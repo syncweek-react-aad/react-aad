@@ -41,9 +41,17 @@ interface IUserInfo {
   user: Msal.User,
 }
 
+interface IRedirectLogin {
+  error: string,
+  errorDesc: string,
+  idToken: string,
+  tokenType: string,
+}
+
 class AzureAD extends React.Component<IProps, IState> {
 
   private clientApplication: Msal.UserAgentApplication;
+  private redirectLoginInfo: IRedirectLogin;
 
   constructor(props: IProps) {
     super(props);
@@ -60,9 +68,23 @@ class AzureAD extends React.Component<IProps, IState> {
 
   public render() {
     if (!this.state.authenticated) {
+      if (this.redirectLoginInfo) {
+        return null;
+      }
       return this.props.unauthenticatedFunction(this.login);
     }
     return this.props.authenticatedFunction(this.logout);
+  }
+
+  public componentDidMount() {
+    if (this.redirectLoginInfo) {
+      if (this.redirectLoginInfo.idToken) {
+        this.acquireTokens(this.redirectLoginInfo.idToken);
+      }
+      else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
+        Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
+      }
+    }
   }
 
   public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): IUserInfo => {
@@ -71,12 +93,6 @@ class AzureAD extends React.Component<IProps, IState> {
       jwtIdToken: idToken,
       user: msalUser
     };
-    this.setState({
-      authenticated: true,
-      userInfo: user
-    });
-
-    this.dispatchToProvidedReduxStore(user);
 
     return user;
   }
@@ -93,19 +109,27 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 
   private loginRedirect = (errorDesc: string, idToken: string, error: string, tokenType: string) => {
-    if (idToken) {
-      this.acquireTokens(idToken);
-    }
-    else if (errorDesc || error) {
-      Logger.error(`Error doing login redirect; errorDescription=${errorDesc}, error=${error}`);
-    }
+    this.redirectLoginInfo = {
+      error,
+      errorDesc,
+      idToken,
+      tokenType
+    };
   }
 
   private acquireTokens = (idToken: string) => {
     this.clientApplication.acquireTokenSilent(this.props.scopes)
       .then((accessToken: string) => {
         const user = this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
+        // Send userInfo first before we set state and rerender 
         this.props.userInfoCallback(user);
+
+        this.setState({
+          authenticated: true,
+          userInfo: user
+        });
+    
+        this.dispatchToProvidedReduxStore(user);
       }, (tokenSilentError) => {
         Logger.error(`token silent error; ${tokenSilentError}`);
         this.clientApplication.acquireTokenPopup(this.props.scopes)
