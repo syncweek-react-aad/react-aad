@@ -103,14 +103,14 @@ class AzureAD extends React.Component<IProps, IState> {
     }
   }
 
-  public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): IUserInfo => {
+  public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
     const user: IUserInfo = {
       jwtAccessToken: accessToken,
       jwtIdToken: idToken,
       user: msalUser
     };
-
-    return user;
+    this.props.userInfoCallback(user);
+    this.dispatchToProvidedReduxStore(user);
   }
 
   public resetUserInfo = () => {
@@ -126,15 +126,11 @@ class AzureAD extends React.Component<IProps, IState> {
   private acquireTokens = (idToken: string) => {
     this.clientApplication.acquireTokenSilent(this.props.scopes)
       .then((accessToken: string) => {
-        const user = this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
-        // Send userInfo first before we set state and rerender 
-        this.props.userInfoCallback(user);
+        this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
 
         this.setState({
           authenticationState: AuthenticationState.Authenticated,
         });
-    
-        this.dispatchToProvidedReduxStore(user);
       }, (tokenSilentError) => {
         Logger.error(`token silent error; ${tokenSilentError}`);
         this.clientApplication.acquireTokenPopup(this.props.scopes)
@@ -174,5 +170,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
+export { AzureAD, AuthenticationState, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
 export default AzureAD;
