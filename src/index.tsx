@@ -9,6 +9,12 @@ enum LoginType {
   Redirect,
 }
 
+enum AuthenticationState {
+  Unauthenticated,
+  Authenticating,
+  Authenticated,
+}
+
 type UserInfoCallback = (token: IUserInfo) => void;
 
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
@@ -31,8 +37,7 @@ interface IProps {
 }
 
 interface IState {
-  authenticated: boolean,
-  userInfo: IUserInfo | null,
+  authenticationState: AuthenticationState,
 }
 
 interface IUserInfo {
@@ -55,25 +60,36 @@ class AzureAD extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
+
+    let authenticationState = AuthenticationState.Unauthenticated;
     this.clientApplication = new Msal.UserAgentApplication(
       props.clientID,
-      props.authority ? props.authority : null,
-      this.loginRedirect
+      props.authority ? props.authority : null, 
+      (errorDesc: string, idToken: string, error: string, tokenType: string) => {
+        this.redirectLoginInfo = {
+          error,
+          errorDesc,
+          idToken,
+          tokenType
+        }
+        authenticationState = AuthenticationState.Authenticating;
+      }
     );
-    this.state = {
-      authenticated: false,
-      userInfo: null,
-    };
+
+    this.state = { authenticationState };
   }
 
   public render() {
-    if (!this.state.authenticated) {
-      if (this.redirectLoginInfo) {
+    switch (this.state.authenticationState) {
+      case AuthenticationState.Authenticated:
+        return this.props.authenticatedFunction(this.logout);
+      case AuthenticationState.Authenticating:
+        // TODO: Add loading callback, componentDidMount will acquire tokens and then re-render
         return null;
-      }
-      return this.props.unauthenticatedFunction(this.login);
+      case AuthenticationState.Unauthenticated:
+      default:
+        return this.props.unauthenticatedFunction(this.login);
     }
-    return this.props.authenticatedFunction(this.logout);
   }
 
   public componentDidMount() {
@@ -103,18 +119,8 @@ class AzureAD extends React.Component<IProps, IState> {
       }
 
       this.setState({
-        authenticated: false,
-        userInfo: null
+        authenticationState: AuthenticationState.Unauthenticated,
       });
-  }
-
-  private loginRedirect = (errorDesc: string, idToken: string, error: string, tokenType: string) => {
-    this.redirectLoginInfo = {
-      error,
-      errorDesc,
-      idToken,
-      tokenType
-    };
   }
 
   private acquireTokens = (idToken: string) => {
@@ -125,8 +131,7 @@ class AzureAD extends React.Component<IProps, IState> {
         this.props.userInfoCallback(user);
 
         this.setState({
-          authenticated: true,
-          userInfo: user
+          authenticationState: AuthenticationState.Authenticated,
         });
     
         this.dispatchToProvidedReduxStore(user);
@@ -155,7 +160,7 @@ class AzureAD extends React.Component<IProps, IState> {
   };
 
   private logout = () => {
-    if (!this.state.authenticated) {return;}
+    if (!this.state.authenticationState) {return;}
     else {
       this.resetUserInfo();
       this.clientApplication.logout();
