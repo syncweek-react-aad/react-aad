@@ -16,7 +16,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
   return (
     <AzureAD
       clientID={'<Application ID for your application>'}
-      scopes={['https://<your-tenant-name>.onmicrosoft.com/hello/demo.read']}
+      scopes={['https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
       unauthenticatedFunction={this.loginCallback}
       authenticatedFunction={this.logoutCallback}
       userInfoCallback={this.printUserInfo}
@@ -31,9 +31,9 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
 ### Required
 
-- `clientID`: Your Azure Active Directory Application ID
+- `clientID`: String representing your Azure Active Directory Application ID
 
-- `scopes`: Permission scopes for your app. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
+- `scopes`: Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
 
 - `unauthenticatedFunction`: A user defined callback function for the AzureAD component to consume.  This function receives the AzureAD components login function which you can then use to trigger a login as you like
 
@@ -53,7 +53,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
 ### Optional
 
-- `authority`: Your Azure Active Directory application policy, if you're using a B2C AAD, it is usually in the format of: `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>`
+- `authority`: A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>`
 
 - `type`: `LoginType.Popup`. Popup is currently the only type available; redirect is currently buggy and disabled.
 
@@ -77,7 +77,9 @@ Once they're logged in, the AzureAD library will call another function given wit
 ```javascript
 // ...
 
-printUserInfo = (userInfo) => {console.log(userInfo)};
+printUserInfo = (userInfo) => {
+  console.log(userInfo)
+};
 
 // ...
 ```
@@ -110,7 +112,7 @@ Import your store into the file rendering the AzureAD component and pass it in:
 <AzureAD
   reduxStore={store}
   clientID={'<Application ID for your application>'}
-  scopes={['https://<your-tenant-name>.onmicrosoft.com/hello/demo.read']}
+  scopes={['https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/demo.read']}
   unauthenticatedFunction={this.loginCallback}
   authenticatedFunction={this.logoutCallback}
   userInfoCallback={this.printUserInfo}
