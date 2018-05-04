@@ -6,7 +6,7 @@
 React AAD MSAL is a library to easily integrate the Microsoft Authentication Library with Azure Active Directory in your React app quickly and reliably.  The library focuses on flexibility, allowing you to define how you want to interact with logins and logouts.
 
 ## Setup
-In the render module of your component, make sure to create an AzureAD component with the arguments you need.  This uses the functions that you will define.  Once the user is successfully authenticated, the component will render the OnAuthenticationComponent given.  This is where you should put the secure, user-specific parts of your app.  `loginCallback` and `printUserInfo` can be any user defined functions.
+In the render module of your component, make sure to create an AzureAD component with the arguments you need.  This uses the functions that you will define.  Once the user is successfully authenticated, the component will render the JSX returned by the `authenticatedFunction`, which in this case is called `logoutCallback`.  This is where you should put the secure, user-specific parts of your app.  `loginCallback` and `printUserInfo` can be any user defined functions.
 
 Find the assignment for ClientID and replace the value with the Application ID for your application from the azure portal.  The authority is the sign-in/signup policy for your application.  Graph scopes is a list of scope URLs that you want to grant access to.  You can find more information on the [active directory MSAL single page app azure sample](https://github.com/Azure-Samples/active-directory-b2c-javascript-msal-singlepageapp).
 
@@ -22,7 +22,6 @@ Find the assignment for ClientID and replace the value with the Application ID f
       userInfoCallback={this.printUserInfo}
       authority={'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>'}
       type={LoginType.Popup}>
-      <OnAuthenticationComponent />
     </AzureAD>
 );
 ```
@@ -34,6 +33,8 @@ Find the assignment for ClientID and replace the value with the Application ID f
 - `clientID`: String representing your Azure Active Directory Application ID
 
 - `scopes`: Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
+
+- `authenticatedFunction`: A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components logout function, and returns JSX containing the logged in portion of your app. You can use this received logout callback to attach it to any part of your logged in portion of your application.
 
 - `unauthenticatedFunction`: A user defined callback function for the AzureAD component to consume.  This function receives the AzureAD components login function which you can then use to trigger a login as you like
 
@@ -92,7 +93,12 @@ Logging out is just as easy.
 
 ```javascript
 logoutCallback = (logout) => {
-  return <button onclick={logout}>Logout</button>;
+  return (
+    <div>
+      You're logged in!
+      <button onclick={logout}>Logout</button>
+    </div>
+  );
 };
 ```
 
