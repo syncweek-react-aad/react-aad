@@ -38,12 +38,12 @@ it('updates the userInfo state', () => {
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'ed236c58-c43b-444c-962c-0bc28a81a753'}
-      scopes={[' https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All']}
+      clientID={'<random-guid>'}
+      scopes={['openid']}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={'https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All'}
+      authority={null}
       type={LoginType.Popup}
     />
   ).instance() as AzureAD;
@@ -82,12 +82,12 @@ it('logs out the user', () => {
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'ed236c58-c43b-444c-962c-0bc28a81a753'}
-      scopes={[' https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All']}
+      clientID={'<random-guid>'}
+      scopes={['openid']}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={'https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All'}
+      authority={null}
       type={LoginType.Popup}
     />
   ).instance() as AzureAD;
