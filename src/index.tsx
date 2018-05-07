@@ -9,6 +9,12 @@ enum LoginType {
   Redirect,
 }
 
+enum AuthenticationState {
+  Unauthenticated,
+  Authenticating,
+  Authenticated,
+}
+
 type UserInfoCallback = (token: IUserInfo) => void;
 
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
@@ -31,8 +37,7 @@ interface IProps {
 }
 
 interface IState {
-  authenticated: boolean,
-  userInfo: IUserInfo | null,
+  authenticationState: AuthenticationState,
 }
 
 interface IUserInfo {
@@ -41,44 +46,71 @@ interface IUserInfo {
   user: Msal.User,
 }
 
+interface IRedirectLogin {
+  error: string,
+  errorDesc: string,
+  idToken: string,
+  tokenType: string,
+}
+
 class AzureAD extends React.Component<IProps, IState> {
 
   private clientApplication: Msal.UserAgentApplication;
+  private redirectLoginInfo: IRedirectLogin;
 
   constructor(props: IProps) {
     super(props);
+
+    let authenticationState = AuthenticationState.Unauthenticated;
     this.clientApplication = new Msal.UserAgentApplication(
       props.clientID,
-      props.authority ? props.authority : null,
-      this.loginRedirect
+      props.authority ? props.authority : null, 
+      (errorDesc: string, idToken: string, error: string, tokenType: string) => {
+        this.redirectLoginInfo = {
+          error,
+          errorDesc,
+          idToken,
+          tokenType
+        }
+        authenticationState = AuthenticationState.Authenticating;
+      }
     );
-    this.state = {
-      authenticated: false,
-      userInfo: null,
-    };
+
+    this.state = { authenticationState };
   }
 
   public render() {
-    if (!this.state.authenticated) {
-      return this.props.unauthenticatedFunction(this.login);
+    switch (this.state.authenticationState) {
+      case AuthenticationState.Authenticated:
+        return this.props.authenticatedFunction(this.logout);
+      case AuthenticationState.Authenticating:
+        // TODO: Add loading callback, componentDidMount will acquire tokens and then re-render
+        return null;
+      case AuthenticationState.Unauthenticated:
+      default:
+        return this.props.unauthenticatedFunction(this.login);
     }
-    return this.props.authenticatedFunction(this.logout);
   }
 
-  public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): IUserInfo => {
+  public componentDidMount() {
+    if (this.redirectLoginInfo) {
+      if (this.redirectLoginInfo.idToken) {
+        this.acquireTokens(this.redirectLoginInfo.idToken);
+      }
+      else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
+        Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
+      }
+    }
+  }
+
+  public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
     const user: IUserInfo = {
       jwtAccessToken: accessToken,
       jwtIdToken: idToken,
       user: msalUser
     };
-    this.setState({
-      authenticated: true,
-      userInfo: user
-    });
-
+    this.props.userInfoCallback(user);
     this.dispatchToProvidedReduxStore(user);
-
-    return user;
   }
 
   public resetUserInfo = () => {
@@ -87,25 +119,18 @@ class AzureAD extends React.Component<IProps, IState> {
       }
 
       this.setState({
-        authenticated: false,
-        userInfo: null
+        authenticationState: AuthenticationState.Unauthenticated,
       });
-  }
-
-  private loginRedirect = (errorDesc: string, idToken: string, error: string, tokenType: string) => {
-    if (idToken) {
-      this.acquireTokens(idToken);
-    }
-    else if (errorDesc || error) {
-      Logger.error(`Error doing login redirect; errorDescription=${errorDesc}, error=${error}`);
-    }
   }
 
   private acquireTokens = (idToken: string) => {
     this.clientApplication.acquireTokenSilent(this.props.scopes)
       .then((accessToken: string) => {
-        const user = this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
-        this.props.userInfoCallback(user);
+        this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
+
+        this.setState({
+          authenticationState: AuthenticationState.Authenticated,
+        });
       }, (tokenSilentError) => {
         Logger.error(`token silent error; ${tokenSilentError}`);
         this.clientApplication.acquireTokenPopup(this.props.scopes)
@@ -131,11 +156,12 @@ class AzureAD extends React.Component<IProps, IState> {
   };
 
   private logout = () => {
-    if (!this.state.authenticated) {return;}
-    else {
-      this.resetUserInfo();
-      this.clientApplication.logout();
+    if (this.state.authenticationState !== AuthenticationState.Authenticated) {
+      return;
     }
+  
+    this.resetUserInfo();
+    this.clientApplication.logout();
   };
 
   private dispatchToProvidedReduxStore(data: IUserInfo) {
@@ -145,5 +171,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
+export { AzureAD, AuthenticationState, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
 export default AzureAD;

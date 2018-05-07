@@ -6,7 +6,7 @@ import * as ReactDOM from 'react-dom';
 
 require('jest-localstorage-mock'); // tslint:disable-line
 
-import { AzureAD, LoginType } from './index';
+import { AuthenticationState, AzureAD, IUserInfo, LoginType } from './index';
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -23,6 +23,7 @@ it('renders without crashing', () => {
 
 it('updates the userInfo state', () => {
 
+  let userInfo : IUserInfo = null;
   const unauthenticatedFunction = (login: any) => {
     return <div><h1> unauthenticatedFunction </h1> </div>
   }
@@ -32,17 +33,17 @@ it('updates the userInfo state', () => {
   }
 
   const userInfoCallback = (token: any) => {
-    // Empty
+    userInfo = token;
   }
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'ed236c58-c43b-444c-962c-0bc28a81a753'}
-      scopes={[' https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All']}
+      clientID={'<random-guid>'}
+      scopes={['openid']}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={'https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All'}
+      authority={null}
       type={LoginType.Popup}
     />
   ).instance() as AzureAD;
@@ -57,10 +58,10 @@ it('updates the userInfo state', () => {
 
   wrapper.createUserInfo("accesstoken", "idtoken", testUser);
 
-  expect(wrapper.state.authenticated).toBe(true);
-  expect(wrapper.state.userInfo ? wrapper.state.userInfo.jwtAccessToken : '').toEqual("accesstoken");
-  expect(wrapper.state.userInfo ? wrapper.state.userInfo.jwtIdToken : '').toEqual("idtoken");
-  expect(wrapper.state.userInfo ? wrapper.state.userInfo.user : {}).toEqual(testUser);
+  expect(userInfo).not.toBeNull();
+  expect(userInfo.jwtAccessToken).toEqual("accesstoken");
+  expect(userInfo.jwtIdToken).toEqual("idtoken");
+  expect(userInfo.user).toEqual(testUser);
 
 });
 
@@ -74,18 +75,19 @@ it('logs out the user', () => {
     return <div><h1> authenticatedFunction </h1> </div>
   }
 
+  let userInfo : IUserInfo = null;
   const userInfoCallback = (token: any) => {
-    // Empty
+    userInfo = token;
   }
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'ed236c58-c43b-444c-962c-0bc28a81a753'}
-      graphScopes={[' https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All']}
+      clientID={'<random-guid>'}
+      scopes={['openid']}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={'https://login.microsoftonline.com/syncteam14.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_All'}
+      authority={null}
       type={LoginType.Popup}
     />
   ).instance() as AzureAD;
@@ -102,6 +104,5 @@ it('logs out the user', () => {
 
   wrapper.resetUserInfo();
 
-  expect(wrapper.state.authenticated).toBe(false);
-  expect(wrapper.state.userInfo).toBeNull();
+  expect(wrapper.state.authenticationState).toBe(AuthenticationState.Unauthenticated);
 });
