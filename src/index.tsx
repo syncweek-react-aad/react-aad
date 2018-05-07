@@ -156,11 +156,12 @@ class AzureAD extends React.Component<IProps, IState> {
   };
 
   private logout = () => {
-    if (!this.state.authenticationState) {return;}
-    else {
-      this.resetUserInfo();
-      this.clientApplication.logout();
+    if (this.state.authenticationState !== AuthenticationState.Authenticated) {
+      return;
     }
+  
+    this.resetUserInfo();
+    this.clientApplication.logout();
   };
 
   private dispatchToProvidedReduxStore(data: IUserInfo) {
