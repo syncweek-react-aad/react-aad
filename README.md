@@ -17,30 +17,27 @@ The React AAD MSAL library provides the following features:
     - create your own function to handle how logout (using this AzureAD component) is triggered in your react app
 * Optional use of redux store containing the token and user information returned from Active Directory
 
-## Getting Started //TODO
+## Getting Started
 
 ### Prerequisites
 
-(ideally very short, if any)
-
-- OS
-- Library version
-- ...
+- [node.js](https://nodejs.org/en/)
 
 ### Installation
 
-(ideally very short)
-
-- npm install [package name]
-- mvn install
-- ...
+- `npm install react-aad-msal`
 
 ### Quickstart
-(Add steps to get up and running quickly)
 
-1. git clone [repository clone url]
-2. cd [respository name]
-3. ...
+If you'd like a sample application running, please see the [sample readme](sample/README.md).
+
+To build this component, follow these steps:
+
+1. `git clone https://github.com/Azure-Samples/react-aad-msal.git`
+2. `cd ./react-aad-msal`
+3. Build the `react-aad-msal` component:
+    - `npm install`
+    - `npm run build`
 
 ## Setup
 In the render module of your component, make sure to create an AzureAD component with the arguments you need.  This uses the functions that you will define.  Once the user is successfully authenticated, the component will render the JSX returned by the `authenticatedFunction`, which in this case is called `logoutCallback`.  This is where you should put the secure, user-specific parts of your app.  `loginCallback` and `printUserInfo` can be any user defined functions.
@@ -53,7 +50,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
   return (
     <AzureAD
       clientID={'<Application ID for your application>'}
-      scopes={['https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
+      scopes={['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
       unauthenticatedFunction={this.loginCallback}
       authenticatedFunction={this.logoutCallback}
       userInfoCallback={this.printUserInfo}
@@ -165,3 +162,7 @@ A sample React-based Single Page Application (SPA) that uses this component is a
 - [MSAL Documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/index.html)
 - [AAD v2 Scopes](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
 - [AAD B22 Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)
+
+## Problems or Suggestions
+
+[Please create an issue.](/issues)
