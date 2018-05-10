@@ -1,0 +1,46 @@
+{
+  "name": "react-aad-msal-samples",
+  "version": "0.1.0",
+  "description": "A `create-react-app` sample React applicate that demonstrates the Azure AD react component.",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://reactaad.visualstudio.com/_git/react-aad-msal-samples"
+  },
+  "author": "Laura Bochenek",
+  "contributors": [
+    "Laura Bochenek <laura.bochenek@microsoft.com>",
+    "Omeed Musavi <omusavi@microsoft.com>",
+    "Lilian Kasem <lilian.kasem@microsoft.com>",
+    "Tess DiStefano <tedistef@microsoft.com>",
+    "Lucas Huet-Hudson <lucashh@microsoft.com>",
+    "Zach Miller <zamiller@microsoft.com>",
+    "P.J. Little <pj.little@microsoft.com>",
+    "Shawn Cicoria <shawn.cicoria@microsoft.com>"
+  ],
+  "dependencies": {
+    "react": "16.3.2",
+    "react-dom": "16.3.2",
+    "react-redux": "5.0.7",
+    "react-scripts": "1.1.4",
+    "redux": "4.0.0"
+  },
+  "scripts": {
+    "rimraf": "./node_modules/.bin/rimraf",
+    "clean": "npm cache clean --force && npm run rimraf -- node_modules build dist",
+    "start": "npm link react-aad-msal && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "engines": {
+    "node": ">= 8.10.0",
+    "npm": ">= 5.6.0"
+  },
+  "keywords": [
+    "Azure AD",
+    "MSAL",
+    "React"
+  ]
+}
