@@ -77,7 +77,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
 - `userInfoCallback`: A user defined callback function. The AzureAD library will calls this function when login is complete to pass back the user info in the following format:
 
-    ``` javascript
+    ```
     IUserInfo {
       jwtAccessToken: string,
       jwtIdToken: string,
@@ -100,7 +100,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.
 
-``` javascript
+``` jsx
 import AzureAD from 'AzureAD'
 
 loginCallback = (login) => {
@@ -179,9 +179,10 @@ const sampleReducer = (state = initialState, action) => {
 
 A sample React-based Single Page Application (SPA) that uses this component is available in the [sample folder](sample/README.md). There you'll find a couple implementations that leverage the library, as well as a tutorial of how to set up Azure Active Directory with an Identity Provider.
 
-## Resources //TODO
+## Resources
 
-- [Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/get-started-azure-ad)
+- [React AAD MSAL NPM Module](https://www.npmjs.com/package/react-aad-msal)
+- [Get Started with Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/get-started-azure-ad)
 - [MSAL Documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/index.html)
 - [AAD v2 Scopes](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
 - [AAD B22 Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)

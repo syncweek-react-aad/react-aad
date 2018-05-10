@@ -96,7 +96,7 @@ userJustLoggedIn = receivedUserInfo => {
 
 For our `unauthenticatedFunction` property, we setup a function that returns a button that uses the login function provided by our AzureAD component.
 
-``` javascript
+``` jsx
 unauthenticatedFunction = loginFunction => {
     return (
         <button className="Button" onClick={loginFunction}>Login</button>
@@ -106,7 +106,7 @@ unauthenticatedFunction = loginFunction => {
 
 For our `authenticatedFunction` property, we setup a function that returns a button that uses the logout function provided by our AzureAD component.
 
-``` javascript
+``` jsx
 authenticatedFunction = (logout) => {
     return (<div>
         You're logged in!
@@ -140,7 +140,7 @@ userJustLoggedIn = receivedUserInfo => {
 
 For our `unauthenticatedFunction` property, we setup a function that returns a a div that lets the user know we are going to redirect them, and uses the login function provided by our AzureAD component to complete the login in a new window.
 
-``` javascript
+``` jsx
 unauthenticatedFunction = loginFunction => {
   if (this.state.redirectEnabled && !this.interval) {
     this.interval = setInterval(() => {
@@ -164,10 +164,16 @@ unauthenticatedFunction = loginFunction => {
 
 For our `authenticatedFunction` property, we setup a function that returns a button that uses the logout function provided by our AzureAD component.
 
-``` javascript
+``` jsx
 authenticatedFunction = logout => {
   return (<div><button onClick={() => {
     logout();
   }} className="Button">Logout</button></div>);
 }
 ```
+
+## Resources
+
+- [React AAD MSAL NPM Module](https://www.npmjs.com/package/react-aad-msal)
+- [Getting Started with an Azure AD App](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal)
+- [Getting Started with an Azure AD B2C App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-app-registration)
