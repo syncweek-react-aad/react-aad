@@ -65,37 +65,17 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
 ## Component Properties
 
-### Required
-
-- `clientID`: String representing your Azure Active Directory Application ID
-
-- `scopes`: Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
-
-- `authenticatedFunction`: A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components logout function, and returns JSX containing the logged in portion of your app. You can use this received logout callback to attach it to any part of your logged in portion of your application.
-
-- `unauthenticatedFunction`: A user defined callback function for the AzureAD component to consume.  This function receives the AzureAD components login function which you can then use to trigger a login as you like
-
-- `userInfoCallback`: A user defined callback function. The AzureAD library will calls this function when login is complete to pass back the user info in the following format:
-
-    ```
-    IUserInfo {
-      jwtAccessToken: string,
-      jwtIdToken: string,
-      user: Msal.User
-    }
-    ```
-
-    The format of [`Msal.User` can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html)
-
-- Child Component: You should provide a child component to the AzureAD component, this will be rendered when login is successful
-
-### Optional
-
-- `authority`: A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>`
-
-- `type`: `LoginType.Popup`. Popup is currently the only type available; redirect is currently buggy and disabled.
-
-- `reduxStore`: If you want to use redux for auth, you can provide a redux store which the AzureAD component will dispatch a `AAD_LOGIN_SUCCESS` action, as well as a `payload` containing `IUserInfo`
+| Property | Description |
+| --- | --- |
+| `clientID` | String representing your Azure Active Directory Application ID |
+| `scopes` | Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
+| `authenticatedFunction` | A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components logout function, and returns JSX containing the logged in portion of your app. You can use this received logout callback to attach it to any part of your logged in portion of your application |
+| `unauthenticatedFunction` | A user defined callback function for the AzureAD component to consume.  This function receives the AzureAD components login function which you can then use to trigger a login as you like |
+| `userInfoCallback` | A user defined callback function. The AzureAD library will calls this function when login is complete to pass back the user info in the following format:  <br /><br /> ``` UserInfo { jwtAccessToken: string, jwtIdToken: string, user: Msal.User }```  <br /> <br /> The format of `Msal.User` [can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
+| `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
+| `type` | **[Optional]** `LoginType.Popup`. Popup is currently the only type available; redirect is currently buggy and disabled. |
+| `reduxStore` | **[Optional]** If you want to use redux for auth, you can provide a redux store which the AzureAD component will dispatch a `AAD_LOGIN_SUCCESS` action, as well as a `payload` containing `IUserInfo` |
+| Child Component | It is recommended that you provide a child component to the AzureAD component, this will be rendered when login is successful |
 
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.
