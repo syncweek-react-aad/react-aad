@@ -11,10 +11,10 @@ React AAD MSAL is a library that allows you to easily integrate auth using Azure
 The React AAD MSAL library provides the following features:
 
 * Login using Azure Active Directory
-     - create your own function that handles how login (using this AzureAD component) is trigger in your react app
+     - create your own function that handles how login (using this AzureAD component) is triggered in your react app
      - create your own function that handles the login success. The AzureAD library will call this function when login is complete to pass back the user info.
 * Logout callback
-    - create your own function to handle how logout (using this AzureAD component) is trigger in your react app
+    - create your own function to handle how logout (using this AzureAD component) is triggered in your react app
 * Optional use of redux store containing the token and user information returned from Active Directory
 
 ## Getting Started //TODO
@@ -75,7 +75,6 @@ Find the assignment for ClientID and replace the value with the Application ID f
 | `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
 | `type` | **[Optional]** `LoginType.Popup`. Popup is currently the only type available; redirect is currently buggy and disabled. |
 | `reduxStore` | **[Optional]** If you want to use redux for auth, you can provide a redux store which the AzureAD component will dispatch a `AAD_LOGIN_SUCCESS` action, as well as a `payload` containing `IUserInfo` |
-| Child Component | It is recommended that you provide a child component to the AzureAD component, this will be rendered when login is successful |
 
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.
