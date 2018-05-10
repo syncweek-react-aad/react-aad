@@ -13,23 +13,7 @@ This repository contains a sample react application that demonstrates how to use
   - [Documentation for AAD Application]( https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal)
   - [Documentation for AAD B2C Application](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-app-registration)
 
-
-## Getting Started
-
-*NOTE: in order to successfully build and run this sample, be sure to complete the prerequisite steps above.
-An Azure Active Directory application must first be setup and configured.*
-
-- Build the `react-aad-msal` component: `npm install && npm run build`
-- create a `.env.local` file, with the following variables:
-  ```
-  REACT_APP_AAD_APP_CLIENT_ID=<client id guid>
-  REACT_APP_AUTHORITY=<authority url (optional)>
-  ```
-- Run the sample application: `npm install && npm run start`
-
-The sample site should launch in a Web browser.
-
-### Quickstart
+### Installation and Quickstart
 
 1. `git clone https://github.com/Azure-Samples/react-aad-msal.git`
 2. `cd react-aad-msal`

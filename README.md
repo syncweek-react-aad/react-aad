@@ -123,7 +123,7 @@ Import your store into the file rendering the AzureAD component and pass it in:
 <AzureAD
   reduxStore={store}
   clientID={'<Application ID for your application>'}
-  scopes={['https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/demo.read']}
+  scopes={['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
   unauthenticatedFunction={this.loginCallback}
   authenticatedFunction={this.logoutCallback}
   userInfoCallback={this.printUserInfo}
