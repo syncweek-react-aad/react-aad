@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://reactaad.visualstudio.com/_git/react-aad-msal-samples"
+    "url": "https://github.com/Azure-Samples/react-aad-msal.git"
   },
   "author": "Laura Bochenek",
   "contributors": [
