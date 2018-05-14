@@ -53,6 +53,9 @@ chances of your issue being dealt with quickly:
 
 You can file new issues by providing the above information at the corresponding repository's issues link: https://github.com/[organization-name]/[repository-name]/issues/new].
 
+### <a name="development"></a> Developing the Module
+If you want to test a change you added to the module, start the sample app with `npm run start-dev`. This will build the module and start the sample app without running the linter.
+
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 Before you submit your Pull Request (PR) consider the following guidelines:
 

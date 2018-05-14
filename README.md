@@ -155,6 +155,9 @@ const sampleReducer = (state = initialState, action) => {
 
 A sample React-based Single Page Application (SPA) that uses this component is available in the [sample folder](sample/README.md). There you'll find a couple implementations that leverage the library, as well as a tutorial of how to set up Azure Active Directory with an Identity Provider.
 
+## Contributing
+See our contribution guildlines [here](CONTRIBUTING.md)
+
 ## Resources
 
 - [React AAD MSAL NPM Module](https://www.npmjs.com/package/react-aad-msal)
