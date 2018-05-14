@@ -81,7 +81,7 @@
     "clean": "npm cache clean --force && npm run rimraf -- node_modules dist",
     "clean:build": "npm run rimraf -- dist",
     "lint": "npm run tslint -- -c tslint.json './src/**/*.ts' './src/**/*.tsx'",
-    "start": "npm install && npm run build && npm link && npm --prefix ./sample install && npm --prefix ./sample run start",
+    "start": "npm install && npm run build && npm --prefix ./sample run start",
     "build": "npm run lint && tsc",
     "test": "node scripts/test.js --env=jsdom",
     "prepublishOnly": "npm run clean && npm install && npm run build"
