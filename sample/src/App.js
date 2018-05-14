@@ -29,42 +29,49 @@ import SampleAppButtonLaunch from './SampleAppButtonLaunch';
 import SampleAppRedirectOnLaunch from './SampleAppRedirectOnLaunch';
 
 class App extends Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       userInfo: null,
       sampleType: null
     };
   }
 
-  userInfoCallback = (userInfo) => {
-    this.setState({userInfo});
+  componentWillMount = () => {
+    if (sessionStorage.getItem('sampleType')) {
+      this.setState({ sampleType: sessionStorage.getItem('sampleType') });
+    }
   }
-  
+
+  userInfoCallback = (userInfo) => {
+    this.setState({ userInfo });
+  }
+
   handleClick = (sampleType) => {
-    this.setState({sampleType});
+    this.setState({ sampleType });
+    sessionStorage.setItem('sampleType', sampleType);
   }
 
   render() {
     let sampleBox;
     if (this.state.sampleType === "popup") {
       sampleBox = <div className="SampleBox">
-            <h2 className="SampleHeader">Button Login</h2>
-            <p>This example will launch a popup dialog to allow for authentication
+        <h2 className="SampleHeader">Button Login</h2>
+        <p>This example will launch a popup dialog to allow for authentication
               with Azure Active Directory</p>
-            <SampleAppButtonLaunch userInfoCallback={this.userInfoCallback} />
-          </div>
+        <SampleAppButtonLaunch userInfoCallback={this.userInfoCallback} />
+      </div>
     } else if (this.state.sampleType === "redirect") {
       sampleBox = <div className="SampleBox">
-            <h2 className="SampleHeader">Automatic Redirect</h2>
-            <p>This example shows how you can use the AzureAD component to redirect 
-              the login screen automatically on page load. Click the checkbox below 
-              to enable the redirect and refresh your browser window.
+        <h2 className="SampleHeader">Automatic Redirect</h2>
+        <p>This example shows how you can use the AzureAD component to redirect
+          the login screen automatically on page load. Click the checkbox below
+          to enable the redirect and refresh your browser window.
             </p>
-            <SampleAppRedirectOnLaunch userInfoCallback={this.userInfoCallback} userInfo={this.state.userInfo}/>
-          </div>
+        <SampleAppRedirectOnLaunch userInfoCallback={this.userInfoCallback} userInfo={this.state.userInfo} />
+      </div>
     }
 
     return (
@@ -72,7 +79,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Welcome to the react-aad-msal sample</h1>
         </header>
-        <br/> <br/>
+        <br /> <br />
         <button onClick={() => this.handleClick("popup")} className="Button">Popup Sample</button>
         {" "}
         <button onClick={() => this.handleClick("redirect")} className="Button">Redirect Sample</button>
@@ -81,11 +88,11 @@ class App extends Component {
           <div className="SampleBox">
             <h2 className="SampleHeader">Authenticated Values</h2>
             <p>When logged in, this box will show your tokens and user info</p>
-            {this.state.userInfo && <div style={{wordWrap: "break-word"}}>
-            <span style={{fontWeight: "bold"}}>User Information:</span> <br />
-            <span style={{fontWeight: "bold"}}>ID Token:</span> {this.state.userInfo.jwtIdToken} <br />
-            <span style={{fontWeight: "bold"}}>Access Token:</span> {this.state.userInfo.jwtAccessToken} <br />
-            <span style={{fontWeight: "bold"}}>Username:</span> {this.state.userInfo.user.name}</div>}
+            {this.state.userInfo && <div style={{ wordWrap: "break-word" }}>
+              <span style={{ fontWeight: "bold" }}>User Information:</span> <br />
+              <span style={{ fontWeight: "bold" }}>ID Token:</span> {this.state.userInfo.jwtIdToken} <br />
+              <span style={{ fontWeight: "bold" }}>Access Token:</span> {this.state.userInfo.jwtAccessToken} <br />
+              <span style={{ fontWeight: "bold" }}>Username:</span> {this.state.userInfo.user.name}</div>}
           </div>
         </div>
       </div>
