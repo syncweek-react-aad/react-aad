@@ -56,22 +56,39 @@ class App extends Component {
 
   render() {
     let sampleBox;
+    let sampleButtons;
+
     if (this.state.sampleType === "popup") {
-      sampleBox = <div className="SampleBox">
-        <h2 className="SampleHeader">Button Login</h2>
-        <p>This example will launch a popup dialog to allow for authentication
+
+      sampleBox =
+        <div className="SampleBox">
+          <h2 className="SampleHeader">Button Login</h2>
+          <p>This example will launch a popup dialog to allow for authentication
               with Azure Active Directory</p>
-        <SampleAppButtonLaunch userInfoCallback={this.userInfoCallback} />
-      </div>
+          <SampleAppButtonLaunch userInfoCallback={this.userInfoCallback} />
+        </div>
+
     } else if (this.state.sampleType === "redirect") {
-      sampleBox = <div className="SampleBox">
-        <h2 className="SampleHeader">Automatic Redirect</h2>
-        <p>This example shows how you can use the AzureAD component to redirect
-          the login screen automatically on page load. Click the checkbox below
-          to enable the redirect and refresh your browser window.
+
+      sampleBox =
+        <div className="SampleBox">
+          <h2 className="SampleHeader">Automatic Redirect</h2>
+          <p>This example shows how you can use the AzureAD component to redirect
+            the login screen automatically on page load. Click the checkbox below
+            to enable the redirect and refresh your browser window.
             </p>
-        <SampleAppRedirectOnLaunch userInfoCallback={this.userInfoCallback} userInfo={this.state.userInfo} />
-      </div>
+          <SampleAppRedirectOnLaunch userInfoCallback={this.userInfoCallback} userInfo={this.state.userInfo} />
+        </div>
+
+    }
+
+    if (!this.state.userInfo) {
+      sampleButtons =
+        <div>
+          <button onClick={() => this.handleClick("popup")} className="Button">Popup Sample</button>
+          {" "}
+          <button onClick={() => this.handleClick("redirect")} className="Button">Redirect Sample</button>
+        </div>
     }
 
     return (
@@ -80,9 +97,7 @@ class App extends Component {
           <h1 className="App-title">Welcome to the react-aad-msal sample</h1>
         </header>
         <br /> <br />
-        <button onClick={() => this.handleClick("popup")} className="Button">Popup Sample</button>
-        {" "}
-        <button onClick={() => this.handleClick("redirect")} className="Button">Redirect Sample</button>
+        {sampleButtons}
         <div className="SampleContainer">
           {sampleBox}
           <div className="SampleBox">
