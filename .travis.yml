@@ -1,5 +1,22 @@
 language: node_js
 node_js:
-  - "9"
-  - "8"
-  - "7"
+- '9'
+- '8'
+- '7'
+
+install:
+  - npm install
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: .travis/pu.sh
+    on:
+      branch: master
+      tags: false
+  - provider: npm
+    email: "liliankasem@gmail.com"
+    api_key:
+      secure: $NPM_TOKEN
+    on:
+      tag: publish

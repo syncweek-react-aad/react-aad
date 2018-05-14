@@ -1,0 +1,10 @@
+tsconfig.json
+tsconfig.test.json
+tslint.json
+.travis.yml
+.npmignore
+.package-lock.json
+src/
+samples/
+config/
+scripts/
