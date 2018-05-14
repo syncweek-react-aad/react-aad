@@ -23,7 +23,6 @@ This repository contains a sample react application that demonstrates how to use
     REACT_APP_AUTHORITY=<authority url (optional)>
     ```
 4. Run the sample application `npm start`
-   - Please note, this creates a symlink.  You may need to run `sudo npm start` on Mac/Linux.
 
 The sample site should launch in a Web browser at `http://localhost:3000`.
 
