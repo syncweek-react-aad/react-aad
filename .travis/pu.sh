@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Source: https://dev.to/jeffreymfarley/deploy-atomically-with-travis--npm-68b
+
 setup_git() {
   # Set the user name and email to match the API token holder
   # This will make sure the git commits will have the correct photo
