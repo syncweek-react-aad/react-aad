@@ -86,7 +86,7 @@
     "build": "npm run lint && tsc",
     "build-dev": "tsc",
     "test": "node scripts/test.js --env=jsdom",
-    "prepublishOnly": "npm run clean && npm install && npm run build",
+    "prepublishOnly": "npm install && npm run build",
     "version": "npm run build && git add .",
     "postversion": "git push && git push --tags"
   },
