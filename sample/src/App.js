@@ -34,38 +34,50 @@ class App extends Component {
     super(props);
     
     this.state = {
-      userInfo: null
+      userInfo: null,
+      sampleType: null
     };
   }
 
   userInfoCallback = (userInfo) => {
     this.setState({userInfo});
   }
+  
+  handleClick = (sampleType) => {
+    this.setState({sampleType});
+  }
 
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to react-aad-msal-samples</h1>
-        </header>
-        <div className="SampleContainer">
-          {/* TODO: Only one sample is supported right now, 
-                    Please uncomment to try the different methods. */}
-                    
-          <div className="SampleBox">
+    let sampleBox;
+    if (this.state.sampleType === "popup") {
+      sampleBox = <div className="SampleBox">
             <h2 className="SampleHeader">Button Login</h2>
             <p>This example will launch a popup dialog to allow for authentication
               with Azure Active Directory</p>
             <SampleAppButtonLaunch userInfoCallback={this.userInfoCallback} />
           </div>
-          {/* <div className="SampleBox">
+    } else if (this.state.sampleType === "redirect") {
+      sampleBox = <div className="SampleBox">
             <h2 className="SampleHeader">Automatic Redirect</h2>
             <p>This example shows how you can use the AzureAD component to redirect 
               the login screen automatically on page load. Click the checkbox below 
               to enable the redirect and refresh your browser window.
             </p>
             <SampleAppRedirectOnLaunch userInfoCallback={this.userInfoCallback} userInfo={this.state.userInfo}/>
-          </div> */}
+          </div>
+    }
+
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title">Welcome to the react-aad-msal sample</h1>
+        </header>
+        <br/> <br/>
+        <button onClick={() => this.handleClick("popup")} className="Button">Popup Sample</button>
+        {" "}
+        <button onClick={() => this.handleClick("redirect")} className="Button">Redirect Sample</button>
+        <div className="SampleContainer">
+          {sampleBox}
           <div className="SampleBox">
             <h2 className="SampleHeader">Authenticated Values</h2>
             <p>When logged in, this box will show your tokens and user info</p>
