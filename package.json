@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://reactaad.visualstudio.com/_git/react-aad-msal"
+    "url": "https://github.com/Azure-Samples/react-aad-msal.git"
   },
   "main": "dist/index.js",
   "files": [
@@ -101,7 +101,8 @@
   "keywords": [
     "Azure AD",
     "MSAL",
-    "React"
+    "React",
+    "OAuth"
   ],
   "jest": {
     "collectCoverageFrom": [
