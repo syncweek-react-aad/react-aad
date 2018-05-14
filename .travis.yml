@@ -16,8 +16,7 @@ deploy:
       tags: false
   - provider: npm
     email: "liliankasem@gmail.com"
-    api_key:
-      secure: $NPM_TOKEN
+    api_key: $NPM_TOKEN
     on:
       branch: master
       tags: false
