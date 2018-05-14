@@ -84,7 +84,7 @@
     "start": "npm install && npm run build && npm --prefix ./sample run start",
     "build": "npm run lint && tsc",
     "test": "node scripts/test.js --env=jsdom",
-    "prepublishOnly": "npm run clean && npm install && npm run build",
+    "prepublishOnly": "npm install && npm run build",
     "version": "npm run build && git add .",
     "postversion": "git push && git push --tags"
   },
