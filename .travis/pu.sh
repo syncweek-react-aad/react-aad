@@ -6,8 +6,8 @@ setup_git() {
   # Set the user name and email to match the API token holder
   # This will make sure the git commits will have the correct photo
   # and the user gets the credit for a checkin
-  git config --global user.email "liliankasem@gmail.com"
-  git config --global user.name "liliankasem"
+  git config --global user.email "github@cicoria.com"
+  git config --global user.name "Mr.Robot"
   git config --global push.default matching
   
   # Get the credentials from a file
@@ -34,12 +34,14 @@ make_version() {
 
 upload_files() {
   # This make sure the current work area is pushed to the tip of the current branch
-  git push origin HEAD:$TRAVIS_BRANCH
+  # git push origin HEAD:$TRAVIS_BRANCH
   
   # This pushes the new tag
-  git push --tags
+  git push --tags --dry-run
 }
-
+echo "####### the env is..."
+env
+echo "####### end env"
 setup_git
 make_version
 upload_files

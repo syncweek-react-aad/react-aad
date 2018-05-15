@@ -1,6 +1,6 @@
 {
   "name": "react-aad-msal",
-  "version": "0.3.7",
+  "version": "0.3.13",
   "description": "A react component that integrates with Azure AD (v2, MSAL).",
   "private": false,
   "license": "MIT",
@@ -85,10 +85,7 @@
     "start-dev": "npm install && npm run build-dev && npm --prefix ./sample run start",
     "build": "npm run lint && tsc",
     "build-dev": "tsc",
-    "test": "node scripts/test.js --env=jsdom",
-    "prepublishOnly": "npm install && npm run build",
-    "version": "npm run build && git add .",
-    "postversion": "git push && git push --tags"
+    "test": "node scripts/test.js --env=jsdom"
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
