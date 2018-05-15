@@ -46,7 +46,7 @@ check_release() {
       echo "script will continue..."
   else
       echo "this is NOT a PR"
-      exit(0)
+      exit 0
   fi
 }
 

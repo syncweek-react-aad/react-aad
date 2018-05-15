@@ -14,7 +14,7 @@ deploy:
     on:
       tags: false
       node: 8
-      repo: Azure-Samples/react-aad-msal"
+      repo: Azure-Samples/react-aad-msal
   # - provider: npm
   #   email: github@cicoria.com
   #   api_key:
