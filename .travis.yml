@@ -7,6 +7,8 @@ install:
   - npm install
 deploy:
   - provider: script
+    script: sh echo "### this is the env "; env | sort
+  - provider: script
     skip_cleanup: true
     script: sh .travis/pu.sh
     on:
