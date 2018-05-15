@@ -1,8 +1,7 @@
 {
-  "name": "react-aad-msal-samples",
+  "name": "react-aad-msal-sample",
   "version": "0.1.0",
-  "description": "A `create-react-app` sample React applicate that demonstrates the Azure AD react component.",
-  "private": true,
+  "description": "A `create-react-app` sample react application that demonstrates the Azure AD MSAL react component.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,12 +27,7 @@
     "redux": "4.0.0"
   },
   "scripts": {
-    "rimraf": "./node_modules/.bin/rimraf",
-    "clean": "npm cache clean --force && npm run rimraf -- node_modules build dist",
-    "start": "npm install && react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "npm install && react-scripts start"
   },
   "engines": {
     "node": ">= 8.10.0",
@@ -42,6 +36,7 @@
   "keywords": [
     "Azure AD",
     "MSAL",
-    "React"
+    "React",
+    "OAuth"
   ]
 }
