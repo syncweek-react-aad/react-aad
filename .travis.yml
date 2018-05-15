@@ -3,20 +3,36 @@ node_js:
 - '9'
 - '8'
 - '7'
-
 install:
-  - npm install
-
+- npm install
 deploy:
-  - provider: script
-    skip_cleanup: true
-    script: sh .travis/pu.sh
-    on:
-      branch: master
-      tags: false
-  - provider: npm
-    email: "liliankasem@gmail.com"
-    api_key: $NPM_TOKEN
-    on:
-      branch: master
-      tags: false
+- provider: script
+  skip_cleanup: true
+  script: sh .travis/pu.sh
+  on:
+    branch: master
+    tags: false
+    node: 8
+    repo: Azure-Samples/react-aad-msal
+- provider: npm
+  email: github@cicoria.com
+  api_key:
+    secure: JGnaSdWwGa2Bh8kezygMsNz9vau3Z/T8SvgAtlnFZIu0mqBfZNjC0oJEM2FH26D73Nj4kb6BOSmZ3blhNeQCZw/KfNimwd4hDJY/bUPyxQNtsejU+wdronuxBL7DFiCBT9GV1clBZNrwWe2R+4w2zLRp48/F7BLBd++4VLy/nVvthBFPuR78g/Il35GYBgwN/BTy1hP4ToY8v5ZeTfpFytZ/QhPjOLTp6QIL8eRcxH0uX7+ivYmG43/vocx3uknMhv637Z5kIU/LtCrRmlnIWUdLC8TfX/R0itP2ZkffrXDSqk5mFlu3DjAG+Nmfx86iKKrniiXePrmXX8V50gSb0BDUXJ/tDdfJtIxfyNXtxZuQjt/dDS4cEsALrHNEbTDfjILBYN1BhOM5H5pks2/7qHhNtu00QkV1CRXbgnxOSiQe86IasYsupJsuUPdEpQFXKZ4EpLWj0I06MIb7xTqZQPDuwq9jtObBtG/qlCDXB0j4amSXMAdVMAoG/IIl3sl+IfHDqcFDNpA7l1e//jhvPt1DqHOalCd+7NsVrFfOmijNKyOBgRThXTCLblFk1yhUBYF9WjW/JnaiuHAqB96fUcwRoNa0pMeuzDdaIdABxuRDc5FHqSQQQzR43h2pPMRrhRtJmcQLO08s/YZKq9o4L8ceNUYtph79v78T7MyfxJo=
+  on:
+    branch: master
+    tags: false
+    node: 8
+    repo: Azure-Samples/react-aad-msal
+- provider: releases
+  api_key:
+    secure: o2qIYtsYuo5r8M/gkU9teD45/cp7uc9SP6sdmSKZlbxeh7gpv8q42QYNebBNaELBXepa2H+oCq3yh4GlhJbQ1glj+n+Ccr6fUosaPE9M0aJ3ECjI6twgX+As2g30Xj0UIiysORD8zGCKAuSecPkydE+/a/GXtA3TxReeDWVmPVrLnkx//sP00+S/hdRK8ocbARFRBU3VKltC6vs+zuBK8ggX8Ab71uBSiuceGdvgWEjy18zTeiJ2a2Ws9geSRgJjA1cW1tFhygIDfuePHkX9q0jvo9e7oxyMFX2iXSBfoyrT/AiuppzyG8IJZA/O1eLnhHWxRzRkQ7kJ4E90c2gRGOmo2CSqeUgv3eRuv183aWfPj0UvgqG/6lRUGF1QCyDU6yn/99T3XE8Uc7DkJGiFsUL/g1nP2FMqRRpkQLRsQFcdNxf8nO/ZzMXBI67Kryzm7clSg7qzQ8mz9xbqtvVAeflvDiGXnC5yMg1W/Ri40X/NsntSSLAn38MTs7qMpYVfnZrIiWm7jFRIkM023l9hLu5kOPWQQxoZTk6wZWbZkw3Q7yExmcTfA2LLJYqzSrQGRj8zO7RcqsSLGwOslr8a25d7mSIoUHZWMef0b1VNq9r5xEWhBJeA1V/zwRMWMuPzSomdG0A7oQEVvipayboeKQ8iPskJrvXG6YNqT2apfwo=
+  file_glob: true
+  file: dist/*
+  on:
+    branch: master
+    tags: false
+    node: 8
+    repo: cicorias/foobar-travis
+env:
+  global:
+    secure: TljZCsFri7z/qySGC6p0JAoiLG/0IfAfwao1KxSKKblgUl6Q7yTGxet+W+6XPorMPRqZNlKtUqPKTZoWtRj7jJykjJXqqMF2SywuJq0+ldYPGWDA47cmpQcZ0tRCnrar+Fd+Ti5eItYbzaK7Wiy3eQWQYm5//9aOzTJe0gqImEV17lxmpcf/YlUSZE7YZbMu9Xxe6JqY7EQ6g3mWB7LXdgIRoMT6bbHneTsmBQDJjbMhH9yGpNY9aMN0mrN7m7uBLtBATzvJWUM3nNbokje5VxwJEr7Q13QeTIBUPOPJkGPlS1rcN3Fl86z4IyXZC+uVfeP0fBZFMpAbcgNceeHv3hnwnmx8ysPO00Js2ln/5jfVLuAqKfPjJ3Vdhvsz5mYgPyvi03v19+IM5SVvWT/Y8do1btdICkF+s0erMh1MWGwP94CI4DSJaM+lbKEJSO6oPZMubzTyZkDgu54plC/Y4gyVNKRetK1mkJ7lMwkHsZz/oLjqWFgc2QKe/H2o5ypaIqQm7zH5qWjtn5nGt3+9D9Xc6+OrK/scWTWpgnoOM33Bh/K4BP/sO3imcx9Lqs98ENSQJdhsBHno6MyBjPbVy4GPShhcYAh7Q4cyeH5lV4k0kDnuDo8Y/0gGxOK5QR1s+7uRHHWA9NCHwrUJiXygIrPFGFEWMUtAmx1kY+BOcDg=
