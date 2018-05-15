@@ -4,7 +4,7 @@ node_js:
   - '8'
   - '7'
 install:
-  - npm install
+  - npm install --production
 deploy:
   - provider: script
     skip_cleanup: true
