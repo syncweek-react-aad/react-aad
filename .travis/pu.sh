@@ -39,9 +39,21 @@ upload_files() {
   # This pushes the new tag
   git push --tags --dry-run
 }
+
+check_release() {
+  if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then 
+      echo "this IS a PR to deploy"
+      echo "script will continue..."
+  else
+      echo "this is NOT a PR"
+      exit(0)
+  fi
+}
+
 echo "####### the env is..."
-env
+env | sort | grep TRAVIS
 echo "####### end env"
+check_release
 setup_git
 make_version
 upload_files
