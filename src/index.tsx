@@ -161,7 +161,7 @@ class AzureAD extends React.Component<IProps, IState> {
       });
   }
 
-  private checkIfUserAuthenticated() {
+  private checkIfUserAuthenticated = () => {
     if (this.state.authenticationState === AuthenticationState.Unauthenticated && this.isLoggedIn()) {
       const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
       this.acquireTokens(idToken!);
@@ -184,7 +184,7 @@ class AzureAD extends React.Component<IProps, IState> {
     return false;
   }
 
-  private getCacheItem(storageLocation: string, itemKey: string): string | null{
+  private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
     if (storageLocation === StorageLocations.localStorage) {
       return localStorage.getItem(itemKey);
     } else if (storageLocation === StorageLocations.sessionStorage) {
