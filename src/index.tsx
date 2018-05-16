@@ -139,10 +139,6 @@ class AzureAD extends React.Component<IProps, IState> {
     this.checkIfUserAuthenticated();
   }
 
-  public componentWillReceiveProps(newProps: IProps) {
-    this.checkIfUserAuthenticated();
-  }
-
   public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
     const user: IUserInfo = {
       jwtAccessToken: accessToken,
@@ -175,7 +171,7 @@ class AzureAD extends React.Component<IProps, IState> {
     const potentialLoggedInUser = this.clientApplication.getUser();
     if (potentialLoggedInUser) {
       const idToken = this.getCacheItem(this.clientApplication.cacheLocation, 'msal.idtoken');
-      const oldIDToken  = potentialLoggedInUser.idToken as any;
+      const oldIDToken = potentialLoggedInUser.idToken as any;
       if (oldIDToken.exp && idToken) {
         const expirationInMs = oldIDToken.exp * 1000; // AD returns in seconds
         if (Date.now() < expirationInMs) { // id token isn't expired
