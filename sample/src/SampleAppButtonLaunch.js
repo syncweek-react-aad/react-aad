@@ -58,7 +58,8 @@ class SampleAppButtonLaunch extends React.Component {
                 unauthenticatedFunction={this.unauthenticatedFunction}
                 userInfoCallback={this.userJustLoggedIn}
                 reduxStore={basicReduxStore}
-                authenticatedFunction={this.authenticatedFunction} />
+                authenticatedFunction={this.authenticatedFunction}
+                persistLoginPastSession={true} />
         );
     }
 }

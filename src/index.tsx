@@ -59,6 +59,7 @@ interface IProps {
   reduxStore?: Store
   authority?: string,
   type?: LoginType,
+  persistLoginPastSession?: boolean
 }
 
 interface IState {
@@ -77,6 +78,13 @@ interface IRedirectLogin {
   idToken: string,
   tokenType: string,
 }
+
+const StorageLocations: {localStorage: string, sessionStorage: string}  = {
+  localStorage: "localStorage",
+  sessionStorage: "sessionStorage"
+}
+
+const IDTokenKey = "msal.idtoken";
 
 class AzureAD extends React.Component<IProps, IState> {
 
@@ -98,6 +106,9 @@ class AzureAD extends React.Component<IProps, IState> {
           tokenType
         }
         authenticationState = AuthenticationState.Authenticating;
+      },
+      {
+        cacheLocation: this.props.persistLoginPastSession? StorageLocations.localStorage : StorageLocations.sessionStorage
       }
     );
 
@@ -126,6 +137,8 @@ class AzureAD extends React.Component<IProps, IState> {
         Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
       }
     }
+
+    this.checkIfUserAuthenticated();
   }
 
   public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
@@ -146,6 +159,39 @@ class AzureAD extends React.Component<IProps, IState> {
       this.setState({
         authenticationState: AuthenticationState.Unauthenticated,
       });
+  }
+
+  private checkIfUserAuthenticated = () => {
+    if (this.state.authenticationState === AuthenticationState.Unauthenticated && this.isLoggedIn()) {
+      const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
+      this.acquireTokens(idToken!);
+    }
+  }
+
+  // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
+  private isLoggedIn = () => {
+    const potentialLoggedInUser = this.clientApplication.getUser();
+    if (potentialLoggedInUser) {
+      const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
+      const oldIDToken = potentialLoggedInUser.idToken as any;
+      if (oldIDToken.exp && idToken) {
+        const expirationInMs = oldIDToken.exp * 1000; // AD returns in seconds
+        if (Date.now() < expirationInMs) { // id token isn't expired
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
+    if (storageLocation === StorageLocations.localStorage) {
+      return localStorage.getItem(itemKey);
+    } else if (storageLocation === StorageLocations.sessionStorage) {
+      return sessionStorage.getItem(itemKey)
+    } else {
+      throw new Error("unrecognized storage location");
+    }
   }
 
   private acquireTokens = (idToken: string) => {

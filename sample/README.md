@@ -49,7 +49,7 @@ Type is set to `LoginType.Popup`.
   // ...
   type={LoginType.Popup}
   // ...
- >
+>
 ```
 
 And we also provide a reduxStore (setup in our `reduxStore.js` file).

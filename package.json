@@ -83,6 +83,7 @@
     "lint": "npm run tslint -- -c tslint.json './src/**/*.ts' './src/**/*.tsx'",
     "start": "npm install && npm run build && npm --prefix ./sample run start",
     "start-dev": "npm install && npm run build-dev && npm --prefix ./sample run start",
+    "start-dev-noinstall": "npm run build-dev && npm --prefix ./sample run start-dev",
     "build": "npm run lint && tsc",
     "build-dev": "tsc",
     "test": "node scripts/test.js --env=jsdom"

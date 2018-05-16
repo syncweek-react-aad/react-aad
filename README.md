@@ -55,7 +55,8 @@ Find the assignment for ClientID and replace the value with the Application ID f
       authenticatedFunction={this.logoutCallback}
       userInfoCallback={this.printUserInfo}
       authority={'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>'}
-      type={LoginType.Popup}>
+      type={LoginType.Popup}
+      persistLoginPastSession={true}>
     </AzureAD>
 );
 ```
@@ -72,6 +73,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
 | `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: <br/> <br/> `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
 | `type` | **[Optional]** `LoginType.Popup` or `LoginType.Redirect`. Redirect is the default if this value is not provided. Make sure to import `LoginType` from the react-aad-msal npm module if using this property  |
 | `reduxStore` | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IUserInfo` |
+|`persistLoginPastSession`|**[Optional]** A boolean value representing if you want your user to be authenticated after the session ends. If `true` login information will be cached in `LocalStorage`. If `false` login information will be cached in `SessionStorage`. Defaults to `false`.|
 
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.
