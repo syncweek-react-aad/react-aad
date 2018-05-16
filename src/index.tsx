@@ -27,28 +27,15 @@ import * as Msal from 'msal';
 import * as React from 'react';
 import { Store } from 'redux';
 import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
+import { AuthenticatedFunction, AuthenticationState, IRedirectLogin, IUserInfo, LoginType, UnauthenticatedFunction, UserInfoCallback } from './Interfaces';
 import { Logger } from './logger';
 
-enum LoginType {
-  Popup,
-  Redirect,
+const StorageLocations: {localStorage: string, sessionStorage: string}  = {
+  localStorage: "localStorage",
+  sessionStorage: "sessionStorage"
 }
 
-enum AuthenticationState {
-  Unauthenticated,
-  Authenticating,
-  Authenticated,
-}
-
-type UserInfoCallback = (token: IUserInfo) => void;
-
-type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
-
-type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
-
-type LoginFunction = () => void;
-
-type LogoutFunction = () => void;
+const IDTokenKey = "msal.idtoken";
 
 interface IProps {
   clientID: string,
@@ -65,26 +52,6 @@ interface IProps {
 interface IState {
   authenticationState: AuthenticationState,
 }
-
-interface IUserInfo {
-  jwtAccessToken: string,
-  jwtIdToken: string,
-  user: Msal.User,
-}
-
-interface IRedirectLogin {
-  error: string,
-  errorDesc: string,
-  idToken: string,
-  tokenType: string,
-}
-
-const StorageLocations: {localStorage: string, sessionStorage: string}  = {
-  localStorage: "localStorage",
-  sessionStorage: "sessionStorage"
-}
-
-const IDTokenKey = "msal.idtoken";
 
 class AzureAD extends React.Component<IProps, IState> {
 
@@ -242,5 +209,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AuthenticationState, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
+export { AzureAD, AAD_LOGIN_SUCCESS };
 export default AzureAD;
