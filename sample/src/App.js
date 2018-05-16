@@ -40,8 +40,8 @@ class App extends Component {
   }
 
   componentWillMount = () => {
-    if (sessionStorage.getItem('sampleType')) {
-      this.setState({ sampleType: sessionStorage.getItem('sampleType') });
+    if (localStorage.getItem('sampleType')) {
+      this.setState({ sampleType: localStorage.getItem('sampleType') });
     }
   }
 
@@ -51,7 +51,7 @@ class App extends Component {
 
   handleClick = (sampleType) => {
     this.setState({ sampleType });
-    sessionStorage.setItem('sampleType', sampleType);
+    localStorage.setItem('sampleType', sampleType);
   }
 
   render() {

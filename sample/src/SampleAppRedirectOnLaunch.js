@@ -31,7 +31,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
     super(props);
 
     this.interval = null;
-    let redirectEnabled = localStorage.getItem("redirectEnabled") || false;
+    let redirectEnabled = sessionStorage.getItem("redirectEnabled") || false;
     this.state = {
       counter: 5,
       redirectEnabled: redirectEnabled
@@ -43,7 +43,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
       if (!this.state.redirectEnabled) {
         this.clearRedirectInterval();
       } else {
-        localStorage.setItem("redirectEnabled", true);
+        sessionStorage.setItem("redirectEnabled", true);
       }
     });
   }
@@ -71,7 +71,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
   clearRedirectInterval() {
     clearInterval(this.interval);
     this.setState({ counter: 5 });
-    localStorage.removeItem("redirectEnabled");
+    sessionStorage.removeItem("redirectEnabled");
     this.interval = null;
   }
 
@@ -99,7 +99,8 @@ class SampleAppRedirectOnLaunch extends React.Component {
           type={LoginType.Redirect}
           unauthenticatedFunction={this.unauthenticatedFunction}
           userInfoCallback={this.userJustLoggedIn}
-          authenticatedFunction={this.authenticatedFunction} />
+          authenticatedFunction={this.authenticatedFunction}
+          persistLoginPastSession={true} />
       </div>
     );
   }
