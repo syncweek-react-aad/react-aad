@@ -6,7 +6,7 @@ GITEMAIL=$(git config --global user.email)
 
 if [ -z "$GITNAME" ]; then
   echo "git config name not set"
-  git config --global user.name "Mr Robot"  
+  git config --global user.name "cicorias"  
 fi
 
 if [ -z "$GITEMAIL" ]; then
@@ -18,7 +18,8 @@ git checkout master -f
 UPDVERSION=$(npm version patch)
 
 GITPWD=$1
-URL=https://${GITNAME}:${GITPWD}@reactaad.visualstudio.com/_git/react-aad-msal
+GITURL=$2
+URL=https://${GITNAME}:${GITPWD}@${GITURL}
 echo $URL
 
 git push $URL
@@ -26,4 +27,3 @@ git push $URL
 NEWVERSION=$(npm view . version)
 # echo "##vso[build.addbuildtag]npm-v$NEWVERSION"
 echo "##vso[build.addbuildtag]npm-$UPDVERSION"
-
