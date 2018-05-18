@@ -57,4 +57,24 @@ interface IRedirectLogin {
   tokenType: string,
 }
 
-export { AuthenticatedFunction, AuthenticationState, LoginType, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, UserInfoCallback }
+interface IMsalAuthProviderConfig {
+  clientID: string;
+  authority?: string;
+  persistLoginPastSession?: boolean;
+  scopes: string[];
+  userInfoCallback: UserInfoCallback;
+}
+
+interface IAuthProvider {
+  init() : void,
+  getUserInfo() : IUserInfo,
+  login() : void,
+  logout() : void,
+}
+
+const StorageLocations: {localStorage: string, sessionStorage: string}  = {
+  localStorage: "localStorage",
+  sessionStorage: "sessionStorage"
+}
+
+export { AuthenticatedFunction, AuthenticationState, LoginType, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, StorageLocations, UserInfoCallback }

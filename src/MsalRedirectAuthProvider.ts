@@ -23,21 +23,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AnyAction } from 'redux';
-import { IUserInfo } from './Interfaces';
+import { IRedirectLogin } from './Interfaces';
+import { Logger } from './logger';
+import { MsalAuthProvider } from './MsalAuthProvider';
 
-export const AAD_LOGIN_SUCCESS: string = 'AAD_LOGIN_SUCCESS';
-export const AAD_LOGOUT_SUCCESS: string = 'AAD_LOGOUT_SUCCESS';
+export class MsalRedirectAuthProvider extends MsalAuthProvider {
+  private redirectLoginInfo: IRedirectLogin;
+  
+  public init(): void {
+    if (this.redirectLoginInfo) {
+      if (this.redirectLoginInfo.idToken) {
+        this.acquireTokens(this.redirectLoginInfo.idToken);
+      }
+      else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
+        Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
+      }
+    }
+    else {
+      this.checkIfUserAuthenticated();
+    }
+  }
 
-export const loginSuccessful = (data: IUserInfo): AnyAction => {
-	return {
-		payload: data,
-		type: AAD_LOGIN_SUCCESS
-	}
-}
+  public login(): void {
+    this.clientApplication.loginRedirect(this.config.scopes);
+  }
 
-export const logoutSuccessful = (): AnyAction => {
-	return {
-		type: AAD_LOGOUT_SUCCESS
-	}
+  protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string): void {
+    this.redirectLoginInfo = {
+      error,
+      errorDesc,
+      idToken,
+      tokenType
+    }
+  }
 }
