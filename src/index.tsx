@@ -26,8 +26,9 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
-import { AuthenticatedFunction, AuthenticationState, IAuthProvider , IUserInfo, LoginType, UnauthenticatedFunction, UserInfoCallback} from './Interfaces';
+import { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, LoginType, UnauthenticatedFunction, UserInfoCallback} from './Interfaces';
 import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
+import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
 interface IProps {
   clientID: string,
@@ -53,12 +54,20 @@ class AzureAD extends React.Component<IProps, IState> {
 
     const authenticationState = AuthenticationState.Unauthenticated;
 
-    this.authProvider = new MsalPopupAuthProvider({
+    const config : IMsalAuthProviderConfig = {
       authority: props.authority,
       clientID: props.clientID,
       persistLoginPastSession: props.persistLoginPastSession,
       scopes: props.scopes,
-    });
+    };
+    
+    if (this.props.type === LoginType.Popup) {
+      this.authProvider = new MsalPopupAuthProvider(config);
+    }
+    else {
+      this.authProvider = new MsalRedirectAuthProvider(config);
+    }
+
     this.authProvider.init();
 
     this.state = { authenticationState };
