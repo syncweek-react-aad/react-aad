@@ -62,6 +62,7 @@ interface IMsalAuthProviderConfig {
   authority?: string;
   persistLoginPastSession?: boolean;
   scopes: string[];
+  userInfoChangedCallback? : (userInfo: IUserInfo) => void;
 }
 
 interface IAuthProvider {

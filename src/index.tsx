@@ -59,6 +59,7 @@ class AzureAD extends React.Component<IProps, IState> {
       clientID: props.clientID,
       persistLoginPastSession: props.persistLoginPastSession,
       scopes: props.scopes,
+      userInfoChangedCallback: this.updateState
     };
     
     if (this.props.type === LoginType.Popup) {
@@ -93,12 +94,7 @@ class AzureAD extends React.Component<IProps, IState> {
   public sendUserInfo = (): void => {
     const user : IUserInfo = this.authProvider.getUserInfo();
     if (user) {
-      this.props.userInfoCallback(user);
-
-      this.dispatchToProvidedReduxStore(user);
-      this.setState({
-        authenticationState: AuthenticationState.Authenticated
-      })
+      this.updateState(user);
     }
   }
 
@@ -110,6 +106,15 @@ class AzureAD extends React.Component<IProps, IState> {
     this.setState({
       authenticationState: AuthenticationState.Unauthenticated,
     });
+  }
+
+  private updateState(user: IUserInfo) {
+    this.props.userInfoCallback(user);
+
+    this.dispatchToProvidedReduxStore(user);
+    this.setState({
+      authenticationState: AuthenticationState.Authenticated
+    })
   }
 
   private login = () => {

@@ -46,7 +46,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       }
     );
   }
-  
+
   public abstract init(): void;
   public abstract login() : void;
 
@@ -90,6 +90,9 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     };
 
     this.userInfo = user;
+    if (this.config.userInfoChangedCallback) {
+      this.config.userInfoChangedCallback(user);
+    }
   }
   
   // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
