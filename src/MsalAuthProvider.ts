@@ -47,7 +47,6 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     );
   }
 
-  public abstract init(): void;
   public abstract login() : void;
 
   public logout(): void {

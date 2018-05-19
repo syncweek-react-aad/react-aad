@@ -69,8 +69,6 @@ class AzureAD extends React.Component<IProps, IState> {
       this.authProvider = new MsalRedirectAuthProvider(config);
     }
 
-    this.authProvider.init();
-
     this.state = { authenticationState };
   }
 

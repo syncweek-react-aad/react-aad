@@ -23,12 +23,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+import { IMsalAuthProviderConfig } from './Interfaces';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 
 export class MsalPopupAuthProvider extends MsalAuthProvider {
-  public init(): void {
+  constructor(authProviderConfig : IMsalAuthProviderConfig) {
+    super(authProviderConfig);
+    
     this.checkIfUserAuthenticated();
   }
 

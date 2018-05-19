@@ -66,7 +66,6 @@ interface IMsalAuthProviderConfig {
 }
 
 interface IAuthProvider {
-  init() : void,
   getUserInfo() : IUserInfo,
   login() : void,
   logout() : void,

@@ -23,14 +23,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IRedirectLogin } from './Interfaces';
+import { IMsalAuthProviderConfig, IRedirectLogin } from './Interfaces';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 export class MsalRedirectAuthProvider extends MsalAuthProvider {
   private redirectLoginInfo: IRedirectLogin;
   
-  public init(): void {
+  constructor(authProviderConfig : IMsalAuthProviderConfig) {
+    super(authProviderConfig);
     if (this.redirectLoginInfo) {
       if (this.redirectLoginInfo.idToken) {
         this.acquireTokens(this.redirectLoginInfo.idToken);
