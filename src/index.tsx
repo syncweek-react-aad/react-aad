@@ -122,7 +122,7 @@ class AzureAD extends React.Component<IProps, IState> {
     });
   }
 
-  private updateState = (user: IUserInfo) => {
+  public updateState = (user: IUserInfo) => {
     this.props.userInfoCallback(user);
 
     this.dispatchToProvidedReduxStore(user);
@@ -152,5 +152,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AAD_LOGIN_SUCCESS, LoginType };
+export { AzureAD, AAD_LOGIN_SUCCESS, AuthenticationState, LoginType };
 export default AzureAD;
