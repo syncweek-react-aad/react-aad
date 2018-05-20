@@ -26,7 +26,7 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
-import { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UnauthenticatedFunction, UserInfoCallback} from './Interfaces';
+import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback} from './Interfaces';
 import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
 import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
@@ -34,6 +34,17 @@ enum LoginType {
   Popup,
   Redirect,
 }
+
+enum AuthenticationState {
+  Unauthenticated,
+  Authenticating,
+  Authenticated,
+}
+
+type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
+type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
+type LoginFunction = () => void;
+type LogoutFunction = () => void;
 
 interface IProps {
   clientID: string,

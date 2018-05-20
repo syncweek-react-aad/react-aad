@@ -23,9 +23,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IMsalAuthProviderConfig, IRedirectLogin } from './Interfaces';
+import { IMsalAuthProviderConfig } from './Interfaces';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
+
+interface IRedirectLogin {
+  error: string,
+  errorDesc: string,
+  idToken: string,
+  tokenType: string,
+}
 
 export class MsalRedirectAuthProvider extends MsalAuthProvider {
   private redirectLoginInfo: IRedirectLogin;

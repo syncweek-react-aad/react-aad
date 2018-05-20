@@ -25,31 +25,11 @@
 import * as Msal from 'msal';
 
 type UserInfoCallback = (token: IUserInfo) => void;
-type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
-type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
-
-enum AuthenticationState {
-  Unauthenticated,
-  Authenticating,
-  Authenticated,
-}
-
-type LoginFunction = () => void;
-
-type LogoutFunction = () => void;
-
 
 interface IUserInfo {
   jwtAccessToken: string,
   jwtIdToken: string,
   user: Msal.User,
-}
-
-interface IRedirectLogin {
-  error: string,
-  errorDesc: string,
-  idToken: string,
-  tokenType: string,
 }
 
 interface IMsalAuthProviderConfig {
@@ -66,4 +46,4 @@ interface IAuthProvider {
   logout() : void,
 }
 
-export { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, UserInfoCallback }
+export { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback }
