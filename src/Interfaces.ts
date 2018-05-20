@@ -28,11 +28,6 @@ type UserInfoCallback = (token: IUserInfo) => void;
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
 type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
 
-enum LoginType {
-  Popup,
-  Redirect,
-}
-
 enum AuthenticationState {
   Unauthenticated,
   Authenticating,
@@ -76,4 +71,4 @@ const StorageLocations: {localStorage: string, sessionStorage: string}  = {
   sessionStorage: "sessionStorage"
 }
 
-export { AuthenticatedFunction, AuthenticationState, LoginType, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, StorageLocations, UserInfoCallback }
+export { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, StorageLocations, UserInfoCallback }

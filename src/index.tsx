@@ -26,9 +26,14 @@
 import * as React from 'react';
 import { Store } from 'redux';
 import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
-import { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, LoginType, UnauthenticatedFunction, UserInfoCallback} from './Interfaces';
+import { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UnauthenticatedFunction, UserInfoCallback} from './Interfaces';
 import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
 import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
+
+enum LoginType {
+  Popup,
+  Redirect,
+}
 
 interface IProps {
   clientID: string,
@@ -106,7 +111,7 @@ class AzureAD extends React.Component<IProps, IState> {
     });
   }
 
-  private updateState(user: IUserInfo) {
+  private updateState = (user: IUserInfo) => {
     this.props.userInfoCallback(user);
 
     this.dispatchToProvidedReduxStore(user);
@@ -136,5 +141,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AAD_LOGIN_SUCCESS };
+export { AzureAD, AAD_LOGIN_SUCCESS, LoginType };
 export default AzureAD;
