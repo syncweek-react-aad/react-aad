@@ -66,9 +66,4 @@ interface IAuthProvider {
   logout() : void,
 }
 
-const StorageLocations: {localStorage: string, sessionStorage: string}  = {
-  localStorage: "localStorage",
-  sessionStorage: "sessionStorage"
-}
-
-export { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, StorageLocations, UserInfoCallback }
+export { AuthenticatedFunction, AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo, IRedirectLogin, UnauthenticatedFunction, LoginFunction, UserInfoCallback }

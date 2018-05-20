@@ -24,10 +24,15 @@
 //
 
 import * as Msal from 'msal';
-import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, StorageLocations } from "./Interfaces";
+import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo } from "./Interfaces";
 import { Logger } from './logger';
 
 const IDTokenKey = "msal.idtoken";
+
+const StorageLocations: {localStorage: string, sessionStorage: string}  = {
+  localStorage: "localStorage",
+  sessionStorage: "sessionStorage"
+}
 
 export abstract class MsalAuthProvider implements IAuthProvider {
   protected clientApplication: Msal.UserAgentApplication;
