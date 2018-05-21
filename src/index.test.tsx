@@ -31,7 +31,8 @@ import * as ReactDOM from 'react-dom';
 
 require('jest-localstorage-mock'); // tslint:disable-line
 
-import { AuthenticationState, AzureAD, IUserInfo, LoginType } from './index';
+import { AuthenticationState, AzureAD, LoginType } from './index';
+import { IUserInfo } from './Interfaces';
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -81,7 +82,12 @@ it('updates the userInfo state', () => {
     userIdentifier: "Something"
   }
 
-  wrapper.createUserInfo("accesstoken", "idtoken", testUser);
+  const loggedInUser : IUserInfo = {
+    jwtAccessToken: "accesstoken",
+    jwtIdToken: "idtoken",
+    user: testUser,
+  }
+  wrapper.updateState(loggedInUser);
 
   expect(userInfo).not.toBeNull();
   expect(userInfo.jwtAccessToken).toEqual("accesstoken");
@@ -100,9 +106,8 @@ it('logs out the user', () => {
     return <div><h1> authenticatedFunction </h1> </div>
   }
 
-  let userInfo : IUserInfo = null;
   const userInfoCallback = (token: any) => {
-    userInfo = token;
+    // empty
   }
 
   const wrapper = Enzyme.shallow(
@@ -125,7 +130,13 @@ it('logs out the user', () => {
     userIdentifier: "Something"
   }
 
-  wrapper.createUserInfo("accesstoken", "idtoken", testUser);
+  const loggedInUser : IUserInfo = {
+    jwtAccessToken: "accesstoken",
+    jwtIdToken: "idtoken",
+    user: testUser,
+  }
+
+  wrapper.updateState(loggedInUser);
 
   wrapper.resetUserInfo();
 

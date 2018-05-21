@@ -23,11 +23,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Msal from 'msal';
 import * as React from 'react';
 import { Store } from 'redux';
 import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
-import { Logger } from './logger';
+import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback} from './Interfaces';
+import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
+import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
 enum LoginType {
   Popup,
@@ -40,14 +41,9 @@ enum AuthenticationState {
   Authenticated,
 }
 
-type UserInfoCallback = (token: IUserInfo) => void;
-
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
-
 type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
-
 type LoginFunction = () => void;
-
 type LogoutFunction = () => void;
 
 interface IProps {
@@ -66,51 +62,28 @@ interface IState {
   authenticationState: AuthenticationState,
 }
 
-interface IUserInfo {
-  jwtAccessToken: string,
-  jwtIdToken: string,
-  user: Msal.User,
-}
-
-interface IRedirectLogin {
-  error: string,
-  errorDesc: string,
-  idToken: string,
-  tokenType: string,
-}
-
-const StorageLocations: {localStorage: string, sessionStorage: string}  = {
-  localStorage: "localStorage",
-  sessionStorage: "sessionStorage"
-}
-
-const IDTokenKey = "msal.idtoken";
-
 class AzureAD extends React.Component<IProps, IState> {
-
-  private clientApplication: Msal.UserAgentApplication;
-  private redirectLoginInfo: IRedirectLogin;
+  private authProvider : IAuthProvider;
 
   constructor(props: IProps) {
     super(props);
 
-    let authenticationState = AuthenticationState.Unauthenticated;
-    this.clientApplication = new Msal.UserAgentApplication(
-      props.clientID,
-      props.authority ? props.authority : null, 
-      (errorDesc: string, idToken: string, error: string, tokenType: string) => {
-        this.redirectLoginInfo = {
-          error,
-          errorDesc,
-          idToken,
-          tokenType
-        }
-        authenticationState = AuthenticationState.Authenticating;
-      },
-      {
-        cacheLocation: this.props.persistLoginPastSession? StorageLocations.localStorage : StorageLocations.sessionStorage
-      }
-    );
+    const authenticationState = AuthenticationState.Unauthenticated;
+
+    const config : IMsalAuthProviderConfig = {
+      authority: props.authority,
+      clientID: props.clientID,
+      persistLoginPastSession: props.persistLoginPastSession,
+      scopes: props.scopes,
+      userInfoChangedCallback: this.updateState
+    };
+    
+    if (this.props.type === LoginType.Popup) {
+      this.authProvider = new MsalPopupAuthProvider(config);
+    }
+    else {
+      this.authProvider = new MsalRedirectAuthProvider(config);
+    }
 
     this.state = { authenticationState };
   }
@@ -129,110 +102,47 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    if (this.redirectLoginInfo) {
-      if (this.redirectLoginInfo.idToken) {
-        this.acquireTokens(this.redirectLoginInfo.idToken);
-      }
-      else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
-        Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
-      }
-    }
-
-    this.checkIfUserAuthenticated();
+    this.sendUserInfo();
   }
 
-  public createUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
-    const user: IUserInfo = {
-      jwtAccessToken: accessToken,
-      jwtIdToken: idToken,
-      user: msalUser
-    };
-    this.props.userInfoCallback(user);
-    this.dispatchToProvidedReduxStore(user);
+  public sendUserInfo = (): void => {
+    const user : IUserInfo = this.authProvider.getUserInfo();
+    if (user) {
+      this.updateState(user);
+    }
   }
 
   public resetUserInfo = () => {
-      if (this.props.reduxStore) {
-        this.props.reduxStore.dispatch(logoutSuccessful());
-      }
-
-      this.setState({
-        authenticationState: AuthenticationState.Unauthenticated,
-      });
-  }
-
-  private checkIfUserAuthenticated = () => {
-    if (this.state.authenticationState === AuthenticationState.Unauthenticated && this.isLoggedIn()) {
-      const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
-      this.acquireTokens(idToken!);
+    if (this.props.reduxStore) {
+      this.props.reduxStore.dispatch(logoutSuccessful());
     }
+
+    this.setState({
+      authenticationState: AuthenticationState.Unauthenticated,
+    });
   }
 
-  // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
-  private isLoggedIn = () => {
-    const potentialLoggedInUser = this.clientApplication.getUser();
-    if (potentialLoggedInUser) {
-      const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
-      const oldIDToken = potentialLoggedInUser.idToken as any;
-      if (oldIDToken.exp && idToken) {
-        const expirationInMs = oldIDToken.exp * 1000; // AD returns in seconds
-        if (Date.now() < expirationInMs) { // id token isn't expired
-          return true;
-        }
-      }
-    }
-    return false;
-  }
+  public updateState = (user: IUserInfo) => {
+    this.props.userInfoCallback(user);
 
-  private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
-    if (storageLocation === StorageLocations.localStorage) {
-      return localStorage.getItem(itemKey);
-    } else if (storageLocation === StorageLocations.sessionStorage) {
-      return sessionStorage.getItem(itemKey)
-    } else {
-      throw new Error("unrecognized storage location");
-    }
-  }
-
-  private acquireTokens = (idToken: string) => {
-    this.clientApplication.acquireTokenSilent(this.props.scopes)
-      .then((accessToken: string) => {
-        this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
-
-        this.setState({
-          authenticationState: AuthenticationState.Authenticated,
-        });
-      }, (tokenSilentError) => {
-        Logger.error(`token silent error; ${tokenSilentError}`);
-        this.clientApplication.acquireTokenPopup(this.props.scopes)
-          .then((accessToken: string) => {
-            this.createUserInfo(accessToken, idToken, this.clientApplication.getUser());
-          }, (tokenPopupError) => {
-            Logger.error(`token popup error; ${tokenPopupError}`);
-          });
-      });
+    this.dispatchToProvidedReduxStore(user);
+    this.setState({
+      authenticationState: AuthenticationState.Authenticated
+    })
   }
 
   private login = () => {
-    if (this.props.type === LoginType.Popup) {
-      this.clientApplication.loginPopup(this.props.scopes)
-        .then((idToken: string) => {
-          this.acquireTokens(idToken);
-        }, (error) => {
-          Logger.error(`Login popup failed; ${error}`);
-        });
-    } else {
-      this.clientApplication.loginRedirect(this.props.scopes);
-    }
+    this.authProvider.login();
+    this.sendUserInfo();
   };
 
   private logout = () => {
     if (this.state.authenticationState !== AuthenticationState.Authenticated) {
       return;
     }
-  
+
     this.resetUserInfo();
-    this.clientApplication.logout();
+    this.authProvider.logout();
   };
 
   private dispatchToProvidedReduxStore(data: IUserInfo) {
@@ -242,5 +152,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AuthenticationState, LoginType, IUserInfo, UnauthenticatedFunction, LoginFunction, AAD_LOGIN_SUCCESS };
+export { AzureAD, AAD_LOGIN_SUCCESS, AuthenticationState, LoginType };
 export default AzureAD;

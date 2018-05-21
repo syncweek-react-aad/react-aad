@@ -22,22 +22,28 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import * as Msal from 'msal';
 
-import { AnyAction } from 'redux';
-import { IUserInfo } from './Interfaces';
+type UserInfoCallback = (token: IUserInfo) => void;
 
-export const AAD_LOGIN_SUCCESS: string = 'AAD_LOGIN_SUCCESS';
-export const AAD_LOGOUT_SUCCESS: string = 'AAD_LOGOUT_SUCCESS';
-
-export const loginSuccessful = (data: IUserInfo): AnyAction => {
-	return {
-		payload: data,
-		type: AAD_LOGIN_SUCCESS
-	}
+interface IUserInfo {
+  jwtAccessToken: string,
+  jwtIdToken: string,
+  user: Msal.User,
 }
 
-export const logoutSuccessful = (): AnyAction => {
-	return {
-		type: AAD_LOGOUT_SUCCESS
-	}
+interface IMsalAuthProviderConfig {
+  clientID: string;
+  authority?: string;
+  persistLoginPastSession?: boolean;
+  scopes: string[];
+  userInfoChangedCallback? : (userInfo: IUserInfo) => void;
 }
+
+interface IAuthProvider {
+  getUserInfo() : IUserInfo,
+  login() : void,
+  logout() : void,
+}
+
+export { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback }
