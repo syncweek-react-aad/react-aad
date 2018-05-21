@@ -34,8 +34,9 @@ To run this sample, you just need to provide your `REACT_APP_AAD_APP_CLIENT_ID` 
 
 ``` jsx
 <AzureAD
-  clientID={process.env.REACT_APP_AAD_APP_CLIENT_ID}
-  authority={process.env.REACT_APP_AUTHORITY}
+  provider={new MsalAuthProviderFactory({
+            authority: process.env.REACT_APP_AUTHORITY,
+            clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
   // ...
  >
 ```
@@ -47,7 +48,8 @@ Type is set to `LoginType.Popup`.
 ``` jsx
 <AzureAD
   // ...
-  type={LoginType.Popup}
+  provider={new MsalAuthProviderFactory({
+    type: LoginType.Popup
   // ...
 >
 ```
@@ -103,7 +105,8 @@ Type is set to `LoginType.Redirect`.
 ``` jsx
 <AzureAD
   // ...
-  type={LoginType.Redirect}
+  provider={new MsalAuthProviderFactory({
+    type: LoginType.Redirect
   // ...
 >
 ```
