@@ -62,7 +62,9 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     return this.userInfo;
   }
 
-  protected abstract tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string) : void;
+  protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string) : void {
+    // Empty callback by default
+  }
   
   protected checkIfUserAuthenticated = () => {
     if (this.isLoggedIn()) {

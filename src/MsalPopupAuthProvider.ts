@@ -43,8 +43,4 @@ export class MsalPopupAuthProvider extends MsalAuthProvider {
         Logger.error(`Login popup failed; ${error}`);
       });
   }
-
-  protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string): void {
-    // Not used by popup login methods
-  }
 }
