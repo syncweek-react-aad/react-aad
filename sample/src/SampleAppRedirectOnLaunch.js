@@ -24,7 +24,7 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType } from 'react-aad-msal';
+import { AzureAD, LoginType, MsalAuthProviderFactory } from 'react-aad-msal';
 
 class SampleAppRedirectOnLaunch extends React.Component {
   constructor(props) {
@@ -93,14 +93,16 @@ class SampleAppRedirectOnLaunch extends React.Component {
             <input type="checkbox" value={this.state.redirectEnabled} onChange={this.handleCheck} /> Enable redirect
           </div> : <div/>}
         <AzureAD
-          clientID={process.env.REACT_APP_AAD_APP_CLIENT_ID}
-          scopes={["openid"]}
-          authority={process.env.REACT_APP_AUTHORITY}
-          type={LoginType.Redirect}
+          provider={new MsalAuthProviderFactory({
+            authority: process.env.REACT_APP_AUTHORITY,
+            clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+            scopes: ["openid"],
+            type: LoginType.Redirect,
+            persistLoginPastSession: true,
+          })}
           unauthenticatedFunction={this.unauthenticatedFunction}
           userInfoCallback={this.userJustLoggedIn}
-          authenticatedFunction={this.authenticatedFunction}
-          persistLoginPastSession={true} />
+          authenticatedFunction={this.authenticatedFunction} />
       </div>
     );
   }

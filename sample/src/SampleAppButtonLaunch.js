@@ -24,7 +24,7 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType } from 'react-aad-msal';
+import { AzureAD, LoginType, MsalAuthProviderFactory } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
 
 class SampleAppButtonLaunch extends React.Component {
@@ -51,15 +51,17 @@ class SampleAppButtonLaunch extends React.Component {
     render() {
         return (
             <AzureAD
-                clientID={process.env.REACT_APP_AAD_APP_CLIENT_ID}
-                scopes={["openid"]}
-                authority={process.env.REACT_APP_AUTHORITY}
-                type={LoginType.Popup}
+                provider={new MsalAuthProviderFactory({
+                    authority: process.env.REACT_APP_AUTHORITY,
+                    clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+                    scopes: ["openid"],
+                    type: LoginType.Popup,
+                    persistLoginPastSession: true,
+                })}
                 unauthenticatedFunction={this.unauthenticatedFunction}
-                userInfoCallback={this.userJustLoggedIn}
                 reduxStore={basicReduxStore}
                 authenticatedFunction={this.authenticatedFunction}
-                persistLoginPastSession={true} />
+                userInfoCallback={this.userJustLoggedIn} />
         );
     }
 }
