@@ -22,39 +22,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as Msal from 'msal';
+import { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, LoginType } from "./Interfaces";
+import { MsalPopupAuthProvider } from "./MsalPopupAuthProvider";
+import { MsalRedirectAuthProvider } from "./MsalRedirectAuthProvider";
 
-type UserInfoCallback = (token: IUserInfo) => void;
+export class MsalAuthProviderFactory implements IAuthProviderFactory {
+  private config : IMsalAuthProviderConfig;
 
-enum LoginType {
-  Popup,
-  Redirect,
-}
-
-interface IUserInfo {
-  jwtAccessToken: string,
-  jwtIdToken: string,
-  user: Msal.User,
-}
-
-interface IAuthProviderFactory {
-  getAuthProvider() : IAuthProvider
-}
-
-interface IMsalAuthProviderConfig {
-  clientID: string,
-  authority?: string,
-  persistLoginPastSession?: boolean,
-  scopes: string[],
-  type: LoginType,
-}
-
-interface IAuthProvider {
-  userInfoChangedCallback? : (userInfo: IUserInfo) => void,
+  constructor(config : IMsalAuthProviderConfig) {
+    this.config = config;
+  }
   
-  getUserInfo() : IUserInfo,
-  login() : void,
-  logout() : void,
+  public getAuthProvider(): IAuthProvider {
+    if (this.config.type === LoginType.Popup) {
+      return new MsalPopupAuthProvider(this.config);
+    }
+    else {
+      return new MsalRedirectAuthProvider(this.config);
+    }
+  }
 }
-
-export { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, IUserInfo, LoginType, UserInfoCallback }

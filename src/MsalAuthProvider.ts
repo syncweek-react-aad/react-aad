@@ -35,6 +35,8 @@ const StorageLocations: {localStorage: string, sessionStorage: string}  = {
 }
 
 export abstract class MsalAuthProvider implements IAuthProvider {
+  public userInfoChangedCallback : (userInfo: IUserInfo) => void;
+
   protected clientApplication: Msal.UserAgentApplication;
   protected config: IMsalAuthProviderConfig;
   protected userInfo : IUserInfo;
@@ -96,8 +98,8 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     };
 
     this.userInfo = user;
-    if (this.config.userInfoChangedCallback) {
-      this.config.userInfoChangedCallback(user);
+    if (this.userInfoChangedCallback) {
+      this.userInfoChangedCallback(user);
     }
   }
   
