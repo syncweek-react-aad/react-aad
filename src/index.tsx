@@ -25,7 +25,7 @@
 
 import * as React from 'react';
 import { Store } from 'redux';
-import { AAD_LOGIN_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
+import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
 import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback} from './Interfaces';
 import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
 import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
@@ -152,5 +152,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AAD_LOGIN_SUCCESS, AuthenticationState, LoginType };
+export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, LoginType };
 export default AzureAD;
