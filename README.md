@@ -52,7 +52,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
       provider={new MsalAuthProviderFactory({
         clientID: '<Application ID for your application>',
         scopes: ['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'],
-        authority" 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
+        authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
         type: LoginType.Popup,
         persistLoginPastSession: true
       })}

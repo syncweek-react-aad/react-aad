@@ -35,8 +35,8 @@ To run this sample, you just need to provide your `REACT_APP_AAD_APP_CLIENT_ID` 
 ``` jsx
 <AzureAD
   provider={new MsalAuthProviderFactory({
-            authority: process.env.REACT_APP_AUTHORITY,
             clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+            authority: process.env.REACT_APP_AUTHORITY,
   // ...
  >
 ```
