@@ -33,6 +33,7 @@ require('jest-localstorage-mock'); // tslint:disable-line
 
 import { AuthenticationState, AzureAD, LoginType } from './index';
 import { IUserInfo } from './Interfaces';
+import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -64,13 +65,15 @@ it('updates the userInfo state', () => {
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'<random-guid>'}
-      scopes={['openid']}
+      provider={new MsalAuthProviderFactory({
+        authority: null,
+        clientID: '<random-guid>',
+        scopes: ['openid'],
+        type: LoginType.Popup,
+      })}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={null}
-      type={LoginType.Popup}
     />
   ).instance() as AzureAD;
 
@@ -112,13 +115,15 @@ it('logs out the user', () => {
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      clientID={'<random-guid>'}
-      scopes={['openid']}
+      provider={new MsalAuthProviderFactory({
+        authority: null,
+        clientID: '<random-guid>',
+        scopes: ['openid'],
+        type: LoginType.Popup,
+      })}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
       userInfoCallback={userInfoCallback}
-      authority={null}
-      type={LoginType.Popup}
     />
   ).instance() as AzureAD;
 

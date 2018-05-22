@@ -49,15 +49,16 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
   return (
     <AzureAD
-      clientID={'<Application ID for your application>'}
-      scopes={['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
+      provider={new MsalAuthProviderFactory({
+        clientID: '<Application ID for your application>',
+        scopes: ['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'],
+        authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
+        type: LoginType.Popup,
+        persistLoginPastSession: true
+      })}
       unauthenticatedFunction={this.loginCallback}
       authenticatedFunction={this.logoutCallback}
-      userInfoCallback={this.printUserInfo}
-      authority={'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>'}
-      type={LoginType.Popup}
-      persistLoginPastSession={true}>
-    </AzureAD>
+      userInfoCallback={this.printUserInfo} />
 );
 ```
 
@@ -65,14 +66,26 @@ Find the assignment for ClientID and replace the value with the Application ID f
 
 | Property | Description |
 | --- | --- |
-| `clientID` | String representing your Azure Active Directory Application ID |
-| `scopes` | Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
+| `provider` | Factory object that provides the configuration values for your Azure Active Directory instance. See [Provider Options](#provider-options) in table below |
 | `authenticatedFunction` | A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `logout function` which you can use to trigger a logout |
 | `unauthenticatedFunction` | A user defined callback function for the AzureAD component to consume.  This function receives the AzureAD components `login function` which you can then use to trigger a login |
 | `userInfoCallback` | A user defined callback function for the AzureAD component to consume. The AzureAD component will call this function when login is complete to pass back the user info in the following format:  <br /><br /> ``` UserInfo { jwtAccessToken: string, jwtIdToken: string, user: Msal.User }```  <br /> <br /> The format of `Msal.User` [can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
+| `reduxStore` | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IUserInfo` |
+
+### Provider Options
+
+Each provider may have different configuration options. Depending on which provider you choose, you should use a different factory class.
+
+As of right now, there is only a single provider, but more may be added in future versions.
+
+#### MsalAuthProviderFactory
+
+| Property | Description |
+| --- | --- |
+| `clientID` | String representing your Azure Active Directory Application ID |
+| `scopes` | Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
 | `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: <br/> <br/> `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
 | `type` | **[Optional]** `LoginType.Popup` or `LoginType.Redirect`. Redirect is the default if this value is not provided. Make sure to import `LoginType` from the react-aad-msal npm module if using this property  |
-| `reduxStore` | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IUserInfo` |
 |`persistLoginPastSession`|**[Optional]** A boolean value representing if you want your user to be authenticated after the session ends. If `true` login information will be cached in `LocalStorage`. If `false` login information will be cached in `SessionStorage`. Defaults to `false`.|
 
 ## Login
@@ -124,13 +137,16 @@ Import your store into the file rendering the AzureAD component and pass it in:
 ``` jsx
 <AzureAD
   reduxStore={store}
-  clientID={'<Application ID for your application>'}
-  scopes={['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>']}
+  provider={new MsalAuthProviderFactory({
+    clientID: '<Application ID for your application>',
+    scopes: ['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'],
+    authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
+    type: LoginType.Popup,
+    persistLoginPastSession: true
+  })}
   unauthenticatedFunction={this.loginCallback}
   authenticatedFunction={this.logoutCallback}
   userInfoCallback={this.printUserInfo}
-  authority={'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>'}
-  type={LoginType.Popup}
 />
 ```
 

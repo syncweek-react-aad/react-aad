@@ -25,15 +25,10 @@
 
 import * as React from 'react';
 import { Store } from 'redux';
-import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
-import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo, UserInfoCallback} from './Interfaces';
-import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
-import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
-enum LoginType {
-  Popup,
-  Redirect,
-}
+import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, loginSuccessful, logoutSuccessful } from './actions';
+import { IAuthProvider, IAuthProviderFactory, IUserInfo, LoginType, UserInfoCallback} from './Interfaces';
+import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 
 enum AuthenticationState {
   Unauthenticated,
@@ -47,15 +42,11 @@ type LoginFunction = () => void;
 type LogoutFunction = () => void;
 
 interface IProps {
-  clientID: string,
-  scopes: string[],
+  provider : IAuthProviderFactory,
   unauthenticatedFunction: UnauthenticatedFunction,
   authenticatedFunction: AuthenticatedFunction,
   userInfoCallback: UserInfoCallback,
   reduxStore?: Store
-  authority?: string,
-  type?: LoginType,
-  persistLoginPastSession?: boolean
 }
 
 interface IState {
@@ -70,20 +61,8 @@ class AzureAD extends React.Component<IProps, IState> {
 
     const authenticationState = AuthenticationState.Unauthenticated;
 
-    const config : IMsalAuthProviderConfig = {
-      authority: props.authority,
-      clientID: props.clientID,
-      persistLoginPastSession: props.persistLoginPastSession,
-      scopes: props.scopes,
-      userInfoChangedCallback: this.updateState
-    };
-    
-    if (this.props.type === LoginType.Popup) {
-      this.authProvider = new MsalPopupAuthProvider(config);
-    }
-    else {
-      this.authProvider = new MsalRedirectAuthProvider(config);
-    }
+    this.authProvider = this.props.provider.getAuthProvider();
+    this.authProvider.userInfoChangedCallback = this.updateState;
 
     this.state = { authenticationState };
   }
@@ -152,5 +131,5 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, LoginType };
+export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, LoginType, MsalAuthProviderFactory };
 export default AzureAD;
