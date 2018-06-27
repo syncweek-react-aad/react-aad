@@ -53,7 +53,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
         clientID: '<Application ID for your application>',
         scopes: ['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'],
         authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
-        redirectUri: '<Optional redirect URI for your application>'
+        redirectUri: '<Optional redirect URI for your application>',
         type: LoginType.Popup,
         persistLoginPastSession: true
       })}
