@@ -53,6 +53,7 @@ Find the assignment for ClientID and replace the value with the Application ID f
         clientID: '<Application ID for your application>',
         scopes: ['<property (i.e. user.read)>', 'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'],
         authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
+        redirectUri: '<Optional redirect URI for your application>'
         type: LoginType.Popup,
         persistLoginPastSession: true
       })}
@@ -85,6 +86,7 @@ As of right now, there is only a single provider, but more may be added in futur
 | `clientID` | String representing your Azure Active Directory Application ID |
 | `scopes` | Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
 | `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: <br/> <br/> `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
+| `redirectUri` | **[Optional]** String representing the URI to redirect back to when authentication completes |
 | `type` | **[Optional]** `LoginType.Popup` or `LoginType.Redirect`. Redirect is the default if this value is not provided. Make sure to import `LoginType` from the react-aad-msal npm module if using this property  |
 |`persistLoginPastSession`|**[Optional]** A boolean value representing if you want your user to be authenticated after the session ends. If `true` login information will be cached in `LocalStorage`. If `false` login information will be cached in `SessionStorage`. Defaults to `false`.|
 

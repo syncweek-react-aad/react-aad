@@ -47,6 +47,7 @@ interface IMsalAuthProviderConfig {
   persistLoginPastSession?: boolean,
   scopes: string[],
   type?: LoginType,
+  redirectUri?: string
 }
 
 interface IAuthProvider {
