@@ -103,10 +103,11 @@ class AzureAD extends React.Component<IProps, IState> {
   public updateState = (user: IUserInfo) => {
     this.props.userInfoCallback(user);
 
-    this.dispatchToProvidedReduxStore(user);
     this.setState({
       authenticationState: AuthenticationState.Authenticated
     })
+
+    this.dispatchToProvidedReduxStore(user);
   }
 
   private login = () => {
