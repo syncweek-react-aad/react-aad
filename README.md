@@ -4,6 +4,8 @@
 
 React AAD MSAL is a library to easily integrate the Microsoft Authentication Library with Azure Active Directory in your React app quickly and reliably.  The library focuses on flexibility, allowing you to define how you want to interact with logins and logouts.
 
+**Note: This is a sample developed to wrap around the MSAL library and make it easier to use. This library is NOT affiliated with the Identity team at Microsoft and was developed by the Commercial Software Engineering team as a tool for the Open Source community to use and contribute to as they see fit.**
+
 ## Features
 
 React AAD MSAL is a library that allows you to easily integrate auth using Azure Active Directory into your React application.  The library focuses on flexibility, allowing you to define how you want to interact with logins and logouts.
