@@ -49,7 +49,8 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       authProviderConfig.authority ? authProviderConfig.authority : null,
       this.tokenRedirectCallback,
       {
-        cacheLocation: authProviderConfig.persistLoginPastSession ? StorageLocations.localStorage : StorageLocations.sessionStorage
+        cacheLocation: authProviderConfig.persistLoginPastSession ? StorageLocations.localStorage : StorageLocations.sessionStorage,
+        redirectUri: authProviderConfig.redirectUri
       }
     );
   }
