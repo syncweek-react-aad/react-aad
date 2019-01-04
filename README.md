@@ -57,7 +57,8 @@ Find the assignment for ClientID and replace the value with the Application ID f
         authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
         redirectUri: '<Optional redirect URI for your application>',
         type: LoginType.Popup,
-        persistLoginPastSession: true
+        persistLoginPastSession: true,
+        validateAuthority: true
       })}
       unauthenticatedFunction={this.loginCallback}
       authenticatedFunction={this.logoutCallback}
@@ -91,6 +92,7 @@ As of right now, there is only a single provider, but more may be added in futur
 | `redirectUri` | **[Optional]** String representing the URI to redirect back to when authentication completes |
 | `type` | **[Optional]** `LoginType.Popup` or `LoginType.Redirect`. Redirect is the default if this value is not provided. Make sure to import `LoginType` from the react-aad-msal npm module if using this property  |
 |`persistLoginPastSession`|**[Optional]** A boolean value representing if you want your user to be authenticated after the session ends. If `true` login information will be cached in `LocalStorage`. If `false` login information will be cached in `SessionStorage`. Defaults to `false`.|
+|`validateAuthority` | **[Optional]** A boolean value to determine if the authority is validated against a known list of authorities. Defaults to `true`.|
 
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.

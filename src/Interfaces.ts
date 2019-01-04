@@ -47,12 +47,13 @@ interface IMsalAuthProviderConfig {
   persistLoginPastSession?: boolean,
   scopes: string[],
   type?: LoginType,
-  redirectUri?: string
+  redirectUri?: string,
+  validateAuthority: boolean
 }
 
 interface IAuthProvider {
   userInfoChangedCallback? : (userInfo: IUserInfo) => void,
-  
+
   getUserInfo() : IUserInfo,
   login() : void,
   logout() : void,

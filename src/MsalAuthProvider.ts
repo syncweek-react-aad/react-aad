@@ -50,7 +50,8 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       this.tokenRedirectCallback,
       {
         cacheLocation: authProviderConfig.persistLoginPastSession ? StorageLocations.localStorage : StorageLocations.sessionStorage,
-        redirectUri: authProviderConfig.redirectUri
+        redirectUri: authProviderConfig.redirectUri,
+        validateAuthority: authProviderConfig.validateAuthority == undefined ? true : authProviderConfig.validateAuthority
       }
     );
   }
@@ -68,7 +69,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
   protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string) : void {
     // Empty callback by default
   }
-  
+
   protected checkIfUserAuthenticated = () => {
     if (this.isLoggedIn()) {
       const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
@@ -103,7 +104,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       this.userInfoChangedCallback(user);
     }
   }
-  
+
   // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
   private isLoggedIn = () => {
     const potentialLoggedInUser = this.clientApplication.getUser();
