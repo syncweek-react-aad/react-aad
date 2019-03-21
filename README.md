@@ -88,9 +88,21 @@ As of right now, there is only a single provider, but more may be added in futur
 | `clientID` | String representing your Azure Active Directory Application ID |
 | `scopes` | Array of permission scopes you want to request from the application you are authenticating against. You can see possible [values for this property here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
 | `authority` | **[Optional]** A string representing your Azure Active Directory application policy. Include if you are trying to authenticate against your Azure Active Directory application. If you're using a B2C AAD, it is usually in the format of: <br/> <br/> `https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>` |
-| `redirectUri` | **[Optional]** String representing the URI to redirect back to when authentication completes |
+| `redirectUri` | **[Optional]** String or function returning a string which represents the URI to redirect back to when authentication completes |
 | `type` | **[Optional]** `LoginType.Popup` or `LoginType.Redirect`. Redirect is the default if this value is not provided. Make sure to import `LoginType` from the react-aad-msal npm module if using this property  |
 |`persistLoginPastSession`|**[Optional]** A boolean value representing if you want your user to be authenticated after the session ends. If `true` login information will be cached in `LocalStorage`. If `false` login information will be cached in `SessionStorage`. Defaults to `false`.|
+|`validateAuthority` | **[Optional]** A boolean value to determine if the authority is validated against a known list of authorities. Defaults to `true`.|
+|`postLogoutRedirectUri` | **[Optional]** String to identify where the user is redirected after logout. Default is `redirectUri`.|
+|`loadFrameTimeout` | **[Optional]** The number of milliseconds of inactivity before a token renewal response from AAD should be considered timed out. Default is `6000ms`.|
+|`navigateToLoginRequestUrl` | **[Optional]** Booolean to turn off default navigation to start page after login. Default is `true`.|
+|`state` | **[Optional]** A value included in the request that will also be returned in the token response typically used for preventing cross-site request forgery attacks. By default, MSAL passes a randomly generated unique value for this purpose. The passed in state appended to the unique guid set by MSAL.js would come back in the `tokenReceivedCallback`.|
+|`isAngular` | **[Optional]** Boolean representing whether the client application uses the Angular framework. MSAL will broadcast events in an Angular-friendly way. This is an undocumented parameter, for information, please refer to [the issue](https://github.com/AzureAD/microsoft-authentication-library-for-js/issues/326) in the MSAL.js GitHub. Defaults to `false`.|
+|`unprotectedResources` | **[Optional]** Array of URI's which are unprotected resources. MSAL will not attach a token to outgoing requests that have these URI. Defaults to `null`.|
+|`protectedResourceMap` | **[Optional]** This is mapping of resources to scopes used by MSAL for automatically attaching access tokens in web API calls. A single access token is obtained for the resource. So you can map a specific resource path as follows: {"https://graph.microsoft.com/v1.0/me", ["user.read"]}. Defaults to `null`.|
+|`storeAuthStateInCookie` | **[Optional]** This flag was introduced in MSAL v0.2.2 as a fix for authentication loop issues on IE and Edge. Enable the flag `storeAuthStateInCookie` to `true` to take advantage of this fix. When this is enabled, MSAL will store the auth request state required for validation of the auth flows in the browser cookies. Defaults to `false`|
+|`logger` | **[Optional]** A custom implementation of the Msal.Logger class. Defaults to ``.|.
+
+For more information on MSAL options, please refer to the [configuration options](https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/MSAL-basics#configuration-options) documentation in the MSAL wiki.
 
 ## Login
 To login, first create a callback function for the AzureAD component to consume.  This function will be called when the component loads, and it will pass in the function to be called when the user wants to login.  In this case, we create a button that will log the user in.

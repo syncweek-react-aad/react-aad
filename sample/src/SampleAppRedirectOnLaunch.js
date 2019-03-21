@@ -99,6 +99,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
             scopes: ["openid"],
             type: LoginType.Redirect,
             persistLoginPastSession: true,
+            postLogoutRedirectUri: window.origin.location
           })}
           unauthenticatedFunction={this.unauthenticatedFunction}
           userInfoCallback={this.userJustLoggedIn}
