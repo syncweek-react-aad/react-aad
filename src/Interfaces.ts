@@ -24,38 +24,46 @@
 //
 import * as Msal from 'msal';
 
-type UserInfoCallback = (token: IUserInfo) => void;
+export type UserInfoCallback = (token: IUserInfo) => void;
 
-enum LoginType {
+export enum LoginType {
   Popup,
   Redirect,
 }
 
-interface IUserInfo {
+export interface IUserInfo {
   jwtAccessToken: string,
   jwtIdToken: string,
   user: Msal.User,
 }
 
-interface IAuthProviderFactory {
+export interface IAuthProviderFactory {
   getAuthProvider() : IAuthProvider
 }
 
-interface IMsalAuthProviderConfig {
+export interface IMsalAuthProviderConfig {
   clientID: string,
   authority?: string,
   persistLoginPastSession?: boolean,
   scopes: string[],
   type?: LoginType,
-  redirectUri?: string
+  validateAuthority?: boolean;
+  redirectUri?: string | (() => string);
+  postLogoutRedirectUri?: string | (() => string);
+  loadFrameTimeout?: number;
+  navigateToLoginRequestUrl?: boolean;
+  state?: string;
+  isAngular?: boolean;
+  unprotectedResources?: string[];
+  protectedResourceMap?: Map<string, string[]>;
+  storeAuthStateInCookie?: boolean;
+  logger?: Msal.Logger;
 }
 
-interface IAuthProvider {
+export interface IAuthProvider {
   userInfoChangedCallback? : (userInfo: IUserInfo) => void,
   
   getUserInfo() : IUserInfo,
   login() : void,
   logout() : void,
 }
-
-export { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, IUserInfo, LoginType, UserInfoCallback }
