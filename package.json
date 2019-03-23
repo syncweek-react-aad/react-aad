@@ -9,6 +9,7 @@
     "url": "https://github.com/Azure-Samples/react-aad-msal.git"
   },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -75,11 +76,9 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "rimraf": "./node_modules/.bin/rimraf",
-    "tslint": "./node_modules/.bin/tslint",
     "clean": "npm cache clean --force && npm run rimraf -- node_modules dist",
     "clean:build": "npm run rimraf -- dist",
-    "lint": "npm run tslint -- -c tslint.json './src/**/*.ts' './src/**/*.tsx'",
+    "lint": "tslint --config tslint.json './src/**/*.ts' './src/**/*.tsx'",
     "start": "npm install && npm run build && npm --prefix ./sample run start",
     "start-dev": "npm install && npm run build-dev && npm --prefix ./sample run start",
     "start-dev-noinstall": "npm run build-dev && npm --prefix ./sample run start-dev",
