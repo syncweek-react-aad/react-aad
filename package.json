@@ -1,12 +1,12 @@
 {
   "name": "react-aad-msal",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "description": "A react component that integrates with Azure AD (v2, MSAL).",
   "private": false,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Azure-Samples/react-aad-msal.git"
+    "url": "https://github.com/syncweek-react-aad/react-aad.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
