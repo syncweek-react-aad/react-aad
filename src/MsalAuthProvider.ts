@@ -24,24 +24,24 @@
 //
 
 import * as Msal from 'msal';
-import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo } from "./Interfaces";
+import { IAuthProvider, IMsalAuthProviderConfig, IUserInfo } from './Interfaces';
 import { Logger } from './logger';
 
-const IDTokenKey = "msal.idtoken";
+const IDTokenKey = 'msal.idtoken';
 
-const StorageLocations: {localStorage: string, sessionStorage: string}  = {
-  localStorage: "localStorage",
-  sessionStorage: "sessionStorage"
-}
+const StorageLocations: { localStorage: string; sessionStorage: string } = {
+  localStorage: 'localStorage',
+  sessionStorage: 'sessionStorage',
+};
 
 export abstract class MsalAuthProvider implements IAuthProvider {
-  public userInfoChangedCallback : (userInfo: IUserInfo) => void;
+  public userInfoChangedCallback: (userInfo: IUserInfo) => void;
 
   protected clientApplication: Msal.UserAgentApplication;
   protected config: IMsalAuthProviderConfig;
-  protected userInfo : IUserInfo;
+  protected userInfo: IUserInfo;
 
-  constructor(authProviderConfig : IMsalAuthProviderConfig) {
+  constructor(authProviderConfig: IMsalAuthProviderConfig) {
     this.config = authProviderConfig;
 
     this.clientApplication = new Msal.UserAgentApplication(
@@ -49,61 +49,77 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       authProviderConfig.authority ? authProviderConfig.authority : null,
       this.tokenRedirectCallback,
       {
-        cacheLocation: authProviderConfig.persistLoginPastSession ? StorageLocations.localStorage : StorageLocations.sessionStorage,
-        redirectUri: authProviderConfig.redirectUri
-      }
+        cacheLocation: authProviderConfig.persistLoginPastSession
+          ? StorageLocations.localStorage
+          : StorageLocations.sessionStorage,
+        isAngular: authProviderConfig.isAngular,
+        loadFrameTimeout: authProviderConfig.loadFrameTimeout,
+        logger: authProviderConfig.logger,
+        navigateToLoginRequestUrl: authProviderConfig.navigateToLoginRequestUrl,
+        postLogoutRedirectUri: authProviderConfig.postLogoutRedirectUri,
+        protectedResourceMap: authProviderConfig.protectedResourceMap,
+        redirectUri: authProviderConfig.redirectUri,
+        state: authProviderConfig.state,
+        storeAuthStateInCookie: authProviderConfig.storeAuthStateInCookie,
+        unprotectedResources: authProviderConfig.unprotectedResources,
+        validateAuthority: authProviderConfig.validateAuthority,
+      },
     );
   }
 
-  public abstract login() : void;
+  public abstract login(): void;
 
   public logout(): void {
     this.clientApplication.logout();
   }
 
-  public getUserInfo() : IUserInfo {
+  public getUserInfo(): IUserInfo {
     return this.userInfo;
   }
 
-  protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string) : void {
+  protected tokenRedirectCallback(errorDesc: string, idToken: string, error: string, tokenType: string): void {
     // Empty callback by default
   }
-  
+
   protected checkIfUserAuthenticated = () => {
     if (this.isLoggedIn()) {
       const idToken = this.getCacheItem(this.clientApplication.cacheLocation, IDTokenKey);
       this.acquireTokens(idToken!);
     }
-  }
+  };
 
   protected acquireTokens = (idToken: string) => {
-    this.clientApplication.acquireTokenSilent(this.config.scopes)
-      .then((accessToken: string) => {
+    this.clientApplication.acquireTokenSilent(this.config.scopes).then(
+      (accessToken: string) => {
         this.saveUserInfo(accessToken, idToken, this.clientApplication.getUser());
-      }, (tokenSilentError) => {
+      },
+      tokenSilentError => {
         Logger.error(`token silent error; ${tokenSilentError}`);
-        this.clientApplication.acquireTokenPopup(this.config.scopes)
-          .then((accessToken: string) => {
+        this.clientApplication.acquireTokenPopup(this.config.scopes).then(
+          (accessToken: string) => {
             this.saveUserInfo(accessToken, idToken, this.clientApplication.getUser());
-          }, (tokenPopupError) => {
+          },
+          tokenPopupError => {
             Logger.error(`token popup error; ${tokenPopupError}`);
-          });
-      });
-  }
+          },
+        );
+      },
+    );
+  };
 
   private saveUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
     const user: IUserInfo = {
       jwtAccessToken: accessToken,
       jwtIdToken: idToken,
-      user: msalUser
+      user: msalUser,
     };
 
     this.userInfo = user;
     if (this.userInfoChangedCallback) {
       this.userInfoChangedCallback(user);
     }
-  }
-  
+  };
+
   // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
   private isLoggedIn = () => {
     const potentialLoggedInUser = this.clientApplication.getUser();
@@ -112,21 +128,22 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       const oldIDToken = potentialLoggedInUser.idToken as any;
       if (oldIDToken.exp && idToken) {
         const expirationInMs = oldIDToken.exp * 1000; // AD returns in seconds
-        if (Date.now() < expirationInMs) { // id token isn't expired
+        if (Date.now() < expirationInMs) {
+          // id token isn't expired
           return true;
         }
       }
     }
     return false;
-  }
+  };
 
   private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
     if (storageLocation === StorageLocations.localStorage) {
       return localStorage.getItem(itemKey);
     } else if (storageLocation === StorageLocations.sessionStorage) {
-      return sessionStorage.getItem(itemKey)
+      return sessionStorage.getItem(itemKey);
     } else {
-      throw new Error("unrecognized storage location");
+      throw new Error('unrecognized storage location');
     }
-  }
+  };
 }

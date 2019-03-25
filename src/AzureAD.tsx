@@ -29,7 +29,7 @@ import { Store } from 'redux';
 import { loginSuccessful, logoutSuccessful } from './actions';
 import { IAuthProvider, IAuthProviderFactory, IUserInfo, UserInfoCallback } from './Interfaces';
 
-enum AuthenticationState {
+export enum AuthenticationState {
   Unauthenticated,
   Authenticating,
   Authenticated,
@@ -131,4 +131,4 @@ class AzureAD extends React.Component<IProps, IState> {
   }
 }
 
-export { AuthenticationState, AzureAD }
+export { AzureAD }

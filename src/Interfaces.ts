@@ -24,38 +24,46 @@
 //
 import * as Msal from 'msal';
 
-type UserInfoCallback = (token: IUserInfo) => void;
+export type UserInfoCallback = (token: IUserInfo) => void;
 
-enum LoginType {
+export enum LoginType {
   Popup,
   Redirect,
 }
 
-interface IUserInfo {
-  jwtAccessToken: string,
-  jwtIdToken: string,
-  user: Msal.User,
+export interface IUserInfo {
+  jwtAccessToken: string;
+  jwtIdToken: string;
+  user: Msal.User;
 }
 
-interface IAuthProviderFactory {
-  getAuthProvider() : IAuthProvider
+export interface IAuthProviderFactory {
+  getAuthProvider(): IAuthProvider;
 }
 
-interface IMsalAuthProviderConfig {
-  clientID: string,
-  authority?: string,
-  persistLoginPastSession?: boolean,
-  scopes: string[],
-  type?: LoginType,
-  redirectUri?: string
+export interface IMsalAuthProviderConfig {
+  clientID: string;
+  authority?: string;
+  persistLoginPastSession?: boolean;
+  scopes: string[];
+  type?: LoginType;
+  validateAuthority?: boolean;
+  redirectUri?: string | (() => string);
+  postLogoutRedirectUri?: string | (() => string);
+  loadFrameTimeout?: number;
+  navigateToLoginRequestUrl?: boolean;
+  state?: string;
+  isAngular?: boolean;
+  unprotectedResources?: string[];
+  protectedResourceMap?: Map<string, string[]>;
+  storeAuthStateInCookie?: boolean;
+  logger?: Msal.Logger;
 }
 
-interface IAuthProvider {
-  userInfoChangedCallback? : (userInfo: IUserInfo) => void,
-  
-  getUserInfo() : IUserInfo,
-  login() : void,
-  logout() : void,
-}
+export interface IAuthProvider {
+  userInfoChangedCallback?: (userInfo: IUserInfo) => void;
 
-export { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, IUserInfo, LoginType, UserInfoCallback }
+  getUserInfo(): IUserInfo;
+  login(): void;
+  logout(): void;
+}

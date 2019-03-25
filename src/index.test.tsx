@@ -23,8 +23,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import * as Enzyme from 'enzyme';
-import * as Adapter from 'enzyme-adapter-react-16';
+import Enzyme from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
 import * as Msal from 'msal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -82,6 +82,7 @@ it('updates the userInfo state', () => {
     idToken: {},
     identityProvider: "Facebook",
     name: "Lilian",
+    sid: "sid",
     userIdentifier: "Something"
   }
 
@@ -132,6 +133,7 @@ it('logs out the user', () => {
     idToken: {},
     identityProvider: "Facebook",
     name: "Lilian",
+    sid: "sid",
     userIdentifier: "Something"
   }
 
