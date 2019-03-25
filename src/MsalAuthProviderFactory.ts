@@ -22,22 +22,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, LoginType } from "./Interfaces";
-import { MsalPopupAuthProvider } from "./MsalPopupAuthProvider";
-import { MsalRedirectAuthProvider } from "./MsalRedirectAuthProvider";
+import { IAuthProvider, IAuthProviderFactory, IMsalAuthProviderConfig, LoginType } from './Interfaces';
+import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
+import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
 export class MsalAuthProviderFactory implements IAuthProviderFactory {
-  private config : IMsalAuthProviderConfig;
+  private config: IMsalAuthProviderConfig;
 
-  constructor(config : IMsalAuthProviderConfig) {
+  constructor(config: IMsalAuthProviderConfig) {
     this.config = config;
   }
-  
+
   public getAuthProvider(): IAuthProvider {
     if (this.config.type === LoginType.Popup) {
       return new MsalPopupAuthProvider(this.config);
-    }
-    else {
+    } else {
       return new MsalRedirectAuthProvider(this.config);
     }
   }

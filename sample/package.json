@@ -21,11 +21,14 @@
   ],
   "dependencies": {
     "react": "16.3.2",
-    "react-dom": "16.3.2",
-    "react-redux": "5.0.7",
-    "react-scripts": "1.1.4",
     "react-aad-msal": "file:../",
+    "react-dom": "16.3.3",
+    "react-redux": "5.0.7",
+    "react-scripts": "^2.1.8",
     "redux": "4.0.0"
+  },
+  "devDependencies": {
+    "rimraf": "2.6.2"
   },
   "scripts": {
     "rimraf": "./node_modules/.bin/rimraf",
@@ -44,5 +47,11 @@
     "Azure AD",
     "MSAL",
     "React"
+  ],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
   ]
 }
