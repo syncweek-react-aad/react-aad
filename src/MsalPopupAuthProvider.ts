@@ -27,20 +27,21 @@ import { IMsalAuthProviderConfig } from './Interfaces';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
-
 export class MsalPopupAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig : IMsalAuthProviderConfig) {
+  constructor(authProviderConfig: IMsalAuthProviderConfig) {
     super(authProviderConfig);
-    
+
     this.checkIfUserAuthenticated();
   }
 
   public login(): void {
-    this.clientApplication.loginPopup(this.config.scopes)
-      .then((idToken: string) => {
+    this.clientApplication.loginPopup(this.config.scopes).then(
+      (idToken: string) => {
         this.acquireTokens(idToken);
-      }, (error) => {
+      },
+      error => {
         Logger.error(`Login popup failed; ${error}`);
-      });
+      },
+    );
   }
 }

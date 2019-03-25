@@ -32,21 +32,21 @@ export enum LoginType {
 }
 
 export interface IUserInfo {
-  jwtAccessToken: string,
-  jwtIdToken: string,
-  user: Msal.User,
+  jwtAccessToken: string;
+  jwtIdToken: string;
+  user: Msal.User;
 }
 
 export interface IAuthProviderFactory {
-  getAuthProvider() : IAuthProvider
+  getAuthProvider(): IAuthProvider;
 }
 
 export interface IMsalAuthProviderConfig {
-  clientID: string,
-  authority?: string,
-  persistLoginPastSession?: boolean,
-  scopes: string[],
-  type?: LoginType,
+  clientID: string;
+  authority?: string;
+  persistLoginPastSession?: boolean;
+  scopes: string[];
+  type?: LoginType;
   validateAuthority?: boolean;
   redirectUri?: string | (() => string);
   postLogoutRedirectUri?: string | (() => string);
@@ -61,9 +61,9 @@ export interface IMsalAuthProviderConfig {
 }
 
 export interface IAuthProvider {
-  userInfoChangedCallback? : (userInfo: IUserInfo) => void,
-  
-  getUserInfo() : IUserInfo,
-  login() : void,
-  logout() : void,
+  userInfoChangedCallback?: (userInfo: IUserInfo) => void;
+
+  getUserInfo(): IUserInfo;
+  login(): void;
+  logout(): void;
 }

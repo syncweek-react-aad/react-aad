@@ -28,26 +28,28 @@ import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 interface IRedirectLogin {
-  error: string,
-  errorDesc: string,
-  idToken: string,
-  tokenType: string,
+  error: string;
+  errorDesc: string;
+  idToken: string;
+  tokenType: string;
 }
 
 export class MsalRedirectAuthProvider extends MsalAuthProvider {
   private redirectLoginInfo: IRedirectLogin;
-  
-  constructor(authProviderConfig : IMsalAuthProviderConfig) {
+
+  constructor(authProviderConfig: IMsalAuthProviderConfig) {
     super(authProviderConfig);
     if (this.redirectLoginInfo) {
       if (this.redirectLoginInfo.idToken) {
         this.acquireTokens(this.redirectLoginInfo.idToken);
+      } else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
+        Logger.error(
+          `Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${
+            this.redirectLoginInfo.error
+          }`,
+        );
       }
-      else if (this.redirectLoginInfo.errorDesc || this.redirectLoginInfo.error) {
-        Logger.error(`Error doing login redirect; errorDescription=${this.redirectLoginInfo.errorDesc}, error=${this.redirectLoginInfo.error}`);
-      }
-    }
-    else {
+    } else {
       this.checkIfUserAuthenticated();
     }
   }
@@ -61,7 +63,7 @@ export class MsalRedirectAuthProvider extends MsalAuthProvider {
       error,
       errorDesc,
       idToken,
-      tokenType
-    }
+      tokenType,
+    };
   }
 }
