@@ -24,8 +24,8 @@
 //
 
 import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS } from './actions';
-import { AuthenticationState, AzureAD } from './AzureAD'
-import { LoginType } from './Interfaces';
+import { AzureAD } from './AzureAD'
+import { AuthenticationState, LoginType } from './Interfaces';
 import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 
 export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, LoginType, MsalAuthProviderFactory };

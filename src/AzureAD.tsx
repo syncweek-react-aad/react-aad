@@ -27,13 +27,9 @@ import * as React from 'react';
 import { Store } from 'redux';
 
 import { loginSuccessful, logoutSuccessful } from './actions';
-import { IAuthProvider, IAuthProviderFactory, IUserInfo, UserInfoCallback } from './Interfaces';
+import { AuthenticationState, IAuthProvider, IAuthProviderFactory, IUserInfo, UserInfoCallback } from './Interfaces';
 
-export enum AuthenticationState {
-  Unauthenticated,
-  Authenticating,
-  Authenticated,
-}
+
 
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
 type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
@@ -42,9 +38,9 @@ type LogoutFunction = () => void;
 
 interface IProps {
   provider: IAuthProviderFactory,
-  unauthenticatedFunction: UnauthenticatedFunction,
-  authenticatedFunction: AuthenticatedFunction,
-  userInfoCallback: UserInfoCallback,
+  unauthenticatedFunction?: UnauthenticatedFunction,
+  authenticatedFunction?: AuthenticatedFunction,
+  userInfoCallback?: UserInfoCallback,
   reduxStore?: Store
 }
 
@@ -58,35 +54,31 @@ class AzureAD extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const authenticationState = AuthenticationState.Unauthenticated;
-
     this.authProvider = this.props.provider.getAuthProvider();
-    this.authProvider.userInfoChangedCallback = this.updateState;
+    this.authProvider.onAuthenticationStateChanged = this.updateAuthenticationState;
 
-    this.state = { authenticationState };
+    this.state = { authenticationState: this.authProvider.authenticationState }
   }
 
   public render() {
     switch (this.state.authenticationState) {
       case AuthenticationState.Authenticated:
-        return this.props.authenticatedFunction(this.logout);
+        if (this.props.authenticatedFunction) {
+          return this.props.authenticatedFunction(this.logout);
+        }
+        else {
+          return this.props.children;
+        }
+      case AuthenticationState.Unauthenticated:
+        if (this.props.unauthenticatedFunction) {
+          return this.props.unauthenticatedFunction(this.login);
+        } else {
+          return null;
+        }
       case AuthenticationState.Authenticating:
         // TODO: Add loading callback, componentDidMount will acquire tokens and then re-render
-        return null;
-      case AuthenticationState.Unauthenticated:
       default:
-        return this.props.unauthenticatedFunction(this.login);
-    }
-  }
-
-  public componentDidMount() {
-    this.sendUserInfo();
-  }
-
-  public sendUserInfo = (): void => {
-    const user: IUserInfo = this.authProvider.getUserInfo();
-    if (user) {
-      this.updateState(user);
+        return null;
     }
   }
 
@@ -94,25 +86,23 @@ class AzureAD extends React.Component<IProps, IState> {
     if (this.props.reduxStore) {
       this.props.reduxStore.dispatch(logoutSuccessful());
     }
-
-    this.setState({
-      authenticationState: AuthenticationState.Unauthenticated,
-    });
   }
 
-  public updateState = (user: IUserInfo) => {
-    this.props.userInfoCallback(user);
-
+  public updateAuthenticationState = (state: AuthenticationState, user?: IUserInfo) => {
     this.setState({
-      authenticationState: AuthenticationState.Authenticated
-    })
+      authenticationState: state
+    });
 
-    this.dispatchToProvidedReduxStore(user);
+    if (user) {
+      this.dispatchToProvidedReduxStore(user);
+      if (this.props.userInfoCallback) {
+        this.props.userInfoCallback(user);
+      }
+    }
   }
 
   private login = () => {
     this.authProvider.login();
-    this.sendUserInfo();
   };
 
   private logout = () => {

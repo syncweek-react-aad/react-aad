@@ -31,6 +31,12 @@ export enum LoginType {
   Redirect,
 }
 
+export enum AuthenticationState {
+  Unauthenticated,
+  Authenticating,
+  Authenticated,
+}
+
 export interface IUserInfo {
   jwtAccessToken: string;
   jwtIdToken: string;
@@ -61,7 +67,8 @@ export interface IMsalAuthProviderConfig {
 }
 
 export interface IAuthProvider {
-  userInfoChangedCallback?: (userInfo: IUserInfo) => void;
+  onAuthenticationStateChanged?: (state: AuthenticationState, user?: IUserInfo) => void;
+  authenticationState: AuthenticationState;
 
   getUserInfo(): IUserInfo;
   login(): void;

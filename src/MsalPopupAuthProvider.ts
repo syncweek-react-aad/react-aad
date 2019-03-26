@@ -30,8 +30,6 @@ import { MsalAuthProvider } from './MsalAuthProvider';
 export class MsalPopupAuthProvider extends MsalAuthProvider {
   constructor(authProviderConfig: IMsalAuthProviderConfig) {
     super(authProviderConfig);
-
-    this.checkIfUserAuthenticated();
   }
 
   public login(): void {

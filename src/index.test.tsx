@@ -43,65 +43,6 @@ beforeEach(() => {
 });
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  //   ReactDOM.render(<AzureAD />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
-
-it('updates the userInfo state', () => {
-
-  let userInfo : IUserInfo = null;
-  const unauthenticatedFunction = (login: any) => {
-    return <div><h1> unauthenticatedFunction </h1> </div>
-  }
-
-  const authenticatedFunction = (logout: any) => {
-    return <div><h1> authenticatedFunction </h1> </div>
-  }
-
-  const userInfoCallback = (token: any) => {
-    userInfo = token;
-  }
-
-  const wrapper = Enzyme.shallow(
-    <AzureAD
-      provider={new MsalAuthProviderFactory({
-        authority: null,
-        clientID: '<random-guid>',
-        scopes: ['openid'],
-        type: LoginType.Popup,
-      })}
-      unauthenticatedFunction={unauthenticatedFunction}
-      authenticatedFunction={authenticatedFunction}
-      userInfoCallback={userInfoCallback}
-    />
-  ).instance() as AzureAD;
-
-  const testUser: Msal.User = {
-    displayableId: "hi",
-    idToken: {},
-    identityProvider: "Facebook",
-    name: "Lilian",
-    sid: "sid",
-    userIdentifier: "Something"
-  }
-
-  const loggedInUser : IUserInfo = {
-    jwtAccessToken: "accesstoken",
-    jwtIdToken: "idtoken",
-    user: testUser,
-  }
-  wrapper.updateState(loggedInUser);
-
-  expect(userInfo).not.toBeNull();
-  expect(userInfo.jwtAccessToken).toEqual("accesstoken");
-  expect(userInfo.jwtIdToken).toEqual("idtoken");
-  expect(userInfo.user).toEqual(testUser);
-
-});
-
-it('logs out the user', () => {
-
   const unauthenticatedFunction = (login: any) => {
     return <div><h1> unauthenticatedFunction </h1> </div>
   }
@@ -114,6 +55,30 @@ it('logs out the user', () => {
     // empty
   }
 
+  const div = document.createElement('div');
+  ReactDOM.render(<AzureAD 
+    provider={new MsalAuthProviderFactory({
+      authority: null,
+      clientID: '<random-guid>',
+      scopes: ['openid'],
+      type: LoginType.Popup,
+    })}
+    unauthenticatedFunction={unauthenticatedFunction}
+    authenticatedFunction={authenticatedFunction}
+    userInfoCallback={userInfoCallback}
+  />, div);
+  ReactDOM.unmountComponentAtNode(div);
+});
+
+it('updates the userInfo state', () => {
+  let userInfo : IUserInfo = null;
+  
+  const unauthenticatedFunction = jest.fn();
+  const authenticatedFunction = jest.fn();
+  const userInfoCallback = jest.fn((token: any) => {
+    userInfo = token;
+  }); // tslint:disable-line: no-empty
+
   const wrapper = Enzyme.shallow(
     <AzureAD
       provider={new MsalAuthProviderFactory({
@@ -143,9 +108,37 @@ it('logs out the user', () => {
     user: testUser,
   }
 
-  wrapper.updateState(loggedInUser);
+  wrapper.updateAuthenticationState(AuthenticationState.Authenticated, loggedInUser);
 
-  wrapper.resetUserInfo();
+  expect(userInfo).not.toBeNull();
+  expect(userInfo.jwtAccessToken).toEqual("accesstoken");
+  expect(userInfo.jwtIdToken).toEqual("idtoken");
+  expect(userInfo.user).toEqual(testUser);
+  expect(wrapper.state.authenticationState).toBe(AuthenticationState.Authenticated);
+  expect(userInfoCallback).toHaveBeenCalledWith(loggedInUser);
+});
+
+it('logs out the user', () => {
+  const unauthenticatedFunction = jest.fn();
+  const authenticatedFunction = jest.fn();
+  const userInfoCallback = jest.fn((token: any) => {}); // tslint:disable-line: no-empty
+
+  const wrapper = Enzyme.shallow(
+    <AzureAD
+      provider={new MsalAuthProviderFactory({
+        authority: null,
+        clientID: '<random-guid>',
+        scopes: ['openid'],
+        type: LoginType.Popup,
+      })}
+      unauthenticatedFunction={unauthenticatedFunction}
+      authenticatedFunction={authenticatedFunction}
+      userInfoCallback={userInfoCallback}
+    />
+  ).instance() as AzureAD;
+
+  wrapper.updateAuthenticationState(AuthenticationState.Unauthenticated);
 
   expect(wrapper.state.authenticationState).toBe(AuthenticationState.Unauthenticated);
+  expect(userInfoCallback).not.toHaveBeenCalled();
 });

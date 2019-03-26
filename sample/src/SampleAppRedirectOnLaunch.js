@@ -31,11 +31,11 @@ class SampleAppRedirectOnLaunch extends React.Component {
     super(props);
 
     this.interval = null;
-    let redirectEnabled = sessionStorage.getItem("redirectEnabled") || false;
+    let redirectEnabled = sessionStorage.getItem('redirectEnabled') || false;
     this.state = {
       counter: 5,
-      redirectEnabled: redirectEnabled
-    }
+      redirectEnabled: redirectEnabled,
+    };
   }
 
   handleCheck = () => {
@@ -43,12 +43,13 @@ class SampleAppRedirectOnLaunch extends React.Component {
       if (!this.state.redirectEnabled) {
         this.clearRedirectInterval();
       } else {
-        sessionStorage.setItem("redirectEnabled", true);
+        sessionStorage.setItem('redirectEnabled', true);
       }
     });
-  }
+  };
 
   unauthenticatedFunction = loginFunction => {
+    console.log('UNAUTHENTICATED');
     if (this.state.redirectEnabled && !this.interval) {
       this.interval = setInterval(() => {
         if (this.state.counter > 0) {
@@ -60,50 +61,68 @@ class SampleAppRedirectOnLaunch extends React.Component {
         }
       }, 1000);
     }
-    
+
     if (this.state.redirectEnabled) {
-      return (<div>Redirecting in {this.state.counter} seconds...</div>);
+      return <div>Redirecting in {this.state.counter} seconds...</div>;
     }
-    
-    return (<div />);
+
+    return <div />;
   };
 
   clearRedirectInterval() {
     clearInterval(this.interval);
     this.setState({ counter: 5 });
-    sessionStorage.removeItem("redirectEnabled");
+    sessionStorage.removeItem('redirectEnabled');
     this.interval = null;
   }
 
   userJustLoggedIn = receivedUserInfo => {
+    console.log('USER JUST LOGGED IN');
+    console.log(receivedUserInfo);
     this.props.userInfoCallback(receivedUserInfo);
-  }
+  };
 
   authenticatedFunction = logout => {
-    return (<div><button onClick={() => {
-      logout();
-    }} className="Button">Logout</button></div>);
-  }
+    console.log('AUTHENTICATED');
+    return (
+      <div>
+        <button
+          onClick={() => {
+            logout();
+          }}
+          className="Button"
+        >
+          Logout
+        </button>
+      </div>
+    );
+  };
 
   render() {
     return (
       <div>
-        {!this.props.userInfo?
+        {!this.props.userInfo ? (
           <div>
             <input type="checkbox" value={this.state.redirectEnabled} onChange={this.handleCheck} /> Enable redirect
-          </div> : <div/>}
+          </div>
+        ) : (
+          <div />
+        )}
         <AzureAD
-          provider={new MsalAuthProviderFactory({
-            authority: process.env.REACT_APP_AUTHORITY,
-            clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-            scopes: ["openid"],
-            type: LoginType.Redirect,
-            persistLoginPastSession: true,
-            postLogoutRedirectUri: window.origin.location
-          })}
+          provider={
+            new MsalAuthProviderFactory({
+              authority: process.env.REACT_APP_AUTHORITY,
+              clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+              scopes: ['openid'],
+              type: LoginType.Redirect,
+              persistLoginPastSession: true,
+              postLogoutRedirectUri: window.origin.location,
+            })
+          }
           unauthenticatedFunction={this.unauthenticatedFunction}
           userInfoCallback={this.userJustLoggedIn}
-          authenticatedFunction={this.authenticatedFunction} />
+          authenticatedFunction={this.authenticatedFunction}
+        />
       </div>
     );
   }
