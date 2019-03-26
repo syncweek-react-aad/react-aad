@@ -67,7 +67,7 @@ export interface IMsalAuthProviderConfig {
 }
 
 export interface IAuthProvider {
-  onAuthenticationStateChanged?: (state: AuthenticationState, user: IUserInfo) => void;
+  onAuthenticationStateChanged?: (state: AuthenticationState, user?: IUserInfo) => void;
   authenticationState: AuthenticationState;
 
   getUserInfo(): IUserInfo;

@@ -88,7 +88,7 @@ class AzureAD extends React.Component<IProps, IState> {
     }
   }
 
-  public updateAuthenticationState = (state: AuthenticationState, user: IUserInfo) => {
+  public updateAuthenticationState = (state: AuthenticationState, user?: IUserInfo) => {
     this.setState({
       authenticationState: state
     });
