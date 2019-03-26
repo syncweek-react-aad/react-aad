@@ -35,8 +35,7 @@ const StorageLocations: { localStorage: string; sessionStorage: string } = {
 };
 
 export abstract class MsalAuthProvider implements IAuthProvider {
-  public userInfoChangedCallback: (userInfo: IUserInfo) => void;
-  public onAuthenticationStateChanged: (state: AuthenticationState) => void;
+  public onAuthenticationStateChanged: (state: AuthenticationState, user: IUserInfo) => void;
   public authenticationState: AuthenticationState;
 
   protected clientApplication: Msal.UserAgentApplication;
@@ -150,11 +149,6 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     this.userInfo = user;
 
     this.setAuthenticationState(AuthenticationState.Authenticated);
-
-    this.userInfo = user;
-    if (this.userInfoChangedCallback) {
-      this.userInfoChangedCallback(user);
-    }
   };
 
   private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
@@ -172,7 +166,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       this.authenticationState = state;
 
       if (this.onAuthenticationStateChanged) {
-        this.onAuthenticationStateChanged(this.authenticationState);
+        this.onAuthenticationStateChanged(this.authenticationState, this.userInfo);
       }
     }
   }

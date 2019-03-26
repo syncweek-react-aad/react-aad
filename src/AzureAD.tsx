@@ -55,7 +55,6 @@ class AzureAD extends React.Component<IProps, IState> {
     super(props);
 
     this.authProvider = this.props.provider.getAuthProvider();
-    this.authProvider.userInfoChangedCallback = this.updateUserState;
     this.authProvider.onAuthenticationStateChanged = this.updateAuthenticationState;
 
     this.state = { authenticationState: this.authProvider.authenticationState }
@@ -89,15 +88,15 @@ class AzureAD extends React.Component<IProps, IState> {
     }
   }
 
-  public updateUserState = (user: IUserInfo) => {
-    this.props.userInfoCallback(user);
-    this.dispatchToProvidedReduxStore(user);
-  }
-
-  public updateAuthenticationState = (state: AuthenticationState) => {
+  public updateAuthenticationState = (state: AuthenticationState, user: IUserInfo) => {
     this.setState({
       authenticationState: state
     });
+
+    if (user) {
+      this.props.userInfoCallback(user);
+      this.dispatchToProvidedReduxStore(user);
+    }
   }
 
   private login = () => {
