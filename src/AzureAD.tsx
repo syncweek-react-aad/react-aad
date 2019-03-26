@@ -38,9 +38,9 @@ type LogoutFunction = () => void;
 
 interface IProps {
   provider: IAuthProviderFactory,
-  unauthenticatedFunction: UnauthenticatedFunction,
-  authenticatedFunction: AuthenticatedFunction,
-  userInfoCallback: UserInfoCallback,
+  unauthenticatedFunction?: UnauthenticatedFunction,
+  authenticatedFunction?: AuthenticatedFunction,
+  userInfoCallback?: UserInfoCallback,
   reduxStore?: Store
 }
 
@@ -94,8 +94,10 @@ class AzureAD extends React.Component<IProps, IState> {
     });
 
     if (user) {
-      this.props.userInfoCallback(user);
       this.dispatchToProvidedReduxStore(user);
+      if (this.props.userInfoCallback) {
+        this.props.userInfoCallback(user);
+      }
     }
   }
 
