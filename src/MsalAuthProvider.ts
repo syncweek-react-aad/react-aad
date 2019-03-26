@@ -24,7 +24,7 @@
 //
 
 import * as Msal from 'msal';
-import { AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo } from "./Interfaces";
+import { AuthenticationState, IAuthProvider, IMsalAuthProviderConfig, IUserInfo } from './Interfaces';
 import { Logger } from './logger';
 
 const IDTokenKey = 'msal.idtoken';
@@ -35,13 +35,13 @@ const StorageLocations: { localStorage: string; sessionStorage: string } = {
 };
 
 export abstract class MsalAuthProvider implements IAuthProvider {
-  public userInfoChangedCallback : (userInfo: IUserInfo) => void;
-  public onAuthenticationStateChanged : (state: AuthenticationState) => void;
+  public userInfoChangedCallback: (userInfo: IUserInfo) => void;
+  public onAuthenticationStateChanged: (state: AuthenticationState) => void;
   public authenticationState: AuthenticationState;
 
   protected clientApplication: Msal.UserAgentApplication;
   protected config: IMsalAuthProviderConfig;
-  protected userInfo : IUserInfo;
+  protected userInfo: IUserInfo;
 
   constructor(authProviderConfig: IMsalAuthProviderConfig) {
     this.config = authProviderConfig;
@@ -89,13 +89,15 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     this.clientApplication.acquireTokenSilent(this.config.scopes).then(
       (accessToken: string) => {
         this.saveUserInfo(accessToken, idToken, this.clientApplication.getUser());
-      }, (tokenSilentError) => {
+      },
+      tokenSilentError => {
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
         Logger.error(`token silent error; ${tokenSilentError}`);
         this.clientApplication.acquireTokenPopup(this.config.scopes).then(
           (accessToken: string) => {
             this.saveUserInfo(accessToken, idToken, this.clientApplication.getUser());
-          }, (tokenPopupError) => {
+          },
+          tokenPopupError => {
             this.setAuthenticationState(AuthenticationState.Unauthenticated);
             Logger.error(`token popup error; ${tokenPopupError}`);
           },
@@ -123,20 +125,21 @@ export abstract class MsalAuthProvider implements IAuthProvider {
       const oldIDToken = potentialLoggedInUser.idToken as any;
       return idToken && !this.isTokenExpired(oldIDToken);
     }
-    
+
     return false;
-  }
+  };
 
   private isTokenExpired = (token: any) => {
     if (token.exp) {
       const expirationInMs = token.exp * 1000; // AD returns in seconds
-      if (Date.now() < expirationInMs) { // id token isn't expired
+      if (Date.now() < expirationInMs) {
+        // id token isn't expired
         return false;
       }
     }
 
     return true;
-  }
+  };
 
   private saveUserInfo = (accessToken: string, idToken: string, msalUser: Msal.User): void => {
     const user: IUserInfo = {
@@ -152,7 +155,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     if (this.userInfoChangedCallback) {
       this.userInfoChangedCallback(user);
     }
-  }
+  };
 
   private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
     if (storageLocation === StorageLocations.localStorage) {
@@ -162,7 +165,7 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     } else {
       throw new Error('unrecognized storage location');
     }
-  }
+  };
 
   private setAuthenticationState(state: AuthenticationState) {
     if (this.authenticationState !== state) {

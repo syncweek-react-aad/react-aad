@@ -67,11 +67,11 @@ export interface IMsalAuthProviderConfig {
 }
 
 export interface IAuthProvider {
-  userInfoChangedCallback? : (userInfo: IUserInfo) => void,
-  onAuthenticationStateChanged? : (state: AuthenticationState) => void,
-  authenticationState : AuthenticationState,
-  
-  getUserInfo() : IUserInfo,
-  login() : void,
-  logout() : void,
+  userInfoChangedCallback?: (userInfo: IUserInfo) => void;
+  onAuthenticationStateChanged?: (state: AuthenticationState) => void;
+  authenticationState: AuthenticationState;
+
+  getUserInfo(): IUserInfo;
+  login(): void;
+  logout(): void;
 }
