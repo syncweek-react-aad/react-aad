@@ -40,11 +40,13 @@
     "start-dev-noinstall": "npm run build-dev && cd ./sample && npm run start-dev",
     "build": "npm run lint && tsc",
     "build-dev": "tsc",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "devDependencies": {
     "@types/jest": "24.0.11",
     "@types/react": "16.8.8",
+    "auto-changelog": "^1.12.0",
     "autoprefixer": "7.1.6",
     "babel-loader": "8.0.5",
     "babel-preset-react-app": "7.0.2",
