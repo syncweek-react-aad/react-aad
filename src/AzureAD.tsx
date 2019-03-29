@@ -64,14 +64,14 @@ class AzureAD extends React.Component<IProps, IState> {
     switch (this.state.authenticationState) {
       case AuthenticationState.Authenticated:
         if (this.props.authenticatedFunction) {
-          return this.props.authenticatedFunction(this.logout);
+          return this.props.authenticatedFunction(this.logout) || null;
         }
         else {
-          return this.props.children;
+          return this.props.children || null;
         }
       case AuthenticationState.Unauthenticated:
         if (this.props.unauthenticatedFunction) {
-          return this.props.unauthenticatedFunction(this.login);
+          return this.props.unauthenticatedFunction(this.login) || null;
         } else {
           return null;
         }
