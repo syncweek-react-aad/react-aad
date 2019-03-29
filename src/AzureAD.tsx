@@ -41,7 +41,8 @@ interface IProps {
   unauthenticatedFunction?: UnauthenticatedFunction,
   authenticatedFunction?: AuthenticatedFunction,
   userInfoCallback?: UserInfoCallback,
-  reduxStore?: Store
+  reduxStore?: Store,
+  forceLogin?: boolean
 }
 
 interface IState {
@@ -58,6 +59,10 @@ class AzureAD extends React.Component<IProps, IState> {
     this.authProvider.onAuthenticationStateChanged = this.updateAuthenticationState;
 
     this.state = { authenticationState: this.authProvider.authenticationState }
+
+    if (this.props.forceLogin && this.state.authenticationState === AuthenticationState.Unauthenticated) {
+      this.login();
+    }
   }
 
   public render() {
