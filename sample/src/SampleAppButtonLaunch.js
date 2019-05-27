@@ -61,8 +61,8 @@ class SampleAppButtonLaunch extends React.Component {
           new MsalAuthProviderFactory(
             {
               auth: {
-                authority: 'https://login.microsoftonline.com/common/',
-                clientId: 'debe0394-e135-4ec5-92e8-4c8dd8d81ef1',
+                authority: process.env.REACT_APP_AUTHORITY,
+                clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
               },
               cache: {
                 storeAuthStateInCookie: true,
