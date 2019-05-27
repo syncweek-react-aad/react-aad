@@ -217,7 +217,7 @@ See our contribution guidelines [here](CONTRIBUTING.md)
 - [Get Started with Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/get-started-azure-ad)
 - [MSAL Documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/index.html)
 - [AAD v2 Scopes](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
-- [AAD B22 Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)
+- [AAD B2C Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)
 
 ## Problems or Suggestions
 
