@@ -23,7 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {  AuthenticationParameters, AuthError, AuthResponse, Configuration  } from 'msal';
+import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 

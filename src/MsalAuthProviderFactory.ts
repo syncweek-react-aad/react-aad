@@ -32,7 +32,7 @@ export class MsalAuthProviderFactory implements IAuthProviderFactory {
   private authParameters: AuthenticationParameters;
   private type: LoginType;
 
-  constructor(config: Configuration, authParams: AuthenticationParameters, type: LoginType) {
+  constructor(config: Configuration, authParams: AuthenticationParameters, type: LoginType = LoginType.Redirect) {
     this.config = config;
     this.authParameters = authParams;
     this.type = type;

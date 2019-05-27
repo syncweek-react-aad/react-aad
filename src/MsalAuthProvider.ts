@@ -23,7 +23,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {  Account, AuthenticationParameters, AuthError, AuthResponse, CacheLocation, Configuration, UserAgentApplication  } from 'msal';
+import {
+  Account,
+  AuthenticationParameters,
+  AuthError,
+  AuthResponse,
+  CacheLocation,
+  Configuration,
+  UserAgentApplication,
+} from 'msal';
 import { AuthenticationState, IAccountInfo, IAuthProvider } from './Interfaces';
 import { Logger } from './logger';
 
