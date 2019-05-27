@@ -29,3 +29,7 @@ yarn-error.log*
 
 # vscode config
 .vscode
+
+# intellij config
+.idea
+
