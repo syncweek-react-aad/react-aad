@@ -22,9 +22,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as Msal from 'msal';
+import { Account } from 'msal';
 
-export type UserInfoCallback = (token: IUserInfo) => void;
+export type AccountInfoCallback = (token: IAccountInfo) => void;
 
 export enum LoginType {
   Popup,
@@ -37,40 +37,21 @@ export enum AuthenticationState {
   Authenticated,
 }
 
-export interface IUserInfo {
+export interface IAccountInfo {
   jwtAccessToken: string;
   jwtIdToken: string;
-  user: Msal.User;
+  account: Account;
 }
 
 export interface IAuthProviderFactory {
   getAuthProvider(): IAuthProvider;
 }
 
-export interface IMsalAuthProviderConfig {
-  clientID: string;
-  authority?: string;
-  persistLoginPastSession?: boolean;
-  scopes: string[];
-  type?: LoginType;
-  validateAuthority?: boolean;
-  redirectUri?: string | (() => string);
-  postLogoutRedirectUri?: string | (() => string);
-  loadFrameTimeout?: number;
-  navigateToLoginRequestUrl?: boolean;
-  state?: string;
-  isAngular?: boolean;
-  unprotectedResources?: string[];
-  protectedResourceMap?: Map<string, string[]>;
-  storeAuthStateInCookie?: boolean;
-  logger?: Msal.Logger;
-}
-
 export interface IAuthProvider {
-  onAuthenticationStateChanged?: (state: AuthenticationState, user?: IUserInfo) => void;
+  onAuthenticationStateChanged?: (state: AuthenticationState, account?: IAccountInfo) => void;
   authenticationState: AuthenticationState;
 
-  getUserInfo(): IUserInfo;
+  getAccountInfo(): IAccountInfo;
   login(): void;
   logout(): void;
 }

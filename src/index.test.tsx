@@ -23,8 +23,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import Enzyme from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
 import * as Msal from 'msal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -32,113 +30,132 @@ import * as ReactDOM from 'react-dom';
 require('jest-localstorage-mock'); // tslint:disable-line
 
 import { AuthenticationState, AzureAD, LoginType } from './index';
-import { IUserInfo } from './Interfaces';
+import { IAccountInfo } from './Interfaces';
 import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 
-Enzyme.configure({ adapter: new Adapter() })
+let Enzyme;
+let Adapter;
+let authProvider: MsalAuthProviderFactory;
+
+beforeAll(() => {
+  Enzyme = require('enzyme');
+  Adapter = require('enzyme-adapter-react-16');
+
+  Enzyme.configure({ adapter: new Adapter() });
+});
 
 beforeEach(() => {
   // values stored in tests will also be available in other tests unless you run
   localStorage.clear();
+
+  authProvider = new MsalAuthProviderFactory(
+    {
+      auth: {
+        authority: null,
+        clientId: '<guid>',
+      },
+    },
+    {
+      scopes: ['openid'],
+    },
+    LoginType.Popup,
+  );
 });
 
 it('renders without crashing', () => {
   const unauthenticatedFunction = (login: any) => {
-    return <div><h1> unauthenticatedFunction </h1> </div>
-  }
+    return (
+      <div>
+        <h1> unauthenticatedFunction </h1>{' '}
+      </div>
+    );
+  };
 
   const authenticatedFunction = (logout: any) => {
-    return <div><h1> authenticatedFunction </h1> </div>
-  }
+    return (
+      <div>
+        <h1> authenticatedFunction </h1>{' '}
+      </div>
+    );
+  };
 
-  const userInfoCallback = (token: any) => {
+  const accountInfoCallback = (token: any) => {
     // empty
-  }
+  };
 
   const div = document.createElement('div');
-  ReactDOM.render(<AzureAD 
-    provider={new MsalAuthProviderFactory({
-      authority: null,
-      clientID: '<random-guid>',
-      scopes: ['openid'],
-      type: LoginType.Popup,
-    })}
-    unauthenticatedFunction={unauthenticatedFunction}
-    authenticatedFunction={authenticatedFunction}
-    userInfoCallback={userInfoCallback}
-  />, div);
+  ReactDOM.render(
+    <AzureAD
+      provider={authProvider}
+      unauthenticatedFunction={unauthenticatedFunction}
+      authenticatedFunction={authenticatedFunction}
+      accountInfoCallback={accountInfoCallback}
+    />,
+    div,
+  );
   ReactDOM.unmountComponentAtNode(div);
 });
 
-it('updates the userInfo state', () => {
-  let userInfo : IUserInfo = null;
-  
+it('updates the accountInfo state', () => {
+  let accountInfo: IAccountInfo = null;
+
   const unauthenticatedFunction = jest.fn();
   const authenticatedFunction = jest.fn();
-  const userInfoCallback = jest.fn((token: any) => {
-    userInfo = token;
+  const accountInfoCallback = jest.fn((token: any) => {
+    accountInfo = token;
   }); // tslint:disable-line: no-empty
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      provider={new MsalAuthProviderFactory({
-        authority: null,
-        clientID: '<random-guid>',
-        scopes: ['openid'],
-        type: LoginType.Popup,
-      })}
+      provider={authProvider}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
-      userInfoCallback={userInfoCallback}
-    />
+      accountInfoCallback={accountInfoCallback}
+    />,
   ).instance() as AzureAD;
 
-  const testUser: Msal.User = {
-    displayableId: "hi",
+  const testAccount: Msal.Account = {
+    accountIdentifier: 'Something',
+    environment: 'testEnv',
+    homeAccountIdentifier: 'testIdentifier',
     idToken: {},
-    identityProvider: "Facebook",
-    name: "Lilian",
-    sid: "sid",
-    userIdentifier: "Something"
-  }
+    name: 'Lilian',
+    sid: 'sid',
+    userName: 'LilUsername',
+  };
 
-  const loggedInUser : IUserInfo = {
-    jwtAccessToken: "accesstoken",
-    jwtIdToken: "idtoken",
-    user: testUser,
-  }
+  const loggedInUser: IAccountInfo = {
+    account: testAccount,
+    jwtAccessToken: 'accesstoken',
+    jwtIdToken: 'idtoken',
+  };
 
   wrapper.updateAuthenticationState(AuthenticationState.Authenticated, loggedInUser);
 
-  expect(userInfo).not.toBeNull();
-  expect(userInfo.jwtAccessToken).toEqual("accesstoken");
-  expect(userInfo.jwtIdToken).toEqual("idtoken");
-  expect(userInfo.user).toEqual(testUser);
+  expect(accountInfo).not.toBeNull();
+  expect(accountInfo.jwtAccessToken).toEqual('accesstoken');
+  expect(accountInfo.jwtIdToken).toEqual('idtoken');
+  expect(accountInfo.account).toEqual(testAccount);
   expect(wrapper.state.authenticationState).toBe(AuthenticationState.Authenticated);
-  expect(userInfoCallback).toHaveBeenCalledWith(loggedInUser);
+  expect(accountInfoCallback).toHaveBeenCalledWith(loggedInUser);
 });
 
 it('logs out the user', () => {
   const unauthenticatedFunction = jest.fn();
   const authenticatedFunction = jest.fn();
-  const userInfoCallback = jest.fn((token: any) => {}); // tslint:disable-line: no-empty
+  const accountInfoCallback = jest.fn((token: any) => {}); // tslint:disable-line: no-empty
 
   const wrapper = Enzyme.shallow(
     <AzureAD
-      provider={new MsalAuthProviderFactory({
-        authority: null,
-        clientID: '<random-guid>',
-        scopes: ['openid'],
-        type: LoginType.Popup,
-      })}
+      provider={authProvider}
       unauthenticatedFunction={unauthenticatedFunction}
       authenticatedFunction={authenticatedFunction}
-      userInfoCallback={userInfoCallback}
-    />
+      accountInfoCallback={accountInfoCallback}
+    />,
   ).instance() as AzureAD;
 
   wrapper.updateAuthenticationState(AuthenticationState.Unauthenticated);
 
   expect(wrapper.state.authenticationState).toBe(AuthenticationState.Unauthenticated);
-  expect(userInfoCallback).not.toHaveBeenCalled();
+  expect(accountInfoCallback).not.toHaveBeenCalled();
 });

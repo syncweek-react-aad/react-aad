@@ -28,42 +28,59 @@ import { AzureAD, LoginType, MsalAuthProviderFactory } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
 
 class SampleAppButtonLaunch extends React.Component {
-    unauthenticatedFunction = loginFunction => {
-        return (
-            <button className="Button" onClick={loginFunction}>Login</button>
-        );
-    }
+  unauthenticatedFunction = loginFunction => {
+    return (
+      <button className="Button" onClick={loginFunction}>
+        Login
+      </button>
+    );
+  };
 
-    userJustLoggedIn = receivedUserInfo => {
-        this.props.userInfoCallback(receivedUserInfo);
-    }
+  userJustLoggedIn = receivedAccountInfo => {
+    this.props.accountInfoCallback(receivedAccountInfo);
+  };
 
-    authenticatedFunction = (logout) => {
-        return (<div>
-            You're logged in!
-            <br />
-            <br />
-            <button onClick={logout} className="Button">Logout</button>
-            <br />
-        </div>) ;
-    }
+  authenticatedFunction = logout => {
+    return (
+      <div>
+        You're logged in!
+        <br />
+        <br />
+        <button onClick={logout} className="Button">
+          Logout
+        </button>
+        <br />
+      </div>
+    );
+  };
 
-    render() {
-        return (
-            <AzureAD
-                provider={new MsalAuthProviderFactory({
-                    authority: process.env.REACT_APP_AUTHORITY,
-                    clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-                    scopes: ["openid"],
-                    type: LoginType.Popup,
-                    persistLoginPastSession: true,
-                })}
-                unauthenticatedFunction={this.unauthenticatedFunction}
-                reduxStore={basicReduxStore}
-                authenticatedFunction={this.authenticatedFunction}
-                userInfoCallback={this.userJustLoggedIn} />
-        );
-    }
+  render() {
+    return (
+      <AzureAD
+        provider={
+          new MsalAuthProviderFactory(
+            {
+              auth: {
+                authority: 'https://login.microsoftonline.com/common/',
+                clientId: 'debe0394-e135-4ec5-92e8-4c8dd8d81ef1',
+              },
+              cache: {
+                storeAuthStateInCookie: true,
+              },
+            },
+            {
+              scopes: ['openid'],
+            },
+            LoginType.Popup,
+          )
+        }
+        unauthenticatedFunction={this.unauthenticatedFunction}
+        reduxStore={basicReduxStore}
+        authenticatedFunction={this.authenticatedFunction}
+        accountInfoCallback={this.userJustLoggedIn}
+      />
+    );
+  }
 }
 
 export default SampleAppButtonLaunch;

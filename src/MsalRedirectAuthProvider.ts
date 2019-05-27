@@ -23,15 +23,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IMsalAuthProviderConfig } from './Interfaces';
+import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 export class MsalRedirectAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: IMsalAuthProviderConfig) {
-    super(authProviderConfig);
+  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
+    super(authProviderConfig, authParameters);
+
+    // tslint:disable-next-line: no-empty
+    const authRedirectCallback = (error: AuthError, response: AuthResponse) => {
+      // Empty callback by default
+    };
+
+    this.UserAgentApplication.handleRedirectCallback(authRedirectCallback);
   }
 
   public login(): void {
-    this.clientApplication.loginRedirect(this.config.scopes);
+    this.UserAgentApplication.loginRedirect(this.authParameters);
   }
 }

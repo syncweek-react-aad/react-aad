@@ -27,7 +27,7 @@ import * as React from 'react';
 import { Store } from 'redux';
 
 import { loginSuccessful, logoutSuccessful } from './actions';
-import { AuthenticationState, IAuthProvider, IAuthProviderFactory, IUserInfo, UserInfoCallback } from './Interfaces';
+import { AccountInfoCallback, AuthenticationState, IAccountInfo, IAuthProvider, IAuthProviderFactory } from './Interfaces';
 
 
 
@@ -40,7 +40,7 @@ interface IProps {
   provider: IAuthProviderFactory,
   unauthenticatedFunction?: UnauthenticatedFunction,
   authenticatedFunction?: AuthenticatedFunction,
-  userInfoCallback?: UserInfoCallback,
+  accountInfoCallback?: AccountInfoCallback,
   reduxStore?: Store,
   forceLogin?: boolean
 }
@@ -87,21 +87,21 @@ class AzureAD extends React.Component<IProps, IState> {
     }
   }
 
-  public resetUserInfo = () => {
+  public resetAccountInfo = () => {
     if (this.props.reduxStore) {
       this.props.reduxStore.dispatch(logoutSuccessful());
     }
   }
 
-  public updateAuthenticationState = (state: AuthenticationState, user?: IUserInfo) => {
+  public updateAuthenticationState = (state: AuthenticationState, user?: IAccountInfo) => {
     this.setState({
       authenticationState: state
     });
 
     if (user) {
       this.dispatchToProvidedReduxStore(user);
-      if (this.props.userInfoCallback) {
-        this.props.userInfoCallback(user);
+      if (this.props.accountInfoCallback) {
+        this.props.accountInfoCallback(user);
       }
     }
   }
@@ -115,11 +115,11 @@ class AzureAD extends React.Component<IProps, IState> {
       return;
     }
 
-    this.resetUserInfo();
+    this.resetAccountInfo();
     this.authProvider.logout();
   };
 
-  private dispatchToProvidedReduxStore(data: IUserInfo) {
+  private dispatchToProvidedReduxStore(data: IAccountInfo) {
     if (this.props.reduxStore) {
       this.props.reduxStore.dispatch(loginSuccessful(data))
     }

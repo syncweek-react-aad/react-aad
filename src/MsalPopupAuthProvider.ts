@@ -23,21 +23,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { IMsalAuthProviderConfig } from './Interfaces';
+import {  AuthenticationParameters, AuthError, AuthResponse, Configuration  } from 'msal';
 import { Logger } from './logger';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 export class MsalPopupAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: IMsalAuthProviderConfig) {
-    super(authProviderConfig);
+  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
+    super(authProviderConfig, authParameters);
   }
 
-  public login(): void {
-    this.clientApplication.loginPopup(this.config.scopes).then(
-      (idToken: string) => {
-        this.acquireTokens(idToken);
+  public login(authParameters: AuthenticationParameters = {}): void {
+    this.UserAgentApplication.loginPopup(authParameters).then(
+      (response: AuthResponse) => {
+        this.acquireTokens(response.idToken.rawIdToken);
       },
-      error => {
+      (error: AuthError) => {
         Logger.error(`Login popup failed; ${error}`);
       },
     );

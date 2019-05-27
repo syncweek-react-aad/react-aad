@@ -45,7 +45,7 @@ To build this component, follow these steps:
 
 ## Setup
 
-In the render module of your component, make sure to create an AzureAD component with the arguments you need. This uses the functions that you will define. Once the user is successfully authenticated, the component will render the JSX returned by the `authenticatedFunction`, which in this case is called `logoutCallback`. This is where you should put the secure, user-specific parts of your app. `loginCallback` and `printUserInfo` can be any user defined functions.
+In the render module of your component, make sure to create an AzureAD component with the arguments you need. This uses the functions that you will define. Once the user is successfully authenticated, the component will render the JSX returned by the `authenticatedFunction`, which in this case is called `logoutCallback`. This is where you should put the secure, user-specific parts of your app. `loginCallback` and `printAccountInfo` can be any user defined functions.
 
 Find the assignment for ClientID and replace the value with the Application ID for your application from the azure portal. The authority is the sign-in/signup policy for your application. Graph scopes is a list of scope URLs that you want to grant access to. You can find more information on the [active directory MSAL single page app azure sample](https://github.com/Azure-Samples/active-directory-b2c-javascript-msal-singlepageapp).
 
@@ -70,21 +70,21 @@ return (
     }
     unauthenticatedFunction={this.loginCallback}
     authenticatedFunction={this.logoutCallback}
-    userInfoCallback={this.printUserInfo}
+    accountInfoCallback={this.printAccountInfo}
   />
 );
 ```
 
 ## Component Properties
 
-| Property                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provider`                | Factory object that provides the configuration values for your Azure Active Directory instance. See [Provider Options](#provider-options) in table below.                                                                                                                                                                                                                                                                                                                                                              |
-| `authenticatedFunction`   | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `logout function` which you can use to trigger a logout. The return value will be rendered by the AzureAD component. If no return value is provided, any elements wrapped by the AzureAD component will be rendered instead.                                                                                                                                                       |
-| `unauthenticatedFunction` | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `login function` which you can then use to trigger a login. The return value will be rendered by the AzureAD component.                                                                                                                                                                                                                                                            |
-| `userInfoCallback`        | **[Optional]** A user defined callback function for the AzureAD component to consume. The AzureAD component will call this function when login is complete to pass back the user info in the following format: <br /><br /> `UserInfo { jwtAccessToken: string, jwtIdToken: string, user: Msal.User }` <br /> <br /> The format of `Msal.User` [can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
-| `reduxStore`              | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IUserInfo`                                                                                                                                                                                                                                                                                                                              |
-| `forceLogin`              | **[Optional]** A boolean that identifies whether the login process should be invoked immediately if the current user is unauthenticated. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                          |
+| Property                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provider`                | Factory object that provides the configuration values for your Azure Active Directory instance. See [Provider Options](#provider-options) in table below.                                                                                                                                                                                                                                                                                                                                                                 |
+| `authenticatedFunction`   | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `logout function` which you can use to trigger a logout. The return value will be rendered by the AzureAD component. If no return value is provided, any elements wrapped by the AzureAD component will be rendered instead.                                                                                                                                                          |
+| `unauthenticatedFunction` | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `login function` which you can then use to trigger a login. The return value will be rendered by the AzureAD component.                                                                                                                                                                                                                                                               |
+| `accountInfoCallback`     | **[Optional]** A user defined callback function for the AzureAD component to consume. The AzureAD component will call this function when login is complete to pass back the user info in the following format: <br /><br /> `AccountInfo { jwtAccessToken: string, jwtIdToken: string, user: Msal.User }` <br /> <br /> The format of `Msal.User` [can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
+| `reduxStore`              | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IAccountInfo`                                                                                                                                                                                                                                                                                                                              |
+| `forceLogin`              | **[Optional]** A boolean that identifies whether the login process should be invoked immediately if the current user is unauthenticated. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                             |
 
 ### Provider Options
 
@@ -129,11 +129,11 @@ loginCallback = login => {
 // ...
 ```
 
-Once they're logged in, the AzureAD library will call another function given with an `IUserInfo` instance. You can do whatever you want with this, but you should store it. In this example, we just print it out to console.
+Once they're logged in, the AzureAD library will call another function given with an `IAccountInfo` instance. You can do whatever you want with this, but you should store it. In this example, we just print it out to console.
 
 ```javascript
-printUserInfo = userInfo => {
-  console.log(userInfo);
+printAccountInfo = accountInfo => {
+  console.log(accountInfo);
 };
 ```
 
@@ -180,7 +180,7 @@ Import your store into the file rendering the AzureAD component and pass it in:
   }
   unauthenticatedFunction={this.loginCallback}
   authenticatedFunction={this.logoutCallback}
-  userInfoCallback={this.printUserInfo}
+  accountInfoCallback={this.printAccountInfo}
 />
 ```
 
