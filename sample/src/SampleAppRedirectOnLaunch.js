@@ -76,10 +76,10 @@ class SampleAppRedirectOnLaunch extends React.Component {
     this.interval = null;
   }
 
-  userJustLoggedIn = receivedUserInfo => {
+  userJustLoggedIn = receivedAccountInfo => {
     console.log('USER JUST LOGGED IN');
-    console.log(receivedUserInfo);
-    this.props.userInfoCallback(receivedUserInfo);
+    console.log(receivedAccountInfo);
+    this.props.accountInfoCallback(receivedAccountInfo);
   };
 
   authenticatedFunction = logout => {
@@ -101,7 +101,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
   render() {
     return (
       <div>
-        {!this.props.userInfo ? (
+        {!this.props.accountInfo ? (
           <div>
             <input type="checkbox" value={this.state.redirectEnabled} onChange={this.handleCheck} /> Enable redirect
           </div>
@@ -110,17 +110,27 @@ class SampleAppRedirectOnLaunch extends React.Component {
         )}
         <AzureAD
           provider={
-            new MsalAuthProviderFactory({
-              authority: process.env.REACT_APP_AUTHORITY,
-              clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-              scopes: ['openid'],
-              type: LoginType.Redirect,
-              persistLoginPastSession: true,
-              postLogoutRedirectUri: window.origin.location,
-            })
+            new MsalAuthProviderFactory(
+              {
+                auth: {
+                  authority: process.env.REACT_APP_AUTHORITY,
+                  clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+                  redirectUri: window.location.origin,
+                  postLogoutRedirectUri: window.location.origin,
+                },
+                cache: {
+                  cacheLocation: 'sessionStorage',
+                  storeAuthStateInCookie: true,
+                },
+              },
+              {
+                scopes: ['openid'],
+              },
+              LoginType.Popup,
+            )
           }
           unauthenticatedFunction={this.unauthenticatedFunction}
-          userInfoCallback={this.userJustLoggedIn}
+          accountInfoCallback={this.userJustLoggedIn}
           authenticatedFunction={this.authenticatedFunction}
         />
       </div>

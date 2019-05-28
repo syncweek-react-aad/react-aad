@@ -24,12 +24,12 @@
 //
 
 import { AnyAction } from 'redux';
-import { IUserInfo } from './Interfaces';
+import { IAccountInfo } from './Interfaces';
 
 export const AAD_LOGIN_SUCCESS: string = 'AAD_LOGIN_SUCCESS';
 export const AAD_LOGOUT_SUCCESS: string = 'AAD_LOGOUT_SUCCESS';
 
-export const loginSuccessful = (data: IUserInfo): AnyAction => {
+export const loginSuccessful = (data: IAccountInfo): AnyAction => {
 	return {
 		payload: data,
 		type: AAD_LOGIN_SUCCESS

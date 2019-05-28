@@ -66,11 +66,11 @@ import { basicReduxStore } from './reduxStore';
 >
 ```
 
-For our `userInfoCallback` property, we setup a function that just saves the userInfo we get back from AAD to state.
+For our `accountInfoCallback` property, we setup a function that just saves the accountInfo we get back from AAD to state.
 
 ```javascript
-userJustLoggedIn = receivedUserInfo => {
-  this.setState({ userInfo: receivedUserInfo });
+userJustLoggedIn = receivedAccountInfo => {
+  this.setState({ accountInfo: receivedAccountInfo });
 };
 ```
 
@@ -117,11 +117,11 @@ Type is set to `LoginType.Redirect`.
 >
 ```
 
-For our `userInfoCallback` property, we setup a function that just saved the userInfo we get back to state.
+For our `accountInfoCallback` property, we setup a function that just saved the accountInfo we get back to state.
 
 ```javascript
-userJustLoggedIn = receivedUserInfo => {
-  this.setState({ userInfo: receivedUserInfo });
+userJustLoggedIn = receivedAccountInfo => {
+  this.setState({ accountInfo: receivedAccountInfo });
 };
 ```
 
