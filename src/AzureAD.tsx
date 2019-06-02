@@ -99,13 +99,13 @@ class AzureAD extends React.Component<IProps, IState> {
     }
     this.setState({
       authenticationState: state
+    },
+    ()=> {
+      if (user && this.props.accountInfoCallback) {
+          this.props.accountInfoCallback(user);
+      }
     });
 
-    if (user) {
-      if (this.props.accountInfoCallback) {
-        this.props.accountInfoCallback(user);
-      }
-    }
   }
 
   private login = () => {
