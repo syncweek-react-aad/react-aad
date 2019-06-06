@@ -126,7 +126,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
               {
                 scopes: ['openid'],
               },
-              LoginType.Popup,
+              LoginType.Redirect,
             )
           }
           unauthenticatedFunction={this.unauthenticatedFunction}
