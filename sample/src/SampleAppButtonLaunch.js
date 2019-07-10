@@ -53,7 +53,6 @@ class SampleAppButtonLaunch extends React.Component {
       </div>
     );
   };
-
   render() {
     return (
       <AzureAD
@@ -62,7 +61,7 @@ class SampleAppButtonLaunch extends React.Component {
             {
               auth: {
                 authority: process.env.REACT_APP_AUTHORITY,
-                clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+                clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
               },
               cache: {
                 storeAuthStateInCookie: true,
@@ -82,5 +81,4 @@ class SampleAppButtonLaunch extends React.Component {
     );
   }
 }
-
 export default SampleAppButtonLaunch;

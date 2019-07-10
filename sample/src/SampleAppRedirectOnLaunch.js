@@ -114,7 +114,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
               {
                 auth: {
                   authority: process.env.REACT_APP_AUTHORITY,
-                  clientID: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+                  clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
                   redirectUri: window.location.origin,
                   postLogoutRedirectUri: window.location.origin,
                 },
@@ -126,7 +126,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
               {
                 scopes: ['openid'],
               },
-              LoginType.Popup,
+              LoginType.Redirect,
             )
           }
           unauthenticatedFunction={this.unauthenticatedFunction}
