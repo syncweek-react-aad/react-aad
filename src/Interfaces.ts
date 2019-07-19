@@ -22,7 +22,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { Account } from 'msal';
+import { Account, AuthResponse } from 'msal';
 
 export type AccountInfoCallback = (token: IAccountInfo) => void;
 
@@ -41,6 +41,7 @@ export interface IAccountInfo {
   jwtAccessToken: string;
   jwtIdToken: string;
   account: Account;
+  authenticationResponse?: AuthResponse;
 }
 
 export interface IAuthProviderFactory {

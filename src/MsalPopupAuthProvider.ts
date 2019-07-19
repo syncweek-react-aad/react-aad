@@ -35,7 +35,7 @@ export class MsalPopupAuthProvider extends MsalAuthProvider {
   public login(authParameters: AuthenticationParameters = {}): void {
     this.UserAgentApplication.loginPopup(authParameters).then(
       (response: AuthResponse) => {
-        this.acquireTokens(response.idToken.rawIdToken);
+        this.acquireTokens();
       },
       (error: AuthError) => {
         Logger.error(`Login popup failed; ${error}`);
