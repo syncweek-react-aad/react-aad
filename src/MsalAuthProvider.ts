@@ -24,7 +24,6 @@
 //
 
 import {
-  Account,
   AuthenticationParameters,
   AuthError,
   AuthResponse,
