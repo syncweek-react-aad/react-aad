@@ -23,14 +23,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication } from 'msal';
+import * as React from 'react';
 
-import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS } from './actions';
-import { AzureAD } from './AzureAD'
-import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
-import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
-import { withAuthentication } from './withAuthentication';
+import { AzureAD, IAzureADProps } from './AzureAD';
 
-export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
-export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType, MsalAuthProviderFactory, withAuthentication };
-export default AzureAD;
+export const withAuthentication = <P extends object>(WrappedComponent: React.ComponentType<P>, parameters: IAzureADProps) =>
+  class WithAuthentication extends React.Component<P> {
+    public readonly propParams: IAzureADProps = {forceLogin: true, ...parameters};
+
+    public render = () => {
+      return (
+        <AzureAD {...this.propParams}>
+          <WrappedComponent {...this.props} />
+        </AzureAD>
+      );
+    };
+  };

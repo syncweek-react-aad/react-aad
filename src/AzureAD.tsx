@@ -36,7 +36,7 @@ type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
 type LoginFunction = () => void;
 type LogoutFunction = () => void;
 
-interface IProps {
+export interface IAzureADProps {
   provider: IAuthProviderFactory,
   unauthenticatedFunction?: UnauthenticatedFunction,
   authenticatedFunction?: AuthenticatedFunction,
@@ -49,10 +49,10 @@ interface IState {
   authenticationState: AuthenticationState,
 }
 
-class AzureAD extends React.Component<IProps, IState> {
+class AzureAD extends React.Component<IAzureADProps, IState> {
   private authProvider: IAuthProvider;
 
-  constructor(props: IProps) {
+  constructor(props: IAzureADProps) {
     super(props);
 
     this.authProvider = this.props.provider.getAuthProvider();
