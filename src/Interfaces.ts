@@ -41,7 +41,7 @@ export interface IAccountInfo {
   jwtAccessToken: string;
   jwtIdToken: string;
   account: Account;
-  authenticationResponse?: AuthResponse;
+  authenticationResponse: AuthResponse;
 }
 
 export interface IAuthProviderFactory {
