@@ -196,6 +196,20 @@ The easiest way to initiate login is to rely on the `forceLogin` prop on the Azu
 
 A common pattern to lock down an entire application with forced authentication is to use `forceLogin` and wrap your `<App>` component with the AzureAD component.
 
+### Higher-Order Component
+
+Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down an app with authentiction. This can be accomplished with the `withAuthentication` component.
+
+```Typescript
+// ...
+export default withAuthentication(App, {
+ provider: new MsalAuthProviderFactory(config, authenticationParameters, LoginType.Redirect),
+ reduxStore: store
+});
+```
+
+The first parameter is the component that requires authentication before being mounted. The second parameter is an object representing the props which will be passed to the `AzureAD` component internally. With this approach the `forceLogin` boolean will defualt to true, but can easily be overriden.
+
 ### Callback functions
 
 To login, first create a callback function for the AzureAD component to consume. This function will be called when the component loads, and it will pass in the function to be called when the user wants to login. In this case, we create a button that will log the user in.
