@@ -42,10 +42,7 @@ const StorageLocations: { localStorage: string; sessionStorage: string } = {
 };
 
 export abstract class MsalAuthProvider implements IAuthProvider {
-  public onAuthenticationStateChanged: (
-    state: AuthenticationState,
-    user?: IAccountInfo
-  ) => void;
+  public onAuthenticationStateChanged: (state: AuthenticationState, user?: IAccountInfo) => void;
   public authenticationState: AuthenticationState;
   public UserAgentApplication: UserAgentApplication;
 
