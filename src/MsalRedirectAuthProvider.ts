@@ -36,7 +36,7 @@ export class MsalRedirectAuthProvider extends MsalAuthProvider {
         Logger.error(`Login redirect failed; ${error}`);
         return;
       } else {
-        this.acquireTokens(response.idToken.rawIdToken);
+        this.acquireTokens();
       }
     };
 

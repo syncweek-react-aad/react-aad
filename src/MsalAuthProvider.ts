@@ -24,7 +24,6 @@
 //
 
 import {
-  Account,
   AuthenticationParameters,
   AuthError,
   AuthResponse,
@@ -70,17 +69,17 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     return this.accountInfo;
   }
 
-  protected acquireTokens = (idToken: string) => {
+  protected acquireTokens = () => {
     this.UserAgentApplication.acquireTokenSilent(this.authParameters).then(
       (response: AuthResponse) => {
-        this.saveAccountInfo(response.accessToken, idToken, this.UserAgentApplication.getAccount());
+        this.saveAccountInfo(response);
       },
       (tokenSilentError: AuthError) => {
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
         Logger.error(`token silent error; ${tokenSilentError}`);
         this.UserAgentApplication.acquireTokenPopup(this.authParameters).then(
           (response: AuthResponse) => {
-            this.saveAccountInfo(response.accessToken, idToken, this.UserAgentApplication.getAccount());
+            this.saveAccountInfo(response);
           },
           (tokenPopupError: AuthError) => {
             this.setAuthenticationState(AuthenticationState.Unauthenticated);
@@ -92,13 +91,8 @@ export abstract class MsalAuthProvider implements IAuthProvider {
   };
 
   private checkIfUserAuthenticated = () => {
-    const cacheOptions = this.UserAgentApplication.getCurrentConfiguration().cache;
-    const cacheLocation: CacheLocation =
-      cacheOptions && cacheOptions.cacheLocation ? cacheOptions.cacheLocation : 'sessionStorage';
-
     if (this.isLoggedIn()) {
-      const idToken = this.getCacheItem(cacheLocation, IDTokenKey);
-      this.acquireTokens(idToken!);
+      this.acquireTokens();
     } else if (this.UserAgentApplication.getLoginInProgress()) {
       this.setAuthenticationState(AuthenticationState.Authenticating);
     } else {
@@ -134,11 +128,12 @@ export abstract class MsalAuthProvider implements IAuthProvider {
     return true;
   };
 
-  private saveAccountInfo = (accessToken: string, idToken: string, msalAccount: Account): void => {
+  private saveAccountInfo = (authResponse: AuthResponse): void => {
     const user: IAccountInfo = {
-      account: msalAccount,
-      jwtAccessToken: accessToken,
-      jwtIdToken: idToken,
+      account: authResponse.account,
+      authenticationResponse: authResponse,
+      jwtAccessToken: authResponse.accessToken,
+      jwtIdToken: authResponse.idToken.rawIdToken,
     };
     this.accountInfo = user;
 

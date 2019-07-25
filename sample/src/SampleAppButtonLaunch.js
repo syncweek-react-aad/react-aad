@@ -53,7 +53,6 @@ class SampleAppButtonLaunch extends React.Component {
       </div>
     );
   };
-
   render() {
     return (
       <AzureAD
@@ -82,5 +81,4 @@ class SampleAppButtonLaunch extends React.Component {
     );
   }
 }
-
 export default SampleAppButtonLaunch;
