@@ -58,9 +58,13 @@ class AzureAD extends React.Component<IAzureADProps, IState> {
     this.authProvider = this.props.provider.getAuthProvider();
     this.authProvider.onAuthenticationStateChanged = this.updateAuthenticationState;
 
-    this.state = { authenticationState: this.authProvider.authenticationState }
+    const authState = this.authProvider.authenticationState;
+    this.state = { authenticationState: authState };
 
-    if (this.props.forceLogin && this.state.authenticationState === AuthenticationState.Unauthenticated) {
+    if (authState === AuthenticationState.Authenticated) {
+      const account = this.authProvider.getAccountInfo();
+      this.updateAuthenticationState(authState, account);
+    } else if (this.state.authenticationState === AuthenticationState.Unauthenticated && this.props.forceLogin) {
       this.login();
     }
   }
@@ -87,25 +91,21 @@ class AzureAD extends React.Component<IAzureADProps, IState> {
     }
   }
 
-  public resetAccountInfo = () => {
-    if (this.props.reduxStore) {
-      this.props.reduxStore.dispatch(logoutSuccessful());
+  public updateAuthenticationState = (newState: AuthenticationState, account?: IAccountInfo) => {
+    if (account) {
+      this.dispatchAccountInfo(account);
     }
-  }
-
-  public updateAuthenticationState = (state: AuthenticationState, user?: IAccountInfo) => {
-    if (user) {
-      this.dispatchToProvidedReduxStore(user);
+    
+    if (newState !== this.state.authenticationState) {
+      this.setState({
+        authenticationState: newState
+      },
+      ()=> {
+        this.handleAccountInfoCallback(account);
+      });
+    } else {
+      this.handleAccountInfoCallback(account);
     }
-    this.setState({
-      authenticationState: state
-    },
-    ()=> {
-      if (user && this.props.accountInfoCallback) {
-          this.props.accountInfoCallback(user);
-      }
-    });
-
   }
 
   private login = () => {
@@ -117,13 +117,25 @@ class AzureAD extends React.Component<IAzureADProps, IState> {
       return;
     }
 
-    this.resetAccountInfo();
+    this.dispatchLogout();
     this.authProvider.logout();
   };
 
-  private dispatchToProvidedReduxStore(data: IAccountInfo) {
+  private dispatchLogout = () => {
+    if (this.props.reduxStore) {
+      this.props.reduxStore.dispatch(logoutSuccessful());
+    }
+  }
+
+  private dispatchAccountInfo = (data: IAccountInfo) => {
     if (this.props.reduxStore) {
       this.props.reduxStore.dispatch(loginSuccessful(data))
+    }
+  }
+
+  private handleAccountInfoCallback = (account?: IAccountInfo)  => {
+    if (account && this.props.accountInfoCallback) {
+      this.props.accountInfoCallback(account);
     }
   }
 }
