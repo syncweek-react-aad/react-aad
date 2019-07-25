@@ -50,7 +50,6 @@ In the render module of your component, make sure to create an AzureAD component
 Find the assignment for ClientID and replace the value with the Application ID for your application from the azure portal. The authority is the sign-in/signup policy for your application. Graph scopes is a list of scope URLs that you want to grant access to. You can find more information on the [active directory MSAL single page app azure sample](https://github.com/Azure-Samples/active-directory-b2c-javascript-msal-singlepageapp).
 
 ```jsx
-import { CacheLocation } from "react-aad-msal";
 // ...
 
 return (
@@ -61,7 +60,7 @@ return (
       redirectUri: '<Optional redirect URI for your application'
     },
     cache: {
-      cacheLocation: ("localStorage" as CacheLocation),
+      cacheLocation: "localStorage",
       storeAuthStateInCookie: true
     }
   };

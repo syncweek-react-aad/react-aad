@@ -29,6 +29,7 @@ import * as ReactDOM from 'react-dom';
 
 require('jest-localstorage-mock'); // tslint:disable-line
 
+import { IdToken } from 'msal/lib-commonjs/IdToken';
 import { AuthenticationState, AzureAD, LoginType } from './index';
 import { IAccountInfo } from './Interfaces';
 import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
@@ -119,6 +120,7 @@ it('updates the accountInfo state', () => {
     environment: 'testEnv',
     homeAccountIdentifier: 'testIdentifier',
     idToken: {},
+    idTokenClaims: {},
     name: 'Lilian',
     sid: 'sid',
     userName: 'LilUsername',
@@ -126,6 +128,18 @@ it('updates the accountInfo state', () => {
 
   const loggedInUser: IAccountInfo = {
     account: testAccount,
+    authenticationResponse: {
+      accessToken: 'test',
+      account: testAccount,
+      accountState: 'testState',
+      expiresOn: new Date(),
+      idToken: {} as IdToken,
+      idTokenClaims: {},
+      scopes: [],
+      tenantId: 'testTenant',
+      tokenType: 'testTokenType',
+      uniqueId: 'testId'
+    },
     jwtAccessToken: 'accesstoken',
     jwtIdToken: 'idtoken',
   };
