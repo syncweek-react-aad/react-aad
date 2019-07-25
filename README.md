@@ -198,7 +198,7 @@ A common pattern to lock down an entire application with forced authentication i
 
 ### Higher-Order Component
 
-Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down you app with authentiction. This can be accomplished with the `withAuthentication` component.
+Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down an app with authentiction. This can be accomplished with the `withAuthentication` component.
 
 ```Typescript
 // ...
