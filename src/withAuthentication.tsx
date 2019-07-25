@@ -23,27 +23,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
-import { Logger } from './logger';
-import { MsalAuthProvider } from './MsalAuthProvider';
+import * as React from 'react';
 
-export class MsalRedirectAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    super(authProviderConfig, authParameters);
+import { AzureAD, IAzureADProps } from './AzureAD';
 
-    const authRedirectCallback = (error: AuthError, response: AuthResponse) => {
-      if (error) {
-        Logger.error(`Login redirect failed; ${error}`);
-        return;
-      } else {
-        this.acquireTokens(response.idToken.rawIdToken);
-      }
-    };
+export const withAuthentication = <P extends object>(WrappedComponent: React.ComponentType<P>, parameters: IAzureADProps) =>
+ class WithAuthentication extends React.Component<P> {
+   public readonly propParams: IAzureADProps = {forceLogin: true, ...parameters};
 
-    this.UserAgentApplication.handleRedirectCallback(authRedirectCallback);
-  }
-
-  public login(): void {
-    this.UserAgentApplication.loginRedirect(this.authParameters);
-  }
-}
+    public render = () => {
+     return (
+       <AzureAD {...this.propParams}>
+         <WrappedComponent {...this.props} />
+       </AzureAD>
+     );
+   };
+ };
