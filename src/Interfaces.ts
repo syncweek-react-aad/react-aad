@@ -23,6 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { Account, AuthResponse } from 'msal';
+import { MsalAuthProvider } from './MsalAuthProvider';
 
 export type AccountInfoCallback = (token: IAccountInfo) => void;
 
@@ -45,7 +46,7 @@ export interface IAccountInfo {
 }
 
 export interface IAuthProviderFactory {
-  getAuthProvider(): IAuthProvider;
+  getAuthProvider(): MsalAuthProvider;
 }
 
 export interface IAuthProvider {

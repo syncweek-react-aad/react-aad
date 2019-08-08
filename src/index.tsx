@@ -28,10 +28,11 @@ import { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configu
 import { AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS } from './actions';
 import { AzureAD } from './AzureAD'
 import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
+import { MsalAuthProvider } from './MsalAuthProvider';
 import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 import { withAuthentication } from './withAuthentication';
 
 export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
-export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType, MsalAuthProviderFactory, withAuthentication };
+export { AzureAD, AAD_LOGIN_SUCCESS, AAD_LOGOUT_SUCCESS, AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType, MsalAuthProviderFactory, MsalAuthProvider, withAuthentication };
 
 export default AzureAD;
