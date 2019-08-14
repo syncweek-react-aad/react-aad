@@ -23,7 +23,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 import { AuthenticationParameters, Configuration } from 'msal';
-import { IAuthProvider, IAuthProviderFactory, LoginType } from './Interfaces';
+import { IAuthProviderFactory, LoginType } from './Interfaces';
+import { MsalAuthProvider } from './MsalAuthProvider';
 import { MsalPopupAuthProvider } from './MsalPopupAuthProvider';
 import { MsalRedirectAuthProvider } from './MsalRedirectAuthProvider';
 
@@ -31,18 +32,21 @@ export class MsalAuthProviderFactory implements IAuthProviderFactory {
   private config: Configuration;
   private authParameters: AuthenticationParameters;
   private type: LoginType;
+  private authProvider: MsalAuthProvider;
 
   constructor(config: Configuration, authParams: AuthenticationParameters, type: LoginType = LoginType.Redirect) {
     this.config = config;
     this.authParameters = authParams;
     this.type = type;
+
+    if (this.type === LoginType.Popup) {
+      this.authProvider = new MsalPopupAuthProvider(this.config, this.authParameters);
+    } else {
+      this.authProvider = new MsalRedirectAuthProvider(this.config, this.authParameters);
+    }
   }
 
-  public getAuthProvider(): IAuthProvider {
-    if (this.type === LoginType.Popup) {
-      return new MsalPopupAuthProvider(this.config, this.authParameters);
-    } else {
-      return new MsalRedirectAuthProvider(this.config, this.authParameters);
-    }
+  public getAuthProvider(): MsalAuthProvider {
+    return this.authProvider;
   }
 }
