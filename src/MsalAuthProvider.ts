@@ -33,7 +33,7 @@ import {
   UserAgentApplication,
 } from 'msal';
 import { AnyAction, Store } from 'redux';
-import { AuthenticationActionCreators } from './actions'
+import { AuthenticationActionCreators } from './actions';
 import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType } from './Interfaces';
 import { Logger } from './logger';
 
@@ -89,7 +89,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     super.logout();
 
     this.dispatchAction(AuthenticationActionCreators.logoutSuccessful());
-  }
+  };
 
   public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
 
@@ -111,7 +111,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
           this.acquireTokenRedirect(params);
 
           // Nothing to return, the user is redirected to the login page
-          return new Promise<AuthResponse>((resolve) => resolve());
+          return new Promise<AuthResponse>(resolve => resolve());
         }
 
         try {
@@ -125,7 +125,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
           this.dispatchAction(AuthenticationActionCreators.loginError(error));
           this.setAuthenticationState(AuthenticationState.Unauthenticated);
-          
+
           throw error;
         }
       } else {
@@ -133,7 +133,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
         this.dispatchAction(AuthenticationActionCreators.loginError(error));
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
-        
+
         throw error;
       }
     }
@@ -143,24 +143,24 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public setAuthenticationParameters = (parameters: AuthenticationParameters): void => {
     this._parameters = parameters;
-  }
+  };
 
   public registerReduxStore = (store: Store): void => {
     this._reduxStore = store;
     while (this._actionQueue.length) {
-        const action = this._actionQueue.shift();
-        if (action) {
-          this.dispatchAction(action);
-        }
+      const action = this._actionQueue.shift();
+      if (action) {
+        this.dispatchAction(action);
+      }
     }
-  }
+  };
 
   public setLoginType = (loginType: LoginType) => {
     if (loginType === LoginType.Redirect) {
       this.handleRedirectCallback(this.authenticationRedirectCallback);
     }
     this._loginType = loginType;
-  }
+  };
 
   private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
     if (response) {
@@ -182,8 +182,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
         // Swallow the error if the user isn't authenticated, just set to Unauthenticated
         if (!(error instanceof ClientAuthError && error.errorCode === 'user_login_error')) {
           Logger.error(error);
-        } 
-        
+        }
+
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
       }
     } else {
@@ -199,7 +199,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     if (this.authenticationState !== state) {
       this.authenticationState = state;
 
-      this.dispatchAction(AuthenticationActionCreators.authenticatedStateChanged(state))
+      this.dispatchAction(AuthenticationActionCreators.authenticatedStateChanged(state));
 
       if (this.onAuthenticationStateChanged) {
         this.onAuthenticationStateChanged(state);
@@ -217,7 +217,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
 
     return this._accountInfo;
-  }
+  };
 
   private dispatchAction = (action: AnyAction): void => {
     if (this._reduxStore) {
@@ -225,22 +225,22 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     } else {
       this._actionQueue.push(action);
     }
-  }
+  };
 
   private mapAuthResponseToAccountInfo = (response: AuthResponse): IAccountInfo => ({
     account: response.account,
     authenticationResponse: response,
     jwtAccessToken: response.accessToken,
-    jwtIdToken: response.idToken.rawIdToken
-  })
+    jwtIdToken: response.idToken.rawIdToken,
+  });
 
   private handleTokenRefreshSuccess = (response: AuthResponse): void => {
     const account = this.setAccountInfo(response);
     this.dispatchAction(AuthenticationActionCreators.acquireTokenSuccess(account));
-  }
+  };
 
   private handleLoginSuccess = (response: AuthResponse): void => {
     const account = this.setAccountInfo(response);
     this.dispatchAction(AuthenticationActionCreators.loginSuccessful(account));
-  } 
+  };
 }

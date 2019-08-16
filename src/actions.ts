@@ -28,52 +28,51 @@ import { AnyAction } from 'redux';
 import { AuthenticationState, IAccountInfo } from './Interfaces';
 
 export enum AuthenticationActions {
-	Initializing = 'AAD_INITIALIZING',
-	Initialized = 'AAD_INITIALIZED',
-	LoginSuccess = 'AAD_LOGIN_SUCCESS',
-	LoginError = 'AAD_LOGIN_ERROR',
-	LogoutSuccess = 'AAD_LOGOUT_SUCCESS',
-	RefreshedTokenSuccess = 'AAD_REFRESHED_TOKEN_SUCCESS',
-	RefreshedTokenError = 'AAD_REFRESHED_TOKEN_ERROR',
-	AuthenticatedStateChanged = 'AAD_AUTHENTICATED_STATE_CHANGED'
+  Initializing = 'AAD_INITIALIZING',
+  Initialized = 'AAD_INITIALIZED',
+  LoginSuccess = 'AAD_LOGIN_SUCCESS',
+  LoginError = 'AAD_LOGIN_ERROR',
+  LogoutSuccess = 'AAD_LOGOUT_SUCCESS',
+  RefreshedTokenSuccess = 'AAD_REFRESHED_TOKEN_SUCCESS',
+  RefreshedTokenError = 'AAD_REFRESHED_TOKEN_ERROR',
+  AuthenticatedStateChanged = 'AAD_AUTHENTICATED_STATE_CHANGED',
 }
 
 export abstract class AuthenticationActionCreators {
-	public static initializing = (): AnyAction => ({
-		type: AuthenticationActions.Initializing
-	});
+  public static initializing = (): AnyAction => ({
+    type: AuthenticationActions.Initializing,
+  });
 
-	public static initialized = (): AnyAction => ({
-		type: AuthenticationActions.Initialized
-	});
+  public static initialized = (): AnyAction => ({
+    type: AuthenticationActions.Initialized,
+  });
 
-	public static loginSuccessful = (data: IAccountInfo): AnyAction => ({
-		payload: data,
-		type: AuthenticationActions.LoginSuccess
-	});
+  public static loginSuccessful = (data: IAccountInfo): AnyAction => ({
+    payload: data,
+    type: AuthenticationActions.LoginSuccess,
+  });
 
-	public static loginError = (error: AuthError): AnyAction => ({
-		payload: error,
-		type: AuthenticationActions.LoginError
-	});
-	
-	public static logoutSuccessful = (): AnyAction => ({
-		type: AuthenticationActions.LogoutSuccess
-	});
+  public static loginError = (error: AuthError): AnyAction => ({
+    payload: error,
+    type: AuthenticationActions.LoginError,
+  });
 
-	public static acquireTokenSuccess = (response: IAccountInfo): AnyAction => ({
-		payload: response,
-		type: AuthenticationActions.RefreshedTokenSuccess
-	});
+  public static logoutSuccessful = (): AnyAction => ({
+    type: AuthenticationActions.LogoutSuccess,
+  });
 
-	public static acquireTokenError = (error: AuthError): AnyAction => ({
-		payload: error,
-		type: AuthenticationActions.RefreshedTokenError
-	});
+  public static acquireTokenSuccess = (response: IAccountInfo): AnyAction => ({
+    payload: response,
+    type: AuthenticationActions.RefreshedTokenSuccess,
+  });
 
-	public static authenticatedStateChanged = (state: AuthenticationState): AnyAction => ({
-		payload: state,
-		type: AuthenticationActions.AuthenticatedStateChanged
-	});
+  public static acquireTokenError = (error: AuthError): AnyAction => ({
+    payload: error,
+    type: AuthenticationActions.RefreshedTokenError,
+  });
+
+  public static authenticatedStateChanged = (state: AuthenticationState): AnyAction => ({
+    payload: state,
+    type: AuthenticationActions.AuthenticatedStateChanged,
+  });
 }
-

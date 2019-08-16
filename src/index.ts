@@ -26,13 +26,23 @@
 import { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration } from 'msal';
 
 import { AuthenticationActions } from './actions';
-import { AzureAD } from './AzureAD'
+import { AzureAD } from './AzureAD';
 import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
 import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 import { withAuthentication } from './withAuthentication';
 
 export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration };
-export { AzureAD, AuthenticationActions, AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType, MsalAuthProviderFactory, MsalAuthProvider, withAuthentication };
+export {
+  AzureAD,
+  AuthenticationActions,
+  AuthenticationState,
+  IAccountInfo,
+  IAuthProviderFactory,
+  LoginType,
+  MsalAuthProviderFactory,
+  MsalAuthProvider,
+  withAuthentication,
+};
 
 export default AzureAD;
