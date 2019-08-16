@@ -196,7 +196,7 @@ A common pattern to lock down an entire application with forced authentication i
 
 ### Higher-Order Component
 
-Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down an app with authentiction. This can be accomplished with the `withAuthentication` component.
+Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down an app with authentication. This can be accomplished with the `withAuthentication` component.
 
 ```Typescript
 // ...
@@ -289,7 +289,7 @@ const sampleReducer = (state = initialState, action) => {
 While this wrapper attempts to provide a full-featured means of authenticating with Azure AD using the MSAL library, for advanced cases you may want to accesst the underlying `UserAgentApplication` object which is the entrypoint for all MSAL functionality. As an escape hatch, the auth provider returned with `MsalAuthProviderFactory` exposes the `UserAgentApplication` as a public member.
 
 ```jsx
-const authProviderFactory = new MsalAuthProviderFactory(config, authenticationParameters)
+const authProviderFactory = new MsalAuthProviderFactory(config, authenticationParameters);
 const authProvider = authProviderFactory.getAuthProvider();
 // authProvider.UserAgentApplication provides access to MSAL features
 
@@ -298,7 +298,7 @@ const authProvider = authProviderFactory.getAuthProvider();
   unauthenticatedFunction={this.loginCallback}
   authenticatedFunction={this.logoutCallback}
   accountInfoCallback={this.printAccountInfo}
-/>
+/>;
 ```
 
 It is not recommended to use this method if it can be avoided, since operations executed via MSAL may not reflect in the wrapper.
