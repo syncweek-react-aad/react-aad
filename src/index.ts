@@ -23,7 +23,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication } from 'msal';
+import {
+  Account,
+  AuthenticationParameters,
+  AuthResponse,
+  CacheLocation,
+  Configuration,
+  UserAgentApplication,
+} from 'msal';
 
 import { AuthenticationActions } from './actions';
 import { AzureAD } from './AzureAD';
