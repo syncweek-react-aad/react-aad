@@ -23,27 +23,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
-import { Logger } from './logger';
+import { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration } from 'msal';
+
+import { AuthenticationActions } from './actions';
+import { AzureAD } from './AzureAD'
+import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
+import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
+import { withAuthentication } from './withAuthentication';
 
-export class MsalRedirectAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    super(authProviderConfig, authParameters);
+export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration };
+export { AzureAD, AuthenticationActions, AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType, MsalAuthProviderFactory, MsalAuthProvider, withAuthentication };
 
-    const authRedirectCallback = (error: AuthError, response: AuthResponse) => {
-      if (error) {
-        Logger.error(`Login redirect failed; ${error}`);
-        return;
-      } else {
-        this.acquireTokens();
-      }
-    };
-
-    this.UserAgentApplication.handleRedirectCallback(authRedirectCallback);
-  }
-
-  public login(): void {
-    this.UserAgentApplication.loginRedirect(this.authParameters);
-  }
-}
+export default AzureAD;

@@ -24,11 +24,21 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType, MsalAuthProviderFactory } from 'react-aad-msal';
+import { AzureAD, LoginType } from 'react-aad-msal';
+
+import { basicReduxStore } from './reduxStore';
+import GetTokenButton from './GetTokenButton';
+
+// Import the authentication provider factory which holds the default settings
+import { authProviderFactory } from './authProviderFactory';
 
 class SampleAppRedirectOnLaunch extends React.Component {
   constructor(props) {
     super(props);
+
+    // Change the login type to execute in a Redirect
+    const provider = authProviderFactory.getAuthProvider();
+    provider.setLoginType(LoginType.Redirect);
 
     this.interval = null;
     let redirectEnabled = sessionStorage.getItem('redirectEnabled') || false;
@@ -76,8 +86,8 @@ class SampleAppRedirectOnLaunch extends React.Component {
     this.interval = null;
   }
 
-  userJustLoggedIn = receivedAccountInfo => {
-    console.log('USER JUST LOGGED IN');
+  userInfoReceived = receivedAccountInfo => {
+    console.log('USER INFO RECEIVED');
     console.log(receivedAccountInfo);
     this.props.accountInfoCallback(receivedAccountInfo);
   };
@@ -86,6 +96,9 @@ class SampleAppRedirectOnLaunch extends React.Component {
     console.log('AUTHENTICATED');
     return (
       <div>
+        <GetTokenButton provider={authProviderFactory} />
+        <br />
+        <br />
         <button
           onClick={() => {
             logout();
@@ -109,29 +122,11 @@ class SampleAppRedirectOnLaunch extends React.Component {
           <div />
         )}
         <AzureAD
-          provider={
-            new MsalAuthProviderFactory(
-              {
-                auth: {
-                  authority: process.env.REACT_APP_AUTHORITY,
-                  clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-                  redirectUri: window.location.origin,
-                  postLogoutRedirectUri: window.location.origin,
-                },
-                cache: {
-                  cacheLocation: 'sessionStorage',
-                  storeAuthStateInCookie: true,
-                },
-              },
-              {
-                scopes: ['openid'],
-              },
-              LoginType.Redirect,
-            )
-          }
+          provider={authProviderFactory}
           unauthenticatedFunction={this.unauthenticatedFunction}
-          accountInfoCallback={this.userJustLoggedIn}
+          accountInfoCallback={this.userInfoReceived}
           authenticatedFunction={this.authenticatedFunction}
+          reduxStore={basicReduxStore}
         />
       </div>
     );

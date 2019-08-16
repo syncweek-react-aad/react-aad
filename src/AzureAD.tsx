@@ -26,10 +26,8 @@
 import * as React from 'react';
 import { Store } from 'redux';
 
-import { loginSuccessful, logoutSuccessful } from './actions';
 import { AccountInfoCallback, AuthenticationState, IAccountInfo, IAuthProviderFactory } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
-
 
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
 type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
@@ -45,66 +43,77 @@ export interface IAzureADProps {
   forceLogin?: boolean
 }
 
-interface IState {
-  authenticationState: AuthenticationState,
+interface IAzureADState {
+  authenticationState: AuthenticationState
 }
 
-class AzureAD extends React.Component<IAzureADProps, IState> {
-  private authProvider: MsalAuthProvider;
+class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
+  private authProvider: MsalAuthProvider = this.props.provider.getAuthProvider();
+
+  // tslint:disable-next-line: member-ordering
+  public state: Readonly<IAzureADState> = {
+    authenticationState: this.authProvider.authenticationState
+  };
 
   constructor(props: IAzureADProps) {
     super(props);
 
-    this.authProvider = this.props.provider.getAuthProvider();
-    this.authProvider.onAuthenticationStateChanged = this.updateAuthenticationState;
+    this.authProvider.onAuthenticationStateChanged = this.setAuthenticationState;
+    this.authProvider.onAccountInfoChanged = this.onAccountInfoChanged;
 
-    const authState = this.authProvider.authenticationState;
-    this.state = { authenticationState: authState };
+    if (props.reduxStore) {
+      this.authProvider.registerReduxStore(props.reduxStore);
+    }
 
-    if (authState === AuthenticationState.Authenticated) {
-      const account = this.authProvider.getAccountInfo();
-      this.updateAuthenticationState(authState, account);
-    } else if (this.state.authenticationState === AuthenticationState.Unauthenticated && this.props.forceLogin) {
-      this.login();
+    const { authenticationState } = this.state;
+    if (authenticationState === AuthenticationState.Authenticated) {
+      const accountInfo = this.authProvider.getAccountInfo();
+      if (accountInfo && props.accountInfoCallback) {
+        this.onAccountInfoChanged(accountInfo);
+      }
+    } else if (authenticationState === AuthenticationState.Unauthenticated) {
+      if (props.forceLogin) {
+        this.login();
+      }
     }
   }
 
   public render() {
+    const { authenticatedFunction, unauthenticatedFunction, children } = this.props;
     switch (this.state.authenticationState) {
       case AuthenticationState.Authenticated:
-        if (this.props.authenticatedFunction) {
-          return this.props.authenticatedFunction(this.logout) || null;
+        if (authenticatedFunction) {
+          return authenticatedFunction(this.logout) || children;
         }
         else {
-          return this.props.children || null;
+          return children || null;
         }
       case AuthenticationState.Unauthenticated:
-        if (this.props.unauthenticatedFunction) {
-          return this.props.unauthenticatedFunction(this.login) || null;
+        if (unauthenticatedFunction) {
+          return unauthenticatedFunction(this.login) || null;
         } else {
           return null;
         }
-      case AuthenticationState.Authenticating:
-        // TODO: Add loading callback, componentDidMount will acquire tokens and then re-render
       default:
         return null;
     }
   }
 
-  public updateAuthenticationState = (newState: AuthenticationState, account?: IAccountInfo) => {
-    if (account) {
-      this.dispatchAccountInfo(account);
-    }
-    
+  public setAuthenticationState = (newState: AuthenticationState) => {
     if (newState !== this.state.authenticationState) {
-      this.setState({
-        authenticationState: newState
-      },
-      ()=> {
-        this.handleAccountInfoCallback(account);
+      this.setState({ authenticationState: newState }, () => {
+        if (newState === AuthenticationState.Unauthenticated && this.props.forceLogin) {
+          this.login();
+        }
       });
-    } else {
-      this.handleAccountInfoCallback(account);
+    }
+  }
+
+  public onAccountInfoChanged = (newAccountInfo: IAccountInfo) => {
+    const { accountInfoCallback } = this.props;
+
+    if (accountInfoCallback) {
+      accountInfoCallback(newAccountInfo);
     }
   }
 
@@ -117,27 +126,8 @@ class AzureAD extends React.Component<IAzureADProps, IState> {
       return;
     }
 
-    this.dispatchLogout();
     this.authProvider.logout();
   };
-
-  private dispatchLogout = () => {
-    if (this.props.reduxStore) {
-      this.props.reduxStore.dispatch(logoutSuccessful());
-    }
-  }
-
-  private dispatchAccountInfo = (data: IAccountInfo) => {
-    if (this.props.reduxStore) {
-      this.props.reduxStore.dispatch(loginSuccessful(data))
-    }
-  }
-
-  private handleAccountInfoCallback = (account?: IAccountInfo)  => {
-    if (account && this.props.accountInfoCallback) {
-      this.props.accountInfoCallback(account);
-    }
-  }
 }
 
 export { AzureAD }

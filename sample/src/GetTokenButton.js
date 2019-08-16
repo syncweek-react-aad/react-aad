@@ -23,23 +23,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
-import { Logger } from './logger';
-import { MsalAuthProvider } from './MsalAuthProvider';
+import * as React from 'react';
 
-export class MsalPopupAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    super(authProviderConfig, authParameters);
-  }
+export default function GetTokenButton({ provider }) {
+  const authProvider = provider.getAuthProvider();
 
-  public login(authParameters: AuthenticationParameters = {}): void {
-    this.UserAgentApplication.loginPopup(authParameters).then(
-      (response: AuthResponse) => {
-        this.acquireTokens();
-      },
-      (error: AuthError) => {
-        Logger.error(`Login popup failed; ${error}`);
-      },
-    );
-  }
+  const getAuthToken = () => {
+    // You should should use getToken() to fetch a fresh token before making API calls
+    authProvider.getToken().then(response => {
+      alert(response.accessToken);
+    });
+  };
+
+  return (
+    <React.Fragment>
+      <p>
+        You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
+        a fresh token will be requested. If the request fails, the user will be forced to login again.
+      </p>
+      <button onClick={getAuthToken} className="Button">
+        Get Token
+      </button>
+    </React.Fragment>
+  );
 }

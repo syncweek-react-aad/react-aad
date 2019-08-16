@@ -33,9 +33,8 @@ export enum LoginType {
 }
 
 export enum AuthenticationState {
-  Unauthenticated,
-  Authenticating,
-  Authenticated,
+  Unauthenticated = 'Unauthenticated',
+  Authenticated = 'Authenticated',
 }
 
 export interface IAccountInfo {
@@ -53,7 +52,7 @@ export interface IAuthProvider {
   onAuthenticationStateChanged?: (state: AuthenticationState, account?: IAccountInfo) => void;
   authenticationState: AuthenticationState;
 
-  getAccountInfo(): IAccountInfo;
+  getAccountInfo(): IAccountInfo | null;
   login(): void;
   logout(): void;
 }

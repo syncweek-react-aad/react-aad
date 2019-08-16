@@ -27,140 +27,220 @@ import {
   AuthenticationParameters,
   AuthError,
   AuthResponse,
-  CacheLocation,
+  ClientAuthError,
   Configuration,
+  InteractionRequiredAuthError,
   UserAgentApplication,
 } from 'msal';
-import { AuthenticationState, IAccountInfo, IAuthProvider } from './Interfaces';
+import { AnyAction, Store } from 'redux';
+import { AuthenticationActionCreators } from './actions'
+import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType } from './Interfaces';
 import { Logger } from './logger';
 
-const IDTokenKey = 'msal.idtoken';
-
-const StorageLocations: { localStorage: string; sessionStorage: string } = {
-  localStorage: 'localStorage',
-  sessionStorage: 'sessionStorage',
-};
-
-export abstract class MsalAuthProvider implements IAuthProvider {
-  public onAuthenticationStateChanged: (state: AuthenticationState, user?: IAccountInfo) => void;
+export class MsalAuthProvider extends UserAgentApplication implements IAuthProvider {
+  public onAuthenticationStateChanged: (state: AuthenticationState) => void;
+  public onAccountInfoChanged: (accountInfo: IAccountInfo) => void;
   public authenticationState: AuthenticationState;
+
+  /**
+   * Gives access to the MSAL functionality for advanced usage.
+   * @deprecated The MsalAuthProvider class itself extends from UserAgentApplication and has the same functionality
+   */
   public UserAgentApplication: UserAgentApplication;
 
-  protected config: Configuration;
-  protected authParameters: AuthenticationParameters;
-  protected accountInfo: IAccountInfo;
+  protected _reduxStore: Store;
+  protected _parameters: AuthenticationParameters;
+  protected _loginType: LoginType;
+  protected _accountInfo: IAccountInfo | null;
 
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    this.config = authProviderConfig;
-    this.authParameters = authParameters;
+  private _actionQueue: AnyAction[] = [];
 
-    this.UserAgentApplication = new UserAgentApplication(authProviderConfig);
+  constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType) {
+    super(config);
 
-    this.checkIfUserAuthenticated();
+    // Required only for backward compatibility
+    this.UserAgentApplication = this as UserAgentApplication;
+
+    this.setAuthenticationParameters(parameters);
+    this.setLoginType(loginType);
+
+    this.initializeProvider();
   }
 
-  public abstract login(): void;
+  public login = async (parameters?: AuthenticationParameters) => {
+    const params = parameters ? parameters : this._parameters;
 
-  public logout(): void {
-    this.UserAgentApplication.logout();
-  }
-
-  public getAccountInfo(): IAccountInfo {
-    return this.accountInfo;
-  }
-
-  protected acquireTokens = () => {
-    this.UserAgentApplication.acquireTokenSilent(this.authParameters).then(
-      (response: AuthResponse) => {
-        this.saveAccountInfo(response);
-      },
-      (tokenSilentError: AuthError) => {
+    if (this._loginType === LoginType.Redirect) {
+      this.loginRedirect(this._parameters);
+      // Nothing to do here, user will be redirected to the login page
+    } else if (this._loginType === LoginType.Popup) {
+      try {
+        await this.loginPopup(params);
+        this.initializeProvider(true);
+      } catch (error) {
+        Logger.error(error);
+        this.dispatchAction(AuthenticationActionCreators.loginError(error));
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
-        Logger.error(`token silent error; ${tokenSilentError}`);
-        this.UserAgentApplication.acquireTokenPopup(this.authParameters).then(
-          (response: AuthResponse) => {
-            this.saveAccountInfo(response);
-          },
-          (tokenPopupError: AuthError) => {
-            this.setAuthenticationState(AuthenticationState.Unauthenticated);
-            Logger.error(`token popup error; ${tokenPopupError}`);
-          },
-        );
-      },
-    );
+      }
+    }
   };
 
-  private checkIfUserAuthenticated = () => {
-    if (this.isLoggedIn()) {
-      this.acquireTokens();
-    } else if (this.UserAgentApplication.getLoginInProgress()) {
-      this.setAuthenticationState(AuthenticationState.Authenticating);
+  public logout = (): void => {
+    super.logout();
+
+    this.dispatchAction(AuthenticationActionCreators.logoutSuccessful());
+  }
+
+  public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
+
+  public getToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
+    const params = parameters ? parameters : this._parameters;
+
+    try {
+      const response = await this.acquireTokenSilent(params);
+
+      this.handleTokenRefreshSuccess(response);
+      this.setAuthenticationState(AuthenticationState.Authenticated);
+
+      return response;
+    } catch (error) {
+      this.dispatchAction(AuthenticationActionCreators.acquireTokenError(error));
+
+      if (error instanceof InteractionRequiredAuthError) {
+        if (this._loginType === LoginType.Redirect) {
+          this.acquireTokenRedirect(params);
+
+          // Nothing to return, the user is redirected to the login page
+          return new Promise<AuthResponse>((resolve) => resolve());
+        }
+
+        try {
+          const response = await this.acquireTokenPopup(params);
+          this.handleTokenRefreshSuccess(response);
+          this.setAuthenticationState(AuthenticationState.Authenticated);
+
+          return response;
+        } catch (error) {
+          Logger.error(error);
+
+          this.dispatchAction(AuthenticationActionCreators.loginError(error));
+          this.setAuthenticationState(AuthenticationState.Unauthenticated);
+          
+          throw error;
+        }
+      } else {
+        Logger.error(error);
+
+        this.dispatchAction(AuthenticationActionCreators.loginError(error));
+        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+        
+        throw error;
+      }
+    }
+  };
+
+  public getAuthenticationParameters = (): AuthenticationParameters => this._parameters;
+
+  public setAuthenticationParameters = (parameters: AuthenticationParameters): void => {
+    this._parameters = parameters;
+  }
+
+  public registerReduxStore = (store: Store): void => {
+    this._reduxStore = store;
+    while (this._actionQueue.length) {
+        const action = this._actionQueue.shift();
+        if (action) {
+          this.dispatchAction(action);
+        }
+    }
+  }
+
+  public setLoginType = (loginType: LoginType) => {
+    if (loginType === LoginType.Redirect) {
+      this.handleRedirectCallback(this.authenticationRedirectCallback);
+    }
+    this._loginType = loginType;
+  }
+
+  private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
+    if (response) {
+      this.initializeProvider(true);
+    }
+  };
+
+  private initializeProvider = async (isLoginFlow: boolean = false) => {
+    if (!isLoginFlow) {
+      this.dispatchAction(AuthenticationActionCreators.initializing());
+    }
+
+    if (this.getAccount()) {
+      try {
+        const response = await this.acquireTokenSilent(this._parameters);
+        this.handleLoginSuccess(response);
+        this.setAuthenticationState(AuthenticationState.Authenticated);
+      } catch (error) {
+        // Swallow the error if the user isn't authenticated, just set to Unauthenticated
+        if (!(error instanceof ClientAuthError && error.errorCode === 'user_login_error')) {
+          Logger.error(error);
+        } 
+        
+        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+      }
     } else {
       this.setAuthenticationState(AuthenticationState.Unauthenticated);
     }
-  };
 
-  // a person is logged in if UserAgentApplication has a current user, if there is an idtoken in the cache, and if the token in the cache is not expired
-  private isLoggedIn = () => {
-    const cacheOptions = this.UserAgentApplication.getCurrentConfiguration().cache;
-    const cacheLocation: CacheLocation =
-      cacheOptions && cacheOptions.cacheLocation ? cacheOptions.cacheLocation : 'sessionStorage';
-    const potentialLoggedInUser = this.UserAgentApplication.getAccount();
-
-    if (potentialLoggedInUser) {
-      const idToken = this.getCacheItem(cacheLocation, IDTokenKey);
-      const oldIDToken = potentialLoggedInUser.idToken as any;
-      return idToken && !this.isTokenExpired(oldIDToken);
-    }
-
-    return false;
-  };
-
-  private isTokenExpired = (token: any) => {
-    if (token.exp) {
-      const expirationInMs = token.exp * 1000; // AD returns in seconds
-      if (Date.now() < expirationInMs) {
-        // id token isn't expired
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  private saveAccountInfo = (authResponse: AuthResponse): void => {
-    const user: IAccountInfo = {
-      account: authResponse.account,
-      authenticationResponse: authResponse,
-      jwtAccessToken: authResponse.accessToken,
-      jwtIdToken: authResponse.idToken.rawIdToken,
-    };
-    this.accountInfo = user;
-
-    this.setAuthenticationState(AuthenticationState.Authenticated);
-  };
-
-  private getCacheItem = (storageLocation: string, itemKey: string): string | null => {
-    if (storageLocation === StorageLocations.localStorage) {
-      return localStorage.getItem(itemKey);
-    } else if (storageLocation === StorageLocations.sessionStorage) {
-      return sessionStorage.getItem(itemKey);
-    } else {
-      throw new Error('unrecognized storage location');
+    if (!isLoginFlow) {
+      this.dispatchAction(AuthenticationActionCreators.initialized());
     }
   };
 
-  private setAuthenticationState(state: AuthenticationState) {
+  private setAuthenticationState = (state: AuthenticationState): AuthenticationState => {
     if (this.authenticationState !== state) {
       this.authenticationState = state;
 
+      this.dispatchAction(AuthenticationActionCreators.authenticatedStateChanged(state))
+
       if (this.onAuthenticationStateChanged) {
-        if (this.authenticationState === AuthenticationState.Authenticated) {
-          this.onAuthenticationStateChanged(this.authenticationState, this.accountInfo);
-        } else {
-          this.onAuthenticationStateChanged(this.authenticationState);
-        }
+        this.onAuthenticationStateChanged(state);
       }
     }
+
+    return this.authenticationState;
+  };
+
+  private setAccountInfo = (response: AuthResponse): IAccountInfo => {
+    this._accountInfo = this.mapAuthResponseToAccountInfo(response);
+
+    if (this.onAccountInfoChanged) {
+      this.onAccountInfoChanged(this._accountInfo);
+    }
+
+    return this._accountInfo;
   }
+
+  private dispatchAction = (action: AnyAction): void => {
+    if (this._reduxStore) {
+      this._reduxStore.dispatch(action);
+    } else {
+      this._actionQueue.push(action);
+    }
+  }
+
+  private mapAuthResponseToAccountInfo = (response: AuthResponse): IAccountInfo => ({
+    account: response.account,
+    authenticationResponse: response,
+    jwtAccessToken: response.accessToken,
+    jwtIdToken: response.idToken.rawIdToken
+  })
+
+  private handleTokenRefreshSuccess = (response: AuthResponse): void => {
+    const account = this.setAccountInfo(response);
+    this.dispatchAction(AuthenticationActionCreators.acquireTokenSuccess(account));
+  }
+
+  private handleLoginSuccess = (response: AuthResponse): void => {
+    const account = this.setAccountInfo(response);
+    this.dispatchAction(AuthenticationActionCreators.loginSuccessful(account));
+  } 
 }
