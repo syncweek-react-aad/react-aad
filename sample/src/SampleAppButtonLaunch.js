@@ -24,11 +24,24 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType, MsalAuthProviderFactory } from 'react-aad-msal';
+import { AzureAD, LoginType } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
+import GetTokenButton from './GetTokenButton';
+
+// Import the authentication provider factory which holds the default settings
+import { authProviderFactory } from './authProviderFactory';
 
 class SampleAppButtonLaunch extends React.Component {
+  constructor(props) {
+    super(props);
+
+    // Change the login type to execute in a Popup
+    const provider = authProviderFactory.getAuthProvider();
+    provider.setLoginType(LoginType.Popup);
+  }
+
   unauthenticatedFunction = loginFunction => {
+    console.log('UNAUTHENTICATED');
     return (
       <button className="Button" onClick={loginFunction}>
         Login
@@ -36,11 +49,14 @@ class SampleAppButtonLaunch extends React.Component {
     );
   };
 
-  userJustLoggedIn = receivedAccountInfo => {
+  userInfoReceived = receivedAccountInfo => {
+    console.log('USER INFO RECEIVED');
+    console.log(receivedAccountInfo);
     this.props.accountInfoCallback(receivedAccountInfo);
   };
 
   authenticatedFunction = logout => {
+    console.log('AUTHENTICATED');
     return (
       <div>
         You're logged in!
@@ -50,33 +66,19 @@ class SampleAppButtonLaunch extends React.Component {
           Logout
         </button>
         <br />
+        <br />
+        <GetTokenButton provider={authProviderFactory} />
       </div>
     );
   };
   render() {
     return (
       <AzureAD
-        provider={
-          new MsalAuthProviderFactory(
-            {
-              auth: {
-                authority: process.env.REACT_APP_AUTHORITY,
-                clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-              },
-              cache: {
-                storeAuthStateInCookie: true,
-              },
-            },
-            {
-              scopes: ['openid'],
-            },
-            LoginType.Popup,
-          )
-        }
+        provider={authProviderFactory}
         unauthenticatedFunction={this.unauthenticatedFunction}
         reduxStore={basicReduxStore}
         authenticatedFunction={this.authenticatedFunction}
-        accountInfoCallback={this.userJustLoggedIn}
+        accountInfoCallback={this.userInfoReceived}
       />
     );
   }

@@ -37,6 +37,8 @@ import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 let Enzyme;
 let Adapter;
 let authProvider: MsalAuthProviderFactory;
+let loggedInUser: IAccountInfo;
+let testAccount: Msal.Account;
 
 beforeAll(() => {
   Enzyme = require('enzyme');
@@ -55,19 +57,51 @@ beforeEach(() => {
         authority: null,
         clientId: '<guid>',
       },
+      cache: {
+        cacheLocation: ('sessionStorage' as Msal.CacheLocation)
+      }
     },
     {
-      scopes: ['openid'],
+      scopes: ['openid']
     },
     LoginType.Popup,
   );
+
+  testAccount = {
+    accountIdentifier: 'Something',
+    environment: 'testEnv',
+    homeAccountIdentifier: 'testIdentifier',
+    idToken: {},
+    idTokenClaims: {},
+    name: 'Lilian',
+    sid: 'sid',
+    userName: 'LilUsername',
+  };
+
+  loggedInUser = {
+    account: testAccount,
+    authenticationResponse: {
+      accessToken: 'test',
+      account: testAccount,
+      accountState: 'testState',
+      expiresOn: new Date(),
+      idToken: {} as IdToken,
+      idTokenClaims: {},
+      scopes: [],
+      tenantId: 'testTenant',
+      tokenType: 'testTokenType',
+      uniqueId: 'testId'
+    },
+    jwtAccessToken: 'accesstoken',
+    jwtIdToken: 'idtoken',
+  };
 });
 
 it('renders without crashing', () => {
   const unauthenticatedFunction = (login: any) => {
     return (
       <div>
-        <h1> unauthenticatedFunction </h1>{' '}
+        <h1> unauthenticatedFunction </h1>
       </div>
     );
   };
@@ -75,7 +109,7 @@ it('renders without crashing', () => {
   const authenticatedFunction = (logout: any) => {
     return (
       <div>
-        <h1> authenticatedFunction </h1>{' '}
+        <h1> authenticatedFunction </h1>
       </div>
     );
   };
@@ -97,14 +131,14 @@ it('renders without crashing', () => {
   ReactDOM.unmountComponentAtNode(div);
 });
 
-it('updates the accountInfo state', () => {
+it('updates the component state', () => {
   let accountInfo: IAccountInfo = null;
 
   const unauthenticatedFunction = jest.fn();
   const authenticatedFunction = jest.fn();
   const accountInfoCallback = jest.fn((token: any) => {
     accountInfo = token;
-  }); // tslint:disable-line: no-empty
+  });
 
   const wrapper = Enzyme.shallow(
     <AzureAD
@@ -115,41 +149,10 @@ it('updates the accountInfo state', () => {
     />,
   ).instance() as AzureAD;
 
-  const testAccount: Msal.Account = {
-    accountIdentifier: 'Something',
-    environment: 'testEnv',
-    homeAccountIdentifier: 'testIdentifier',
-    idToken: {},
-    idTokenClaims: {},
-    name: 'Lilian',
-    sid: 'sid',
-    userName: 'LilUsername',
-  };
+  wrapper.onAccountInfoChanged(loggedInUser);
+  wrapper.setAuthenticationState(AuthenticationState.Authenticated);
 
-  const loggedInUser: IAccountInfo = {
-    account: testAccount,
-    authenticationResponse: {
-      accessToken: 'test',
-      account: testAccount,
-      accountState: 'testState',
-      expiresOn: new Date(),
-      idToken: {} as IdToken,
-      idTokenClaims: {},
-      scopes: [],
-      tenantId: 'testTenant',
-      tokenType: 'testTokenType',
-      uniqueId: 'testId'
-    },
-    jwtAccessToken: 'accesstoken',
-    jwtIdToken: 'idtoken',
-  };
-
-  wrapper.updateAuthenticationState(AuthenticationState.Authenticated, loggedInUser);
-
-  expect(accountInfo).not.toBeNull();
-  expect(accountInfo.jwtAccessToken).toEqual('accesstoken');
-  expect(accountInfo.jwtIdToken).toEqual('idtoken');
-  expect(accountInfo.account).toEqual(testAccount);
+  expect(accountInfo).toEqual(loggedInUser);
   expect(wrapper.state.authenticationState).toBe(AuthenticationState.Authenticated);
   expect(accountInfoCallback).toHaveBeenCalledWith(loggedInUser);
 });
@@ -168,7 +171,7 @@ it('logs out the user', () => {
     />,
   ).instance() as AzureAD;
 
-  wrapper.updateAuthenticationState(AuthenticationState.Unauthenticated);
+  wrapper.setAuthenticationState(AuthenticationState.Unauthenticated);
 
   expect(wrapper.state.authenticationState).toBe(AuthenticationState.Unauthenticated);
   expect(accountInfoCallback).not.toHaveBeenCalled();

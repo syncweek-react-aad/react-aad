@@ -23,21 +23,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AnyAction } from 'redux';
-import { IAccountInfo } from './Interfaces';
+import { MsalAuthProviderFactory, LoginType } from 'react-aad-msal';
 
-export const AAD_LOGIN_SUCCESS: string = 'AAD_LOGIN_SUCCESS';
-export const AAD_LOGOUT_SUCCESS: string = 'AAD_LOGOUT_SUCCESS';
+// The auth provider should be a singleton. Best practice is to only have it ever instantiated once.
+// Avoid creating an instance inside the component it will be recreated on each render.
+// If two providers are created on the same page it will cause authentication errors.
+export const authProviderFactory = new MsalAuthProviderFactory(
+  {
+    auth: {
+      authority: process.env.REACT_APP_AUTHORITY,
+      clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+      postLogoutRedirectUri: window.location.origin,
+      redirectUri: window.location.origin,
+      validateAuthority: true,
 
-export const loginSuccessful = (data: IAccountInfo): AnyAction => {
-	return {
-		payload: data,
-		type: AAD_LOGIN_SUCCESS
-	}
-}
-
-export const logoutSuccessful = (): AnyAction => {
-	return {
-		type: AAD_LOGOUT_SUCCESS
-	}
-}
+      // After being redirected to the "redirectUri" page, should user
+      // be redirected back to the Url where their login originated from?
+      navigateToLoginRequestUrl: false,
+    },
+    cache: {
+      cacheLocation: 'sessionStorage',
+      storeAuthStateInCookie: true,
+    },
+  },
+  {
+    scopes: ['openid'],
+  },
+  LoginType.Popup,
+);

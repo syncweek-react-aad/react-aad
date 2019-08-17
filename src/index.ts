@@ -23,23 +23,33 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
-import { Logger } from './logger';
+import {
+  Account,
+  AuthenticationParameters,
+  AuthResponse,
+  CacheLocation,
+  Configuration,
+  UserAgentApplication,
+} from 'msal';
+
+import { AuthenticationActions } from './actions';
+import { AzureAD } from './AzureAD';
+import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
+import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
+import { withAuthentication } from './withAuthentication';
 
-export class MsalPopupAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    super(authProviderConfig, authParameters);
-  }
+export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
+export {
+  AzureAD,
+  AuthenticationActions,
+  AuthenticationState,
+  IAccountInfo,
+  IAuthProviderFactory,
+  LoginType,
+  MsalAuthProviderFactory,
+  MsalAuthProvider,
+  withAuthentication,
+};
 
-  public login(authParameters: AuthenticationParameters = {}): void {
-    this.UserAgentApplication.loginPopup(authParameters).then(
-      (response: AuthResponse) => {
-        this.acquireTokens();
-      },
-      (error: AuthError) => {
-        Logger.error(`Login popup failed; ${error}`);
-      },
-    );
-  }
-}
+export default AzureAD;
