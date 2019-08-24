@@ -23,27 +23,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { AuthenticationParameters, AuthError, AuthResponse, Configuration } from 'msal';
-import { Logger } from './logger';
-import { MsalAuthProvider } from './MsalAuthProvider';
+import * as React from 'react';
 
-export class MsalRedirectAuthProvider extends MsalAuthProvider {
-  constructor(authProviderConfig: Configuration, authParameters: AuthenticationParameters) {
-    super(authProviderConfig, authParameters);
+export default function GetTokenButton({ provider }) {
+  const authProvider = provider.getAuthProvider();
 
-    const authRedirectCallback = (error: AuthError, response: AuthResponse) => {
-      if (error) {
-        Logger.error(`Login redirect failed; ${error}`);
-        return;
-      } else {
-        this.acquireTokens();
-      }
-    };
+  const getAuthToken = () => {
+    // You should should use getToken() to fetch a fresh token before making API calls
+    authProvider.getToken().then(response => {
+      alert(response.accessToken);
+    });
+  };
 
-    this.UserAgentApplication.handleRedirectCallback(authRedirectCallback);
-  }
-
-  public login(): void {
-    this.UserAgentApplication.loginRedirect(this.authParameters);
-  }
+  return (
+    <React.Fragment>
+      <p>
+        You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
+        a fresh token will be requested. If the request fails, the user will be forced to login again.
+      </p>
+      <button onClick={getAuthToken} className="Button">
+        Get Token
+      </button>
+    </React.Fragment>
+  );
 }

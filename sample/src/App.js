@@ -24,7 +24,9 @@
 //
 
 import React, { Component } from 'react';
+
 import './App.css';
+
 import SampleAppButtonLaunch from './SampleAppButtonLaunch';
 import SampleAppRedirectOnLaunch from './SampleAppRedirectOnLaunch';
 
@@ -57,28 +59,33 @@ class App extends Component {
     let sampleBox;
     let sampleButtons;
 
-    if (this.state.sampleType === 'popup') {
-      sampleBox = (
-        <div className="SampleBox">
-          <h2 className="SampleHeader">Button Login</h2>
-          <p>This example will launch a popup dialog to allow for authentication with Azure Active Directory</p>
-          <SampleAppButtonLaunch accountInfoCallback={this.accountInfoCallback} />
-        </div>
-      );
-    } else if (this.state.sampleType === 'redirect') {
-      sampleBox = (
-        <div className="SampleBox">
-          <h2 className="SampleHeader">Automatic Redirect</h2>
-          <p>
-            This example shows how you can use the AzureAD component to redirect the login screen automatically on page
-            load. Click the checkbox below to enable the redirect and refresh your browser window.
-          </p>
-          <SampleAppRedirectOnLaunch
-            accountInfoCallback={this.accountInfoCallback}
-            accountInfo={this.state.accountInfo}
-          />
-        </div>
-      );
+    switch (this.state.sampleType) {
+      case 'popup':
+        sampleBox = (
+          <div className="SampleBox">
+            <h2 className="SampleHeader">Button Login</h2>
+            <p>This example will launch a popup dialog to allow for authentication with Azure Active Directory</p>
+            <SampleAppButtonLaunch accountInfoCallback={this.accountInfoCallback} />
+          </div>
+        );
+        break;
+      case 'redirect':
+        sampleBox = (
+          <div className="SampleBox">
+            <h2 className="SampleHeader">Automatic Redirect</h2>
+            <p>
+              This example shows how you can use the AzureAD component to redirect the login screen automatically on
+              page load. Click the checkbox below to enable the redirect and refresh your browser window.
+            </p>
+            <SampleAppRedirectOnLaunch
+              accountInfoCallback={this.accountInfoCallback}
+              accountInfo={this.state.accountInfo}
+            />
+          </div>
+        );
+        break;
+      default:
+        break;
     }
 
     if (!this.state.accountInfo) {
