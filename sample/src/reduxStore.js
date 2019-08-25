@@ -48,13 +48,13 @@ const rootReducer = (state = initialState, action) => {
         initialized: true,
       };
     case AuthenticationActions.LoginSuccess:
-    case AuthenticationActions.AcquireTokenSuccess:
+    case AuthenticationActions.RefreshedTokenSuccess:
       return {
         ...state,
         accountInfo: action.payload,
       };
     case AuthenticationActions.LoginError:
-    case AuthenticationActions.AcquireTokenError:
+    case AuthenticationActions.RefreshedTokenError:
     case AuthenticationActions.LogoutSuccess:
       return { ...state, accountInfo: null };
     case AuthenticationActions.AuthenticatedStateChanged:
@@ -70,6 +70,6 @@ const rootReducer = (state = initialState, action) => {
 export const basicReduxStore = createStore(
   rootReducer,
   // Enable the Redux DevTools extension if available
-  /// See more: https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfiblj
+  // See more: https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfiblj
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
