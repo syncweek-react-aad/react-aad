@@ -1,9 +1,17 @@
 {
-  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "extends": [
+    "tslint:recommended",
+    "tslint-react",
+    "tslint-microsoft-contrib/recommended.json",
+    "tslint-config-prettier"
+  ],
   "linterOptions": {
-    "exclude": ["config/**/*.js", "node_modules/**/*.ts"]
+    "exclude": ["node_modules/**/*.ts", "sample/**/*.js"]
   },
+  "rulesDirectory": ["node_modules/tslint-microsoft-contrib"],
   "rules": {
-    "variable-name": false
+    "variable-name": false,
+    "no-relative-imports": false,
+    "prefer-type-cast": false
   }
 }

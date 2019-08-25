@@ -78,7 +78,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
         await this.loginPopup(params);
         this.initializeProvider(true);
       } catch (error) {
-        Logger.error(error);
+        Logger.ERROR(error);
         this.dispatchAction(AuthenticationActionCreators.loginError(error));
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
       }
@@ -121,7 +121,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
           return response;
         } catch (error) {
-          Logger.error(error);
+          Logger.ERROR(error);
 
           this.dispatchAction(AuthenticationActionCreators.loginError(error));
           this.setAuthenticationState(AuthenticationState.Unauthenticated);
@@ -129,7 +129,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
           throw error;
         }
       } else {
-        Logger.error(error);
+        Logger.ERROR(error);
 
         this.dispatchAction(AuthenticationActionCreators.loginError(error));
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
@@ -181,7 +181,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       } catch (error) {
         // Swallow the error if the user isn't authenticated, just set to Unauthenticated
         if (!(error instanceof ClientAuthError && error.errorCode === 'user_login_error')) {
-          Logger.error(error);
+          Logger.ERROR(error);
         }
 
         this.setAuthenticationState(AuthenticationState.Unauthenticated);

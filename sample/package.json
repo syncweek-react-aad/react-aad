@@ -1,7 +1,7 @@
 {
   "name": "react-aad-msal-samples",
-  "version": "0.1.0",
-  "description": "A `create-react-app` sample React applicate that demonstrates the Azure AD react component.",
+  "version": "1.0.0",
+  "description": "A `create-react-app` sample React application that demonstrates the Azure AD react component.",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -17,24 +17,23 @@
     "Lucas Huet-Hudson <lucashh@microsoft.com>",
     "Zach Miller <zamiller@microsoft.com>",
     "P.J. Little <pj.little@microsoft.com>",
-    "Shawn Cicoria <shawn.cicoria@microsoft.com>"
+    "Shawn Cicoria <shawn.cicoria@microsoft.com>",
+    "Andrew Craswell <andcra@microsoft.com>"
   ],
   "dependencies": {
-    "react": "16.3.2",
+    "react": "16.9.0",
     "react-aad-msal": "file:../",
-    "react-dom": "16.3.3",
-    "react-redux": "5.0.7",
-    "react-scripts": "3.0.1",
-    "redux": "4.0.0"
+    "react-dom": "16.9.0",
+    "react-redux": "7.1.0",
+    "react-scripts": "3.1.1",
+    "redux": "4.0.4"
   },
   "devDependencies": {
-    "rimraf": "2.6.2"
+    "rimraf": "3.0.0"
   },
   "scripts": {
-    "rimraf": "./node_modules/.bin/rimraf",
-    "clean": "npm cache clean --force && npm run rimraf -- node_modules build dist",
-    "start": "npm install && react-scripts start",
-    "start-dev": "react-scripts start",
+    "clean": "rimraf build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
@@ -43,11 +42,6 @@
     "node": ">= 8.10.0",
     "npm": ">= 5.6.0"
   },
-  "keywords": [
-    "Azure AD",
-    "MSAL",
-    "React"
-  ],
   "browserslist": [
     ">0.2%",
     "not dead",
