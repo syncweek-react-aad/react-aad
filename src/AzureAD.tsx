@@ -35,16 +35,16 @@ type LoginFunction = () => void;
 type LogoutFunction = () => void;
 
 export interface IAzureADProps {
-  provider: IAuthProviderFactory,
-  unauthenticatedFunction?: UnauthenticatedFunction,
-  authenticatedFunction?: AuthenticatedFunction,
-  accountInfoCallback?: AccountInfoCallback,
-  reduxStore?: Store,
-  forceLogin?: boolean
+  provider: IAuthProviderFactory;
+  unauthenticatedFunction?: UnauthenticatedFunction;
+  authenticatedFunction?: AuthenticatedFunction;
+  accountInfoCallback?: AccountInfoCallback;
+  reduxStore?: Store;
+  forceLogin?: boolean;
 }
 
 interface IAzureADState {
-  authenticationState: AuthenticationState
+  authenticationState: AuthenticationState;
 }
 
 class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
@@ -52,7 +52,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
 
   // tslint:disable-next-line: member-ordering
   public state: Readonly<IAzureADState> = {
-    authenticationState: this.authProvider.authenticationState
+    authenticationState: this.authProvider.authenticationState,
   };
 
   constructor(props: IAzureADProps) {
@@ -84,8 +84,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
       case AuthenticationState.Authenticated:
         if (authenticatedFunction) {
           return authenticatedFunction(this.logout) || children;
-        }
-        else {
+        } else {
           return children || null;
         }
       case AuthenticationState.Unauthenticated:
@@ -107,7 +106,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
         }
       });
     }
-  }
+  };
 
   public onAccountInfoChanged = (newAccountInfo: IAccountInfo) => {
     const { accountInfoCallback } = this.props;
@@ -115,7 +114,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
     if (accountInfoCallback) {
       accountInfoCallback(newAccountInfo);
     }
-  }
+  };
 
   private login = () => {
     this.authProvider.login();
@@ -130,4 +129,4 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
   };
 }
 
-export { AzureAD }
+export { AzureAD };
