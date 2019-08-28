@@ -30,19 +30,19 @@ export default function GetTokenButton({ provider }) {
 
   const getAuthToken = () => {
     // You should should use getToken() to fetch a fresh token before making API calls
-    authProvider.getToken().then(response => {
-      alert(response.accessToken);
+    authProvider.getIdToken().then(response => {
+      alert(response.idToken.rawIdToken);
     });
   };
 
   return (
     <React.Fragment>
       <p>
-        You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
-        a fresh token will be requested. If the request fails, the user will be forced to login again.
+        It's also possible to renew the IdToken. If a valid token is in the cache, it will be returned. Otherwise a
+        renewed token will be requested. If the request fails, the user will be forced to login again.
       </p>
       <button onClick={getAuthToken} className="Button">
-        Get Token
+        Get IdToken
       </button>
     </React.Fragment>
   );

@@ -22,7 +22,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 import {
   AuthenticationParameters,
   AuthError,
@@ -33,8 +32,10 @@ import {
   UserAgentApplication,
 } from 'msal';
 import { AnyAction, Store } from 'redux';
+import { AccessTokenResponse } from './AccessTokenResponse';
 import { AuthenticationActionCreators } from './actions';
-import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType } from './Interfaces';
+import { IdTokenResponse } from './IdTokenResponse';
+import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType, TokenType } from './Interfaces';
 import { Logger } from './logger';
 
 export class MsalAuthProvider extends UserAgentApplication implements IAuthProvider {
@@ -76,7 +77,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     } else if (this._loginType === LoginType.Popup) {
       try {
         await this.loginPopup(params);
-        this.initializeProvider(true);
+        this.processLogin();
       } catch (error) {
         Logger.ERROR(error);
         this.dispatchAction(AuthenticationActionCreators.loginError(error));
@@ -93,49 +94,43 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
 
-  public getToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
+  public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
     const params = parameters ? parameters : this._parameters;
 
     try {
       const response = await this.acquireTokenSilent(params);
 
-      this.handleTokenRefreshSuccess(response);
+      this.handleAcquireTokenSuccess(response);
       this.setAuthenticationState(AuthenticationState.Authenticated);
 
       return response;
     } catch (error) {
-      this.dispatchAction(AuthenticationActionCreators.acquireTokenError(error));
+      this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
+      return this.loginToRefreshToken(error, params);
+    }
+  };
 
-      if (error instanceof InteractionRequiredAuthError) {
-        if (this._loginType === LoginType.Redirect) {
-          this.acquireTokenRedirect(params);
+  public getIdToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
+    const config = this.getCurrentConfiguration();
+    const clientId = config.auth.clientId;
+    let params = parameters ? parameters : this._parameters;
 
-          // Nothing to return, the user is redirected to the login page
-          return new Promise<AuthResponse>(resolve => resolve());
-        }
+    // Pass the clientId as the only scope to get a renewed IdToken if it has expired
+    params = {
+      ...params,
+      scopes: [clientId],
+    };
 
-        try {
-          const response = await this.acquireTokenPopup(params);
-          this.handleTokenRefreshSuccess(response);
-          this.setAuthenticationState(AuthenticationState.Authenticated);
+    try {
+      const response = await this.acquireTokenSilent(params);
 
-          return response;
-        } catch (error) {
-          Logger.ERROR(error);
+      this.handleAcquireTokenSuccess(response);
+      this.setAuthenticationState(AuthenticationState.Authenticated);
 
-          this.dispatchAction(AuthenticationActionCreators.loginError(error));
-          this.setAuthenticationState(AuthenticationState.Unauthenticated);
-
-          throw error;
-        }
-      } else {
-        Logger.ERROR(error);
-
-        this.dispatchAction(AuthenticationActionCreators.loginError(error));
-        this.setAuthenticationState(AuthenticationState.Unauthenticated);
-
-        throw error;
-      }
+      return response;
+    } catch (error) {
+      this.dispatchAction(AuthenticationActionCreators.acquireIdTokenError(error));
+      return this.loginToRefreshToken(error, params);
     }
   };
 
@@ -162,22 +157,68 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._loginType = loginType;
   };
 
-  private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
-    if (response) {
-      this.initializeProvider(true);
+  private loginToRefreshToken = async (
+    error: AuthError,
+    parameters?: AuthenticationParameters,
+  ): Promise<AuthResponse> => {
+    const params = parameters ? parameters : this._parameters;
+
+    if (error instanceof InteractionRequiredAuthError) {
+      if (this._loginType === LoginType.Redirect) {
+        this.acquireTokenRedirect(params);
+
+        // Nothing to return, the user is redirected to the login page
+        return new Promise<AuthResponse>(resolve => resolve());
+      }
+
+      try {
+        const response = await this.acquireTokenPopup(params);
+        this.handleAcquireTokenSuccess(response);
+        this.setAuthenticationState(AuthenticationState.Authenticated);
+
+        return response;
+      } catch (error) {
+        Logger.ERROR(error);
+
+        this.dispatchAction(AuthenticationActionCreators.loginError(error));
+        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+
+        throw error;
+      }
+    } else {
+      Logger.ERROR(error as any);
+
+      this.dispatchAction(AuthenticationActionCreators.loginError(error));
+      this.setAuthenticationState(AuthenticationState.Unauthenticated);
+
+      throw error;
     }
   };
 
-  private initializeProvider = async (isLoginFlow: boolean = false) => {
-    if (!isLoginFlow) {
-      this.dispatchAction(AuthenticationActionCreators.initializing());
+  private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
+    if (response) {
+      this.processLogin();
     }
+  };
 
+  private initializeProvider = async () => {
+    this.dispatchAction(AuthenticationActionCreators.initializing());
+
+    await this.processLogin();
+
+    this.dispatchAction(AuthenticationActionCreators.initialized());
+  };
+
+  private processLogin = async () => {
     if (this.getAccount()) {
       try {
-        const response = await this.acquireTokenSilent(this._parameters);
-        this.handleLoginSuccess(response);
-        this.setAuthenticationState(AuthenticationState.Authenticated);
+        // If the IdToken has expired, refresh it. Otherwise use the cached token
+        await this.getIdToken();
+
+        // If the access token has expired, refresh it. Otherwise use the cached token
+        await this.getAccessToken(this._parameters);
+
+        this.handleLoginSuccess();
       } catch (error) {
         // Swallow the error if the user isn't authenticated, just set to Unauthenticated
         if (!(error instanceof ClientAuthError && error.errorCode === 'user_login_error')) {
@@ -188,10 +229,6 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       }
     } else {
       this.setAuthenticationState(AuthenticationState.Unauthenticated);
-    }
-
-    if (!isLoginFlow) {
-      this.dispatchAction(AuthenticationActionCreators.initialized());
     }
   };
 
@@ -210,12 +247,20 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   };
 
   private setAccountInfo = (response: AuthResponse): IAccountInfo => {
-    this._accountInfo = this.mapAuthResponseToAccountInfo(response);
+    const accountInfo: IAccountInfo = this.getAccountInfo() || ({ account: response.account } as IAccountInfo);
 
-    if (this.onAccountInfoChanged) {
-      this.onAccountInfoChanged(this._accountInfo);
+    // Depending on the token type of the auth response, update the correct property
+    if (response.tokenType === TokenType.IdToken) {
+      accountInfo.jwtIdToken = response.idToken.rawIdToken;
+    } else if (response.tokenType === TokenType.AccessToken) {
+      accountInfo.jwtAccessToken = response.accessToken;
     }
 
+    if (this.onAccountInfoChanged) {
+      this.onAccountInfoChanged(accountInfo);
+    }
+
+    this._accountInfo = accountInfo;
     return this._accountInfo;
   };
 
@@ -227,20 +272,22 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
   };
 
-  private mapAuthResponseToAccountInfo = (response: AuthResponse): IAccountInfo => ({
-    account: response.account,
-    authenticationResponse: response,
-    jwtAccessToken: response.accessToken,
-    jwtIdToken: response.idToken.rawIdToken,
-  });
+  private handleAcquireTokenSuccess = (response: AuthResponse): void => {
+    this.setAccountInfo(response);
 
-  private handleTokenRefreshSuccess = (response: AuthResponse): void => {
-    const account = this.setAccountInfo(response);
-    this.dispatchAction(AuthenticationActionCreators.acquireTokenSuccess(account));
+    if (response.tokenType === TokenType.IdToken) {
+      const token = new IdTokenResponse(response);
+      this.dispatchAction(AuthenticationActionCreators.acquireIdTokenSuccess(token));
+    } else if (response.tokenType === TokenType.AccessToken) {
+      const token = new AccessTokenResponse(response);
+      this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenSuccess(token));
+    }
   };
 
-  private handleLoginSuccess = (response: AuthResponse): void => {
-    const account = this.setAccountInfo(response);
-    this.dispatchAction(AuthenticationActionCreators.loginSuccessful(account));
+  private handleLoginSuccess = (): void => {
+    const account = this.getAccountInfo();
+    if (account) {
+      this.dispatchAction(AuthenticationActionCreators.loginSuccessful(account));
+    }
   };
 }

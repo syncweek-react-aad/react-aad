@@ -26,7 +26,8 @@
 import * as React from 'react';
 import { AzureAD, LoginType } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
-import GetTokenButton from './GetTokenButton';
+import GetAccessTokenButton from './GetAccessTokenButton';
+import GetIdTokenButton from './GetIdTokenButton';
 
 // Import the authentication provider factory which holds the default settings
 import { authProviderFactory } from './authProviderFactory';
@@ -67,7 +68,10 @@ class SampleAppButtonLaunch extends React.Component {
         </button>
         <br />
         <br />
-        <GetTokenButton provider={authProviderFactory} />
+        <GetAccessTokenButton provider={authProviderFactory} />
+        <br />
+        <br />
+        <GetIdTokenButton provider={authProviderFactory} />
       </div>
     );
   };

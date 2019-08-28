@@ -23,37 +23,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import {
-  Account,
-  AuthenticationParameters,
-  AuthResponse,
-  CacheLocation,
-  Configuration,
-  UserAgentApplication,
-} from 'msal';
+import * as React from 'react';
 
-import { AccessTokenResponse } from './AccessTokenResponse';
-import { AuthenticationActions } from './actions';
-import { AzureAD } from './AzureAD';
-import { IdTokenResponse } from './IdTokenResponse';
-import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
-import { MsalAuthProvider } from './MsalAuthProvider';
-import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
-import { withAuthentication } from './withAuthentication';
+export default function GetTokenButton({ provider }) {
+  const authProvider = provider.getAuthProvider();
 
-export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
-export {
-  AccessTokenResponse,
-  AzureAD,
-  AuthenticationActions,
-  AuthenticationState,
-  IAccountInfo,
-  IAuthProviderFactory,
-  LoginType,
-  MsalAuthProviderFactory,
-  MsalAuthProvider,
-  withAuthentication,
-  IdTokenResponse,
-};
+  const getAuthToken = () => {
+    // You should should use getToken() to fetch a fresh token before making API calls
+    authProvider.getAccessToken().then(response => {
+      alert(response.accessToken);
+    });
+  };
 
-export default AzureAD;
+  return (
+    <React.Fragment>
+      <p>
+        You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
+        a fresh token will be requested. If the request fails, the user will be forced to login again.
+      </p>
+      <button onClick={getAuthToken} className="Button">
+        Get Access Token
+      </button>
+    </React.Fragment>
+  );
+}
