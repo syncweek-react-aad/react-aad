@@ -28,7 +28,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "tslint --config tslint.json --project ./tsconfig.json --fix",
-    "start": "npm run build && cd ./sample && npm run start",
+    "start": "tsc && cd ./sample && npm run start",
     "build": "npm run lint && tsc",
     "test": "jest --env=jsdom",
     "version": "auto-changelog -p && git add CHANGELOG.md"
