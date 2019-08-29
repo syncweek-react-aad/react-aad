@@ -32,11 +32,11 @@ require('jest-localstorage-mock'); // tslint:disable-line
 import { IdToken } from 'msal/lib-commonjs/IdToken';
 import { AuthenticationState, AzureAD, LoginType } from './index';
 import { IAccountInfo } from './Interfaces';
-import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
+import { MsalAuthProvider } from './MsalAuthProvider';
 
 let Enzyme;
 let Adapter;
-let authProvider: MsalAuthProviderFactory;
+let authProvider: MsalAuthProvider;
 let loggedInUser: IAccountInfo;
 let testAccount: Msal.Account;
 
@@ -51,18 +51,18 @@ beforeEach(() => {
   // values stored in tests will also be available in other tests unless you run
   localStorage.clear();
 
-  authProvider = new MsalAuthProviderFactory(
+  authProvider = new MsalAuthProvider(
     {
       auth: {
         authority: null,
         clientId: '<guid>',
       },
       cache: {
-        cacheLocation: ('sessionStorage' as Msal.CacheLocation)
-      }
+        cacheLocation: 'sessionStorage' as Msal.CacheLocation,
+      },
     },
     {
-      scopes: ['openid']
+      scopes: ['openid'],
     },
     LoginType.Popup,
   );
@@ -80,18 +80,6 @@ beforeEach(() => {
 
   loggedInUser = {
     account: testAccount,
-    authenticationResponse: {
-      accessToken: 'test',
-      account: testAccount,
-      accountState: 'testState',
-      expiresOn: new Date(),
-      idToken: {} as IdToken,
-      idTokenClaims: {},
-      scopes: [],
-      tenantId: 'testTenant',
-      tokenType: 'testTokenType',
-      uniqueId: 'testId'
-    },
     jwtAccessToken: 'accesstoken',
     jwtIdToken: 'idtoken',
   };
