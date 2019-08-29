@@ -94,7 +94,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
 
-  public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
+  public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AccessTokenResponse> => {
     const params = parameters ? parameters : this._parameters;
 
     try {
@@ -103,14 +103,15 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       this.handleAcquireTokenSuccess(response);
       this.setAuthenticationState(AuthenticationState.Authenticated);
 
-      return response;
+      return new AccessTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
-      return this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, params);
+      return new AccessTokenResponse(response);
     }
   };
 
-  public getIdToken = async (parameters?: AuthenticationParameters): Promise<AuthResponse> => {
+  public getIdToken = async (parameters?: AuthenticationParameters): Promise<IdTokenResponse> => {
     const config = this.getCurrentConfiguration();
     const clientId = config.auth.clientId;
     let params = parameters ? parameters : this._parameters;
@@ -127,10 +128,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       this.handleAcquireTokenSuccess(response);
       this.setAuthenticationState(AuthenticationState.Authenticated);
 
-      return response;
+      return new IdTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireIdTokenError(error));
-      return this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, params);
+      return new IdTokenResponse(response);
     }
   };
 
