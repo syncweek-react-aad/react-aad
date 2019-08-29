@@ -26,12 +26,9 @@
 import * as React from 'react';
 
 export default function GetTokenButton({ provider }) {
-  const authProvider = provider.getAuthProvider();
-
   const getAuthToken = () => {
-    // You should should use getToken() to fetch a fresh token before making API calls
-    authProvider.getIdToken().then(response => {
-      alert(response.idToken.rawIdToken);
+    provider.getIdToken().then(token => {
+      alert(token.idToken.rawIdToken);
     });
   };
 

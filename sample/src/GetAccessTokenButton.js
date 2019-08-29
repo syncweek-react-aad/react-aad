@@ -26,12 +26,10 @@
 import * as React from 'react';
 
 export default function GetTokenButton({ provider }) {
-  const authProvider = provider.getAuthProvider();
-
   const getAuthToken = () => {
-    // You should should use getToken() to fetch a fresh token before making API calls
-    authProvider.getAccessToken().then(response => {
-      alert(response.accessToken);
+    // You should should use getAccessToken() to fetch a fresh token before making API calls
+    provider.getAccessToken().then(token => {
+      alert(token.accessToken);
     });
   };
 

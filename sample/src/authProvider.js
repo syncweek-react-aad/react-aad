@@ -22,18 +22,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { AuthenticationParameters, Configuration } from 'msal';
-import { IAuthProviderFactory, LoginType } from './Interfaces';
-import { MsalAuthProvider } from './MsalAuthProvider';
 
-export class MsalAuthProviderFactory implements IAuthProviderFactory {
-  private authProvider: MsalAuthProvider;
+import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 
-  constructor(config: Configuration, authParams: AuthenticationParameters, type: LoginType = LoginType.Redirect) {
-    this.authProvider = new MsalAuthProvider(config, authParams, type);
-  }
+// The auth provider should be a singleton. Best practice is to only have it ever instantiated once.
+// Avoid creating an instance inside the component it will be recreated on each render.
+// If two providers are created on the same page it will cause authentication errors.
+export const authProvider = new MsalAuthProvider(
+  {
+    auth: {
+      authority: process.env.REACT_APP_AUTHORITY,
+      clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
+      postLogoutRedirectUri: window.location.origin,
+      redirectUri: window.location.origin,
+      validateAuthority: true,
 
-  public getAuthProvider(): MsalAuthProvider {
-    return this.authProvider;
-  }
-}
+      // After being redirected to the "redirectUri" page, should user
+      // be redirected back to the Url where their login originated from?
+      navigateToLoginRequestUrl: false,
+    },
+    cache: {
+      cacheLocation: 'sessionStorage',
+      storeAuthStateInCookie: true,
+    },
+  },
+  {
+    scopes: ['openid'],
+  },
+  LoginType.Popup,
+);

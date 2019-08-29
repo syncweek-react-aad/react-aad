@@ -27,15 +27,18 @@ import * as React from 'react';
 
 import { AzureAD, IAzureADProps } from './AzureAD';
 
-export const withAuthentication = <P extends object>(WrappedComponent: React.ComponentType<P>, parameters: IAzureADProps) =>
- class WithAuthentication extends React.Component<P> {
-   public readonly propParams: IAzureADProps = {forceLogin: true, ...parameters};
+export const withAuthentication = <P extends object>(
+  WrappedComponent: React.ComponentType<P>,
+  parameters: IAzureADProps,
+) =>
+  class WithAuthentication extends React.Component<P> {
+    public readonly propParams: IAzureADProps = { forceLogin: true, ...parameters };
 
     public render = () => {
-     return (
-       <AzureAD {...this.propParams}>
-         <WrappedComponent {...this.props} />
-       </AzureAD>
-     );
-   };
- };
+      return (
+        <AzureAD {...this.propParams}>
+          <WrappedComponent {...this.props} />
+        </AzureAD>
+      );
+    };
+  };
