@@ -23,31 +23,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { MsalAuthProviderFactory, LoginType } from 'react-aad-msal';
+import * as React from 'react';
 
-// The auth provider should be a singleton. Best practice is to only have it ever instantiated once.
-// Avoid creating an instance inside the component it will be recreated on each render.
-// If two providers are created on the same page it will cause authentication errors.
-export const authProviderFactory = new MsalAuthProviderFactory(
-  {
-    auth: {
-      authority: process.env.REACT_APP_AUTHORITY,
-      clientId: process.env.REACT_APP_AAD_APP_CLIENT_ID,
-      postLogoutRedirectUri: window.location.origin,
-      redirectUri: window.location.origin,
-      validateAuthority: true,
+export default function GetTokenButton({ provider }) {
+  const getAuthToken = () => {
+    provider.getIdToken().then(token => {
+      alert(token.idToken.rawIdToken);
+    });
+  };
 
-      // After being redirected to the "redirectUri" page, should user
-      // be redirected back to the Url where their login originated from?
-      navigateToLoginRequestUrl: false,
-    },
-    cache: {
-      cacheLocation: 'sessionStorage',
-      storeAuthStateInCookie: true,
-    },
-  },
-  {
-    scopes: ['openid'],
-  },
-  LoginType.Popup,
-);
+  return (
+    <React.Fragment>
+      <p>
+        It's also possible to renew the IdToken. If a valid token is in the cache, it will be returned. Otherwise a
+        renewed token will be requested. If the request fails, the user will be forced to login again.
+      </p>
+      <button onClick={getAuthToken} className="Button">
+        Get IdToken
+      </button>
+    </React.Fragment>
+  );
+}

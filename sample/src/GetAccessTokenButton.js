@@ -22,18 +22,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-import { AuthenticationParameters, Configuration } from 'msal';
-import { IAuthProviderFactory, LoginType } from './Interfaces';
-import { MsalAuthProvider } from './MsalAuthProvider';
 
-export class MsalAuthProviderFactory implements IAuthProviderFactory {
-  private authProvider: MsalAuthProvider;
+import * as React from 'react';
 
-  constructor(config: Configuration, authParams: AuthenticationParameters, type: LoginType = LoginType.Redirect) {
-    this.authProvider = new MsalAuthProvider(config, authParams, type);
-  }
+export default function GetTokenButton({ provider }) {
+  const getAuthToken = () => {
+    // You should should use getAccessToken() to fetch a fresh token before making API calls
+    provider.getAccessToken().then(token => {
+      alert(token.accessToken);
+    });
+  };
 
-  public getAuthProvider(): MsalAuthProvider {
-    return this.authProvider;
-  }
+  return (
+    <React.Fragment>
+      <p>
+        You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
+        a fresh token will be requested. If the request fails, the user will be forced to login again.
+      </p>
+      <button onClick={getAuthToken} className="Button">
+        Get Access Token
+      </button>
+    </React.Fragment>
+  );
 }

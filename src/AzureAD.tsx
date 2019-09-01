@@ -26,7 +26,7 @@
 import * as React from 'react';
 import { Store } from 'redux';
 
-import { AccountInfoCallback, AuthenticationState, IAccountInfo, IAuthProviderFactory } from './Interfaces';
+import { AccountInfoCallback, AuthenticationState, IAccountInfo } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
@@ -35,7 +35,7 @@ type LoginFunction = () => void;
 type LogoutFunction = () => void;
 
 export interface IAzureADProps {
-  provider: IAuthProviderFactory;
+  provider: MsalAuthProvider;
   unauthenticatedFunction?: UnauthenticatedFunction;
   authenticatedFunction?: AuthenticatedFunction;
   accountInfoCallback?: AccountInfoCallback;
@@ -48,7 +48,7 @@ interface IAzureADState {
 }
 
 class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
-  private authProvider: MsalAuthProvider = this.props.provider.getAuthProvider();
+  private authProvider: MsalAuthProvider = this.props.provider;
 
   // tslint:disable-next-line: member-ordering
   public state: Readonly<IAzureADState> = {

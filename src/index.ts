@@ -32,24 +32,25 @@ import {
   UserAgentApplication,
 } from 'msal';
 
+import { AccessTokenResponse } from './AccessTokenResponse';
 import { AuthenticationActions } from './actions';
 import { AzureAD } from './AzureAD';
-import { AuthenticationState, IAccountInfo, IAuthProviderFactory, LoginType } from './Interfaces';
+import { IdTokenResponse } from './IdTokenResponse';
+import { AuthenticationState, IAccountInfo, LoginType } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
-import { MsalAuthProviderFactory } from './MsalAuthProviderFactory';
 import { withAuthentication } from './withAuthentication';
 
 export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
 export {
+  AccessTokenResponse,
   AzureAD,
   AuthenticationActions,
   AuthenticationState,
   IAccountInfo,
-  IAuthProviderFactory,
   LoginType,
-  MsalAuthProviderFactory,
   MsalAuthProvider,
   withAuthentication,
+  IdTokenResponse,
 };
 
 export default AzureAD;

@@ -27,18 +27,18 @@ import * as React from 'react';
 import { AzureAD, LoginType } from 'react-aad-msal';
 
 import { basicReduxStore } from './reduxStore';
-import GetTokenButton from './GetTokenButton';
+import GetAccessTokenButton from './GetAccessTokenButton';
+import GetIdTokenButton from './GetIdTokenButton';
 
-// Import the authentication provider factory which holds the default settings
-import { authProviderFactory } from './authProviderFactory';
+// Import the authentication provider which holds the default settings
+import { authProvider } from './authProvider';
 
 class SampleAppRedirectOnLaunch extends React.Component {
   constructor(props) {
     super(props);
 
     // Change the login type to execute in a Redirect
-    const provider = authProviderFactory.getAuthProvider();
-    provider.setLoginType(LoginType.Redirect);
+    authProvider.setLoginType(LoginType.Redirect);
 
     this.interval = null;
     let redirectEnabled = sessionStorage.getItem('redirectEnabled') || false;
@@ -96,9 +96,6 @@ class SampleAppRedirectOnLaunch extends React.Component {
     console.log('AUTHENTICATED');
     return (
       <div>
-        <GetTokenButton provider={authProviderFactory} />
-        <br />
-        <br />
         <button
           onClick={() => {
             logout();
@@ -107,6 +104,12 @@ class SampleAppRedirectOnLaunch extends React.Component {
         >
           Logout
         </button>
+        <br />
+        <br />
+        <GetAccessTokenButton provider={authProvider} />
+        <br />
+        <br />
+        <GetIdTokenButton provider={authProvider} />
       </div>
     );
   };
@@ -122,7 +125,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
           <div />
         )}
         <AzureAD
-          provider={authProviderFactory}
+          provider={authProvider}
           unauthenticatedFunction={this.unauthenticatedFunction}
           accountInfoCallback={this.userInfoReceived}
           authenticatedFunction={this.authenticatedFunction}

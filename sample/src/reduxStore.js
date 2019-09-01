@@ -29,7 +29,8 @@ import { AuthenticationActions, AuthenticationState } from 'react-aad-msal';
 const initialState = {
   initializing: false,
   initialized: false,
-  accountInfo: null,
+  idToken: null,
+  accessToken: null,
   state: AuthenticationState.Unauthenticated,
 };
 
@@ -47,16 +48,25 @@ const rootReducer = (state = initialState, action) => {
         initializing: false,
         initialized: true,
       };
-    case AuthenticationActions.LoginSuccess:
-    case AuthenticationActions.AcquireTokenSuccess:
+    case AuthenticationActions.AcquiredIdTokenSuccess:
       return {
         ...state,
-        accountInfo: action.payload,
+        idToken: action.payload,
+      };
+    case AuthenticationActions.AcquiredAccessTokenSuccess:
+      return {
+        ...state,
+        accessToken: action.payload,
+      };
+    case AuthenticationActions.AcquiredAccessTokenError:
+      return {
+        ...state,
+        accessToken: null,
       };
     case AuthenticationActions.LoginError:
-    case AuthenticationActions.AcquireTokenError:
+    case AuthenticationActions.AcquiredIdTokenError:
     case AuthenticationActions.LogoutSuccess:
-      return { ...state, accountInfo: null };
+      return { ...state, idToken: null, accessToken: null };
     case AuthenticationActions.AuthenticatedStateChanged:
       return {
         ...state,

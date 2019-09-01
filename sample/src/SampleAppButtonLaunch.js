@@ -26,18 +26,18 @@
 import * as React from 'react';
 import { AzureAD, LoginType } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
-import GetTokenButton from './GetTokenButton';
+import GetAccessTokenButton from './GetAccessTokenButton';
+import GetIdTokenButton from './GetIdTokenButton';
 
-// Import the authentication provider factory which holds the default settings
-import { authProviderFactory } from './authProviderFactory';
+// Import the authentication provider which holds the default settings
+import { authProvider } from './authProvider';
 
 class SampleAppButtonLaunch extends React.Component {
   constructor(props) {
     super(props);
 
     // Change the login type to execute in a Popup
-    const provider = authProviderFactory.getAuthProvider();
-    provider.setLoginType(LoginType.Popup);
+    authProvider.setLoginType(LoginType.Popup);
   }
 
   unauthenticatedFunction = loginFunction => {
@@ -67,14 +67,17 @@ class SampleAppButtonLaunch extends React.Component {
         </button>
         <br />
         <br />
-        <GetTokenButton provider={authProviderFactory} />
+        <GetAccessTokenButton provider={authProvider} />
+        <br />
+        <br />
+        <GetIdTokenButton provider={authProvider} />
       </div>
     );
   };
   render() {
     return (
       <AzureAD
-        provider={authProviderFactory}
+        provider={authProvider}
         unauthenticatedFunction={this.unauthenticatedFunction}
         reduxStore={basicReduxStore}
         authenticatedFunction={this.authenticatedFunction}

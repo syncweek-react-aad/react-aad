@@ -25,6 +25,8 @@
 
 import { AuthError } from 'msal';
 import { AnyAction } from 'redux';
+import { AccessTokenResponse } from './AccessTokenResponse';
+import { IdTokenResponse } from './IdTokenResponse';
 import { AuthenticationState, IAccountInfo } from './Interfaces';
 
 export enum AuthenticationActions {
@@ -33,8 +35,10 @@ export enum AuthenticationActions {
   LoginSuccess = 'AAD_LOGIN_SUCCESS',
   LoginError = 'AAD_LOGIN_ERROR',
   LogoutSuccess = 'AAD_LOGOUT_SUCCESS',
-  RefreshedTokenSuccess = 'AAD_REFRESHED_TOKEN_SUCCESS',
-  RefreshedTokenError = 'AAD_REFRESHED_TOKEN_ERROR',
+  AcquiredIdTokenSuccess = 'AAD_ACQUIRED_ID_TOKEN_SUCCESS',
+  AcquiredIdTokenError = 'AAD_ACQUIRED_ID_TOKEN_ERROR',
+  AcquiredAccessTokenSuccess = 'AAD_ACQUIRED_ACCESS_TOKEN_SUCCESS',
+  AcquiredAccessTokenError = 'AAD_ACQUIRED_ACCESS_TOKEN_ERROR',
   AuthenticatedStateChanged = 'AAD_AUTHENTICATED_STATE_CHANGED',
 }
 
@@ -61,14 +65,24 @@ export abstract class AuthenticationActionCreators {
     type: AuthenticationActions.LogoutSuccess,
   });
 
-  public static acquireTokenSuccess = (response: IAccountInfo): AnyAction => ({
-    payload: response,
-    type: AuthenticationActions.RefreshedTokenSuccess,
+  public static acquireIdTokenSuccess = (token: IdTokenResponse): AnyAction => ({
+    payload: token,
+    type: AuthenticationActions.AcquiredIdTokenSuccess,
   });
 
-  public static acquireTokenError = (error: AuthError): AnyAction => ({
+  public static acquireIdTokenError = (error: AuthError): AnyAction => ({
     payload: error,
-    type: AuthenticationActions.RefreshedTokenError,
+    type: AuthenticationActions.AcquiredIdTokenError,
+  });
+
+  public static acquireAccessTokenSuccess = (token: AccessTokenResponse): AnyAction => ({
+    payload: token,
+    type: AuthenticationActions.AcquiredAccessTokenSuccess,
+  });
+
+  public static acquireAccessTokenError = (error: AuthError): AnyAction => ({
+    payload: error,
+    type: AuthenticationActions.AcquiredAccessTokenError,
   });
 
   public static authenticatedStateChanged = (state: AuthenticationState): AnyAction => ({
