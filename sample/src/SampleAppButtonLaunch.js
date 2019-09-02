@@ -24,7 +24,7 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType } from 'react-aad-msal';
+import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 import { basicReduxStore } from './reduxStore';
 import GetAccessTokenButton from './GetAccessTokenButton';
 import GetIdTokenButton from './GetIdTokenButton';
@@ -40,49 +40,35 @@ class SampleAppButtonLaunch extends React.Component {
     authProvider.setLoginType(LoginType.Popup);
   }
 
-  unauthenticatedFunction = loginFunction => {
-    console.log('UNAUTHENTICATED');
-    return (
-      <button className="Button" onClick={loginFunction}>
-        Login
-      </button>
-    );
-  };
-
-  userInfoReceived = receivedAccountInfo => {
-    console.log('USER INFO RECEIVED');
-    console.log(receivedAccountInfo);
-    this.props.accountInfoCallback(receivedAccountInfo);
-  };
-
-  authenticatedFunction = logout => {
-    console.log('AUTHENTICATED');
-    return (
-      <div>
-        You're logged in!
-        <br />
-        <br />
-        <button onClick={logout} className="Button">
-          Logout
-        </button>
-        <br />
-        <br />
-        <GetAccessTokenButton provider={authProvider} />
-        <br />
-        <br />
-        <GetIdTokenButton provider={authProvider} />
-      </div>
-    );
-  };
   render() {
     return (
-      <AzureAD
-        provider={authProvider}
-        unauthenticatedFunction={this.unauthenticatedFunction}
-        reduxStore={basicReduxStore}
-        authenticatedFunction={this.authenticatedFunction}
-        accountInfoCallback={this.userInfoReceived}
-      />
+      <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
+        {({ login, logout, authenticationState }) => {
+          switch (authenticationState) {
+            case AuthenticationState.Authenticated:
+              return (
+                <React.Fragment>
+                  <p>You're logged in!</p>
+                  <button onClick={logout} className="Button">
+                    Logout
+                  </button>
+                  <GetAccessTokenButton provider={authProvider} />
+                  <GetIdTokenButton provider={authProvider} />
+                </React.Fragment>
+              );
+            case AuthenticationState.Unauthenticated:
+              return (
+                <button className="Button" onClick={login}>
+                  Login
+                </button>
+              );
+            default:
+              // TODO: This should not be necessary
+              //  If it is, it should be documented
+              return null;
+          }
+        }}
+      </AzureAD>
     );
   }
 }

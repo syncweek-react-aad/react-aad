@@ -34,7 +34,7 @@ export default function GetTokenButton({ provider }) {
   };
 
   return (
-    <React.Fragment>
+    <div style={{ margin: '40px 0' }}>
       <p>
         You can use the auth provider to get a fresh token. If a valid token is in cache it will be returned, otherwise
         a fresh token will be requested. If the request fails, the user will be forced to login again.
@@ -42,6 +42,6 @@ export default function GetTokenButton({ provider }) {
       <button onClick={getAuthToken} className="Button">
         Get Access Token
       </button>
-    </React.Fragment>
+    </div>
   );
 }

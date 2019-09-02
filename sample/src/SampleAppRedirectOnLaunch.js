@@ -24,7 +24,7 @@
 //
 
 import * as React from 'react';
-import { AzureAD, LoginType } from 'react-aad-msal';
+import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
 
 import { basicReduxStore } from './reduxStore';
 import GetAccessTokenButton from './GetAccessTokenButton';
@@ -49,17 +49,22 @@ class SampleAppRedirectOnLaunch extends React.Component {
   }
 
   handleCheck = () => {
-    this.setState({ redirectEnabled: !this.state.redirectEnabled }, () => {
-      if (!this.state.redirectEnabled) {
-        this.clearRedirectInterval();
-      } else {
-        sessionStorage.setItem('redirectEnabled', true);
-      }
-    });
+    this.setState(
+      state => ({
+        ...state,
+        redirectEnabled: !state.redirectEnabled,
+      }),
+      () => {
+        if (!this.state.redirectEnabled) {
+          this.clearRedirectInterval();
+        } else {
+          sessionStorage.setItem('redirectEnabled', true);
+        }
+      },
+    );
   };
 
-  unauthenticatedFunction = loginFunction => {
-    console.log('UNAUTHENTICATED');
+  countdownToLogin = loginFunction => {
     if (this.state.redirectEnabled && !this.interval) {
       this.interval = setInterval(() => {
         if (this.state.counter > 0) {
@@ -71,12 +76,6 @@ class SampleAppRedirectOnLaunch extends React.Component {
         }
       }, 1000);
     }
-
-    if (this.state.redirectEnabled) {
-      return <div>Redirecting in {this.state.counter} seconds...</div>;
-    }
-
-    return <div />;
   };
 
   clearRedirectInterval() {
@@ -86,52 +85,39 @@ class SampleAppRedirectOnLaunch extends React.Component {
     this.interval = null;
   }
 
-  userInfoReceived = receivedAccountInfo => {
-    console.log('USER INFO RECEIVED');
-    console.log(receivedAccountInfo);
-    this.props.accountInfoCallback(receivedAccountInfo);
-  };
-
-  authenticatedFunction = logout => {
-    console.log('AUTHENTICATED');
-    return (
-      <div>
-        <button
-          onClick={() => {
-            logout();
-          }}
-          className="Button"
-        >
-          Logout
-        </button>
-        <br />
-        <br />
-        <GetAccessTokenButton provider={authProvider} />
-        <br />
-        <br />
-        <GetIdTokenButton provider={authProvider} />
-      </div>
-    );
-  };
-
   render() {
+    const { redirectEnabled } = this.state;
+
     return (
-      <div>
-        {!this.props.accountInfo ? (
-          <div>
-            <input type="checkbox" value={this.state.redirectEnabled} onChange={this.handleCheck} /> Enable redirect
-          </div>
-        ) : (
-          <div />
-        )}
-        <AzureAD
-          provider={authProvider}
-          unauthenticatedFunction={this.unauthenticatedFunction}
-          accountInfoCallback={this.userInfoReceived}
-          authenticatedFunction={this.authenticatedFunction}
-          reduxStore={basicReduxStore}
-        />
-      </div>
+      <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
+        {({ login, logout, authenticationState }) => {
+          switch (authenticationState) {
+            case AuthenticationState.Authenticated:
+              return (
+                <React.Fragment>
+                  <p>You're logged in!</p>
+                  <button onClick={logout} className="Button">
+                    Logout
+                  </button>
+                  <GetAccessTokenButton provider={authProvider} />
+                  <GetIdTokenButton provider={authProvider} />
+                </React.Fragment>
+              );
+            case AuthenticationState.Unauthenticated:
+              this.countdownToLogin(login);
+              return (
+                <div>
+                  <input type="checkbox" value={redirectEnabled} onChange={this.handleCheck} /> Enable redirect
+                  {redirectEnabled && <div>Redirecting in {this.state.counter} seconds...</div>}
+                </div>
+              );
+            default:
+              // TODO: This should not be necessary
+              //  If it is, it should be documented
+              return null;
+          }
+        }}
+      </AzureAD>
     );
   }
 }

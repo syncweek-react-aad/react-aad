@@ -34,6 +34,13 @@ type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
 type LoginFunction = () => void;
 type LogoutFunction = () => void;
 
+export interface IAzureADFunctionProps {
+  login: LoginFunction;
+  logout: LogoutFunction;
+  authenticationState: AuthenticationState;
+  accountInfo: IAccountInfo | null;
+}
+
 export interface IAzureADProps {
   provider: MsalAuthProvider;
   unauthenticatedFunction?: UnauthenticatedFunction;
@@ -68,7 +75,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
     const { authenticationState } = this.state;
     if (authenticationState === AuthenticationState.Authenticated) {
       const accountInfo = this.authProvider.getAccountInfo();
-      if (accountInfo && props.accountInfoCallback) {
+      if (accountInfo) {
         this.onAccountInfoChanged(accountInfo);
       }
     } else if (authenticationState === AuthenticationState.Unauthenticated) {
@@ -80,21 +87,41 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
 
   public render() {
     const { authenticatedFunction, unauthenticatedFunction, children } = this.props;
-    switch (this.state.authenticationState) {
+    const { authenticationState } = this.state;
+    const { login, logout } = this.authProvider;
+    const accountInfo = this.authProvider.getAccountInfo();
+    const childrenFunctionProps = {
+      accountInfo,
+      authenticationState,
+      login,
+      logout,
+    };
+
+    switch (authenticationState) {
       case AuthenticationState.Authenticated:
         if (authenticatedFunction) {
-          return authenticatedFunction(this.logout) || children;
-        } else {
-          return children || null;
+          const authFunctionResult = authenticatedFunction(this.logout);
+
+          if (authFunctionResult) {
+            // tslint:disable-next-line: no-console
+            console.warn(
+              'Warning! The authenticatedFunction callback has been deprecated and will be removed in a future release.',
+            );
+            return authFunctionResult;
+          }
         }
+
+        return this.getChildrenOrFunction(children, childrenFunctionProps);
       case AuthenticationState.Unauthenticated:
         if (unauthenticatedFunction) {
+          // tslint:disable-next-line: no-console
+          console.warn(
+            'Warning! The unauthenticatedFunction callback has been deprecated and will be removed in a future release.',
+          );
           return unauthenticatedFunction(this.login) || null;
-        } else {
-          return null;
         }
       default:
-        return null;
+        return this.getChildrenOrFunction(children, childrenFunctionProps);
     }
   }
 
@@ -112,6 +139,10 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
     const { accountInfoCallback } = this.props;
 
     if (accountInfoCallback) {
+      // tslint:disable-next-line: no-console
+      console.warn(
+        'Warning! The accountInfoCallback callback has been deprecated and will be removed in a future release.',
+      );
       accountInfoCallback(newAccountInfo);
     }
   };
@@ -126,6 +157,19 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
     }
 
     this.authProvider.logout();
+  };
+
+  private getChildrenOrFunction = (children: any, props: IAzureADFunctionProps) => {
+    if (children) {
+      // tslint:disable-next-line: triple-equals
+      if (typeof children == 'function' || false) {
+        return (children as (props: IAzureADFunctionProps) => {})(props);
+      } else {
+        return children;
+      }
+    } else {
+      return null;
+    }
   };
 }
 
