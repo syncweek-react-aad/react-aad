@@ -56,7 +56,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   private _actionQueue: AnyAction[] = [];
 
-  constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType) {
+  constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType = LoginType.Popup) {
     super(config);
 
     // Required only for backward compatibility

@@ -1,116 +1,141 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/1908292/64083094-6321ce80-ccce-11e9-8c09-4101444bc4f8.png">
+</p>
+<p align="center">The easiest way to integrate the <a href="https://github.com/AzureAD/microsoft-authentication-library-for-js" target="_blank">Microsoft Authentication Library</a> (MSAL) with <a href="https://reactjs.org/" target="_blank">React</a> applications. Secure your apps with <a href="https://azure.microsoft.com/en-us/services/active-directory/" target="_blank">Azure Active Directory</a> (AAD)</p>
+<p align="center">
+<a href="https://www.npmjs.com/package/react-aad-msal"><img src="https://badge.fury.io/js/react-aad-msal.svg" alt="npm version" height="18"></a> <a href="https://reactaad.visualstudio.com/react-aad-msal/_build/latest?definitionId=4&branchName=master"><img src="https://reactaad.visualstudio.com/react-aad-msal/_apis/build/status/React%20AAD%20CI%20Master?branchName=master" alt="build status" height="18"></a> <a href="https://david-dm.org/syncweek-react-aad/react-aad-msal"><img src="https://img.shields.io/david/syncweek-react-aad/react-aad.svg" alt="dependencies" height="18"></a> <a href="https://npmcharts.com/compare/react-aad-msal?minimal=true" target="_blank"><img alt="npm" src="https://img.shields.io/npm/dm/react-aad-msal"></a>
+</p>
+
+<p align="center">:monkey_face: Our code monkeys live on a solid diet of :star:'s. If you like what they're doing, please feed them!</p>
+
 # React AAD MSAL
 
-[![Build Status](https://reactaad.visualstudio.com/react-aad-msal/_apis/build/status/React%20AAD%20CI%20Master?branchName=master)](https://reactaad.visualstudio.com/react-aad-msal/_build/latest?definitionId=4&branchName=master)
-[![NPM Version](https://badge.fury.io/js/react-aad-msal.svg)](https://badge.fury.io/js/react-aad-msal)
-![Dependencies](https://img.shields.io/david/syncweek-react-aad/react-aad.svg)
+A library of components to easily integrate the Microsoft Authentication Library with Azure Active Directory in your React app quickly and reliably. The library focuses on flexibility, providing functionality to login, logout, and fetch the user details while maintaining access to the underlying MSAL library for advanced use.
 
-React AAD MSAL is a library to easily integrate the Microsoft Authentication Library with Azure Active Directory in your React app quickly and reliably. The library focuses on flexibility, allowing you to define how you want to interact with logins and logouts.
+**:exclamation: This library is not affiliated with the Identity team at Microsoft. It was developed as a tool for the Open Source community to use and contribute to as they see fit.**
 
-**Note: This is a sample developed to wrap around the MSAL library and make it easier to use. This library is NOT affiliated with the Identity team at Microsoft and was developed by the Commercial Software Engineering team as a tool for the Open Source community to use and contribute to as they see fit. Use at your own risk!**
+## :memo: Table of contents
 
-## Features
+- [React AAD MSAL](#react-aad-msal)
+  - [:memo: Table of contents](#memo-table-of-contents)
+  - [:tada: Features](#tada-features)
+  - [:checkered_flag: Getting Started](#checkeredflag-getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Creating the Provider](#creating-the-provider)
+      - [Configuration Options](#configuration-options)
+      - [Authentication Parameters](#authentication-parameters)
+      - [Login Type](#login-type)
+  - [:package: Authentication Components](#package-authentication-components)
+    - [AzureAD Component](#azuread-component)
+    - [Higher Order Component](#higher-order-component)
+  - [:mortar_board: Advanced Topics](#mortarboard-advanced-topics)
+    - [Getting Tokens for API Requests](#getting-tokens-for-api-requests)
+      - [Refreshing Access Tokens](#refreshing-access-tokens)
+      - [Renewing IdTokens](#renewing-idtokens)
+    - [Integrating with a Redux Store](#integrating-with-a-redux-store)
+    - [Accessing the MSAL API](#accessing-the-msal-api)
+  - [:cd: Sample application](#cd-sample-application)
+  - [:calendar: Roadmap](#calendar-roadmap)
+  - [:books: Resources](#books-resources)
+  - [:trophy: Contributers](#trophy-contributers)
 
-React AAD MSAL is a library that allows you to easily integrate auth using Azure Active Directory into your React application. The library focuses on flexibility, allowing you to define how you want to interact with logins and logouts.
+## :tada: Features
 
-The React AAD MSAL library provides the following features:
+:white_check_mark: Login/logout with `AzureAD` component  
+:white_check_mark: Callback functions for login success, logout success, and user info changed  
+:white_check_mark: Higher Order Component ([HoC]()) `withAuthentication` for protecting components, routes, or the whole app  
+:white_check_mark: Function as Child Component pattern ([FaCC](https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9)) to pass authentication data and login/logout functions to children components  
+:white_check_mark: Redux integration for storing authentication status, user info, tokens, etc  
+:white_check_mark: Automatic renewal of IdTokens, and optional function to get a fresh token at any point  
+:white_check_mark: Easily fetch a fresh Access Token from cache (or refresh it) before calling API endpoints
 
-- Login using Azure Active Directory
-  - create your own function that handles how login (using this AzureAD component) is triggered in your react app
-  - create your own function that handles the login success. The AzureAD library will call this function when login is complete to pass back the user info.
-- Logout callback
-  - create your own function to handle how logout (using this AzureAD component) is triggered in your react app
-- Optional use of redux store containing the token and user information returned from Active Directory
-
-## Getting Started
+## :checkered_flag: Getting Started
 
 ### Prerequisites
 
 - [node.js](https://nodejs.org/en/)
+- [Register an app](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app) in AzureAD to get a `clientId` and `authorityUrl`. You will need to [follow additional steps](https://docs.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration) to enable the app for your SPA site.
 
 ### Installation
 
-- `npm install react-aad-msal`
+Via NPM:
 
-### Quickstart
+```
+npm install react-aad-msal
+```
 
-If you'd like a sample application running, please see the [sample readme](sample/README.md).
+### Creating the Provider
 
-To build this component, follow these steps:
+There are many ways to use the library to authenticate users, but all of them require that you first configure an instance of the `MsalAuthProvider` and give it three parameters:
 
-1. `git clone https://github.com/syncweek-react-aad/react-aad.git`
-2. `cd ./react-aad`
-3. Build the `react-aad` component:
-   - `npm install`
-   - `npm run build`
+| Parameters   | Description                                                                                                                                                                                                                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `config`     | Instance of a `Msal.Configuration` object to configure the underlying provider. The documentation for all the options can be found in the [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications#configuration-options) documentation |
+| `parameters` | Instance of the `Msal.AuthenticationParameters` configuration to identify how the authentication process should function. This object includes the `scopes` values. You can see possible [values for scopes here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)   |
+| `loginType`  | **[Optional]** A `LoginType` value which identifies whether the login operation is executed using a Popup or Reidrect. The default value is Popup                                                                                                                                                               |
 
-## Setup
+The `MsalAuthProvider` is meant to be a singleton, and it's recommended only create one instance. There are known implications when multiple instances of MSAL are running at the same time. THe recommended approach is to instantiate the `MsalAuthProvider` in a separate file and `import` it when needed.
 
-In the render module of your component, make sure to create an AzureAD component with the arguments you need. This uses the functions that you will define. Once the user is successfully authenticated, the component will render the JSX returned by the `authenticatedFunction`, which in this case is called `logoutCallback`. This is where you should put the secure, user-specific parts of your app. `loginCallback` and `printAccountInfo` can be any user defined functions.
+```TypeScript
+// authProvider.js
+import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 
-Find the assignment for ClientID and replace the value with the Application ID for your application from the azure portal. The authority is the sign-in/signup policy for your application. Graph scopes is a list of scope URLs that you want to grant access to. You can find more information on the [active directory MSAL single page app azure sample](https://github.com/Azure-Samples/active-directory-b2c-javascript-msal-singlepageapp).
-
-```jsx
-// ...
-
-return (
-  const config = {
-    auth: {
-      authority: 'https://login.microsoftonline.com/tfp/<your-tenant-name>.onmicrosoft.com/<your-sign-in-sign-up-policy>',
-      clientId: '<Application ID for your application>',
-      redirectUri: '<Optional redirect URI for your application'
-    },
-    cache: {
-      cacheLocation: "localStorage",
-      storeAuthStateInCookie: true
-    }
-  };
-
-  const authenticationParameters = {
-    scopes: [
-      '<property (i.e. user.read)>',
-      'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'
-    ]
+const config = {
+  auth: {
+    authority: 'https://login.microsoftonline.com/common',
+    clientId: '<YOUR APPLICATION ID>',
+    redirectUri: '<OPTIONAL REDIRECT URI'
+  },
+  cache: {
+    cacheLocation: "localStorage",
+    storeAuthStateInCookie: true
   }
+};
 
-  <AzureAD
-    provider={
-      new MsalAuthProviderFactory(config, authenticationParameters, LoginType.Popup)
-    }
-    unauthenticatedFunction={this.loginCallback}
-    authenticatedFunction={this.logoutCallback}
-    accountInfoCallback={this.printAccountInfo}
-  />
+const authenticationParameters = {
+  scopes: [
+    '<property (i.e. user.read)>',
+    'https://<your-tenant-name>.onmicrosoft.com/<your-application-name>/<scope (i.e. demo.read)>'
+  ]
+}
+
+export const authProvider = new MsalAuthProvider(config, authenticationParameters, LoginType.Popup)
+```
+
+Now you can `import` the `authProvider` and use it in combination with one of the authentication components.
+
+```tsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { AzureAD } from 'react-aad-msal';
+
+import App from './App';
+import { authProvider } from './authProvider';
+
+ReactDOM.render(
+  <AzureAD provider={authProvider}>
+    <App />
+  </AzureAD>,
+  document.getElementById('root'),
 );
 ```
 
-## Component Properties
+#### Configuration Options
 
-| Property                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provider`                | Factory object that provides the configuration values for your Azure Active Directory instance. See [Provider Options](#provider-options) in table below.                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `authenticatedFunction`   | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `logout function` which you can use to trigger a logout. The return value will be rendered by the AzureAD component. If no return value is provided, any elements wrapped by the AzureAD component will be rendered instead.                                                                                                                                                                                                              |
-| `unauthenticatedFunction` | **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `login function` which you can then use to trigger a login. The return value will be rendered by the AzureAD component.                                                                                                                                                                                                                                                                                                                   |
-| `accountInfoCallback`     | **[Optional]** A user defined callback function for the AzureAD component to consume. The AzureAD component will call this function when login is complete to pass back the user info in the following format: <br /><br /> `AccountInfo { jwtAccessToken: string, jwtIdToken: string, account: Msal.Account, authenticationResponse: Msal.AuthResponse }` <br /> <br /> The format of `Msal.Account` [can be found here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
-| `reduxStore`              | **[Optional]** You can provide a redux store which the AzureAD component will dispatch `AAD_LOGIN_SUCCESS` and `AAD_LOGIN_SUCCESS` actions, as well as a `payload` containing `IAccountInfo`                                                                                                                                                                                                                                                                                                                                                                                  |
-| `forceLogin`              | **[Optional]** A boolean that identifies whether the login process should be invoked immediately if the current user is unauthenticated. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                                                                                                 |
-
-### Provider Options
-
-Each provider may have different configuration options. Depending on which provider you choose, you should use a different factory class.
-
-As of right now, there is only a single provider, but more may be added in future versions.
-
-#### MsalAuthProviderFactory
-
-| Property     | Description                                                                                                                                                                                                                                                                                                   |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `config`     | Instance of a `Msal.Configuration` object to configure the underlying provider.                                                                                                                                                                                                                               |
-| `authParams` | Instance of the `Msal.AuthenticationParameters` configuration to identify how the authentication process should function. This object includes the `scopes` values. You can see possible [values for scopes here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
-| `type`       | **[Optional]** A `LoginType` value which identifies whether the login operation is executed using a Popup or Reidrect. The default value is Redirect.                                                                                                                                                         |
+The options that get passed to the `MsalAuthProvider` are defined by the MSAL library, and are described in more detail in the [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications#configuration-options) documentation.
 
 Below is the total set of configurable options that are supported currently in the `config` object.
 
 ```TypeScript
+  // Configuration Object
+  export type Configuration = {
+    auth: AuthOptions,
+    cache?: CacheOptions,
+    system?: SystemOptions
+  };
+
   // Protocol Support
   export type AuthOptions = {
     clientId: string;
@@ -134,36 +159,22 @@ Below is the total set of configurable options that are supported currently in t
     tokenRenewalOffsetSeconds?: number;
     navigateFrameWait?: number;
   };
-
-  // Developer App Environment Support
-  export type FrameworkOptions = {
-    isAngular?: boolean;
-    unprotectedResources?: Array<string>;
-    protectedResourceMap?: Map<string, Array<string>>;
-  };
-
-  // Configuration Object
-  export type Configuration = {
-    auth: AuthOptions,
-    cache?: CacheOptions,
-    system?: SystemOptions,
-    framework?: FrameworkOptions
-  };
 ```
 
 For more information on MSAL config options, please refer to the MSAL [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications) documentation.
 
-The set of configuration options that are supported for the `Msal.AuthenticationParameters` is below.
+#### Authentication Parameters
+
+When instantiating an instance of the `MsalAuthProvider` the authentication parameters passed will become the default parameters used when authenticating, fetching or refreshing tokens. It is possible to change the default parameters later by executing the `setAuthenticationParameters()` method on the `MsalAuthProvider`.
+
+The set of parameter options that are supported for the `Msal.AuthenticationParameters` class can be found below as they are defined in the MSAL library.
 
 ```TypeScript
-  export type QPDict = {[key: string]: string};
-
-  // Request type
   export type AuthenticationParameters = {
     scopes?: Array<string>;
     extraScopesToConsent?: Array<string>;
     prompt?: string;
-    extraQueryParameters?: QPDict;
+    extraQueryParameters?: {[key: string]: string};
     claimsRequest?: string;
     authority?: string;
     state?: string;
@@ -174,95 +185,191 @@ The set of configuration options that are supported for the `Msal.Authentication
   };
 ```
 
-For more information on MSAL parameters, please see the MSAL [release notes](https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/MSAL.js-1.0.0-api-release).
+#### Login Type
 
-## Login
+The `LoginType` parameter is an enum with two options for `Popup` or `Redirect` authentication. This parameter is optional and will default to `Popup` if not provided. At any time after instantiating the `MsalAuthProvider` the login type can be changed using the `setLoginType()` method.
 
-### Force login
+## :package: Authentication Components
 
-The easiest way to initiate login is to rely on the `forceLogin` prop on the AzureAD component. If you do not provide a `authenticatedFunction` callback, any elements that are children on the AzureAD component will be rendered when the user is Authenticated successfully.
+The library provides multiple components to integrate Azure AD authentication into your application, and each component has various use cases. The are also plans for additional components, documented in the project [Roadmap](#calendar-roadmap).
 
-```jsx
-<AzureAD
-  provider={
-    new MsalAuthProviderFactory(config, authenticationParameters, LoginType.Popup)
+### AzureAD Component
+
+The `AzureAD` component is the primary method to add authentication to your application. When the component is loaded it internally uses MSAL to check the cache to determine the current authentication state. This state determines how the component will render it's `children`.
+
+1. If the `children` is an element, it will only be rendered when the `AzureAD` detects an authenticated user.
+2. If the `children` is a function, then it will always be executed and a reference to the `login`, `logout`, `authenticationState`, and `accountInfo` will be passed to the function.
+
+The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
+
+```tsx
+import { AzureAD, AuthenticationStatus } from 'react-aad-msal';
+
+// Import the provider created in a different file
+import { authProvider } from './authProvider';
+
+// Only authenticated users can see the span, unauthenticated users will see nothing
+<AzureAD provider={authProvider}>
+  <span>Only authenticated users can see me.</span>
+</AzureAD>
+
+// If the user is not authenticated, login will be initiated and they will see the span when done
+<AzureAD provider={authProvider} forceLogin={true}>
+  <span>Only authenticated users can see me.</span>
+</AzureAD>
+
+// Using a function inside the component will give you control of what to show for each state
+<AzureAD provider={authProvider} forceLogin={true}>
+  {
+    ({login, logout, authenticationStatus, accountInfo}) => {
+      if (authenticationStatus === AuthenticationStatus.Authenticated) {
+        return (
+          <p>
+            <span>Welcome, {accountInfo.account.name}!</span>
+            <button onClick={logout}>Logout</button>
+          </p>
+        );
+      } else if (authenticationStatus === AuthenticationStatus.Unauthenticated) {
+        return (
+          <p>
+            <span>Hey stranger, you look new!</span>
+            <button onClick={login}>Login</button>
+          </p>
+        );
+      }
+    }
   }
-  forceLogin={true}>
-  <p>Only authenticated users can see this.</p>
-</AzureAd>
+</AzureAD>
 ```
 
-A common pattern to lock down an entire application with forced authentication is to use `forceLogin` and wrap your `<App>` component with the AzureAD component.
+The following props are available to the `AzureAD` component.
 
-### Higher-Order Component
+| AzureAD Props             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `provider`                | An `MsalAuthProvider` instance containing configuration values for your Azure AD instance. See [Creating the Provider](#Creating the Provider) for details.                                                                                                                                                                                                                                                                                                                                            |
+| `authenticatedFunction`   | :warning: **[Deprecated]** **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `logout function` which you can use to trigger a logout. The return value will be rendered by the AzureAD component. If no return value is provided, the `children` of the AzureAD component will be rendered instead.                                                                                                                  |
+| `unauthenticatedFunction` | :warning: **[Deprecated]** **[Optional]** A user defined callback function for the AzureAD component to consume. This function receives the AzureAD components `login function` which you can then use to trigger a login. The return value will be rendered by the AzureAD component.                                                                                                                                                                                                                 |
+| `accountInfoCallback`     | :warning: **[Deprecated]** **[Optional]** A user defined callback function for the AzureAD component to consume. The AzureAD component will call this function when login is complete to pass back the user info as an instance of [`IAccountInfo`](/src/Interfaces.ts). In addition to the tokens, the account info includes the [`Msal.Account`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/classes/_user_.user.html) |
+| `reduxStore`              | **[Optional]** You can provide a redux store which the component will dispatch actions to when changes occur. You can find the list of all actions defined in the [AuthenticationActions](src/actions.ts) enum.                                                                                                                                                                                                                                                                                        |
+| `forceLogin`              | **[Optional]** A boolean that identifies whether the login process should be invoked immediately if the current user is unauthenticated. Defaults to `false`.                                                                                                                                                                                                                                                                                                                                          |
 
-Sometimes it's easier to utilize a Higher-Order Component (HOC) to lock down an app with authentication. This can be accomplished with the `withAuthentication` component.
+### Higher Order Component
+
+Sometimes it's easier to utilize a Higher Order Component (HoC) to lock down an app or page component with authentication. This can be accomplished with the `withAuthentication` component which acts as a wrapper for the `AzureAD` component.
 
 ```Typescript
-// ...
+import { withAuthentication } from 'react-aad-msal';
+
+// The instance of MsalAuthProvider defined in a separate file
+import { authProvider } from './authProvider.js';
+
+// The App component wrapped in the withAuthentication() HoC
 export default withAuthentication(App, {
- provider: new MsalAuthProviderFactory(config, authenticationParameters, LoginType.Redirect),
+ provider: authProvider,
  reduxStore: store
 });
 ```
 
-The first parameter is the component that requires authentication before being mounted. The second parameter is an object representing the props which will be passed to the `AzureAD` component internally. With this approach the `forceLogin` boolean will defualt to true, but can easily be overriden.
+The first parameter is the component that requires authentication before being mounted. The second parameter is an object containing the props to be passed into the `AzureAD` component. With this approach the `forceLogin` prop will default to true. This is a good way to protect routes or quickly require authentication for your entire `App` in several lines.
 
-### Callback functions
+## :mortar_board: Advanced Topics
 
-To login, first create a callback function for the AzureAD component to consume. This function will be called when the component loads, and it will pass in the function to be called when the user wants to login. In this case, we create a button that will log the user in.
+### Getting Tokens for API Requests
+
+The library components will manage authenticating the user without you needing to think about tokens. But there are scenarios where a fresh token will be needed to communicate with a service, or to decode the token to examine the claims. The library exposes methods for retrieving active IdToken and Access Tokens.
+
+For more advanced scenarios where you need specific control over error handling whena token fails to renew you can always [access the MSAL API](#accessing-the-msal-api) methods and renew a token manually as described in the MSAL [token renewal pattern](https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/FAQs#q3-how-to-renew-tokens-with-msaljs) documentation.
+
+#### Refreshing Access Tokens
+
+To get a fresh and valid Access Token to pass to an API you can call the `getAccessToken()` on the `MsalAuthProvider` instance. This function will asynchronously attempt to retrieve the token from the cache. If the cached token has expired, it will automatically attempt to refresh it. In some scenarios the token refresh will fail and the user will be required to authenticate again before a fresh token is provided. The method will handle these scenarios automatically.
+
+The `getAccessToken()` returns an instance of the [`AccessTokenResponse`](/src/AccessTokenResponse.ts) class. The following snippet is an example of how you might use the function before calling an API endpoint.
+
+```typescript
+// authProvider.js
+import { MsalAuthProvider, LoginType } from 'react-aad-msal';
+export const authProvider = new MsalAuthProvider(
+  {
+    /* config */
+  },
+  {
+    /* parameters */
+  },
+  LoginType.Popup,
+);
+
+// api.js
+import { authProvider } from './authProvider';
+
+const request = async url => {
+  const token = await authProvider.getAccessToken();
+
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + token.idToken.rawIdToken,
+      'Content-Type': 'application/json',
+    },
+  });
+};
+```
+
+#### Renewing IdTokens
+
+To get a fresh and valid IdToken you can call the `getIdToken()` on the `MsalAuthProvider` instance. This function will asynchronously attempt to retrieve the token from the cache. If the cached token has expired, it will automatically attempt to renew it. In some scenarios the token renewal will fail and the user will be required to authenticate again before a new token is provided. The method will handle these scenarios automatically.
+
+The `getIdToken()` returns an instance of the [`IdTokenResponse`](/src/IdTokenResponse.ts) class. The following snippet is an example of how you might use the function to retrieve a valid IdToken.
+
+```typescript
+// authProvider.js
+import { MsalAuthProvider, LoginType } from 'react-aad-msal';
+export const authProvider = new MsalAuthProvider(
+  {
+    /* config */
+  },
+  {
+    /* parameters */
+  },
+  LoginType.Popup,
+);
+
+// consumer.js
+import { authProvider } from './authProvider';
+const idToken = await authProvider.getIdToken();
+```
+
+### Integrating with a Redux Store
+
+The `AzureAD` component optionally accepts a `reduxStore` prop. On successful login and after an Access Token has been acquired, an action of type `AAD_LOGIN_SUCCESS` will be dispatch to the provided store, containing the token and user information returned from Active Directory. It does the same for logout events, but the action will not contain a payload.
+
+Import your store into the file rendering the `AzureAD` component and pass it in:
 
 ```jsx
-import { AzureAD, LoginType } from 'AzureAD';
+// authProvider.js
+import { MsalAuthProvider, LoginType } from 'react-aad-msal';
+export const authProvider = new MsalAuthProvider(
+  {
+    /* config */
+  },
+  {
+    /* parameters */
+  },
+  LoginType.Popup,
+);
 
-loginCallback = login => {
-  return <button onclick={login}>Login</button>;
-};
+// index.js
+import { authProvider } from './authProvider';
+import { store } from './reduxStore.js';
 
 // ...
-```
 
-Once they're logged in, the AzureAD library will call another function given with an `IAccountInfo` instance. You can do whatever you want with this, but you should store it. In this example, we just print it out to console.
-
-```javascript
-printAccountInfo = accountInfo => {
-  console.log(accountInfo);
-};
-```
-
-Once you've set this up, you should be able to set up a button to login that will hit an AAD instance. To set up your instance, check out the documentation on [Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/get-started-azure-ad) and on how to connect an [Identity Provider](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app) for that AAD instance.
-
-## Logout
-
-Logging out is just as easy.
-
-```jsx
-logoutCallback = logout => {
-  return (
-    <div>
-      You're logged in!
-      <button onclick={logout}>Logout</button>
-    </div>
-  );
-};
-```
-
-You can, of course, include a component in either of these functions. This allows you to gate which view of your application users get, based on whether or not they are authenticated.
-
-## Integrating with a Redux Store
-
-The Azure AD component optionally accepts a `reduxStore` prop. On successful login, Azure AD will dispatch an action of type `AAD_LOGIN_SUCCESS` to the provided store, containing the token and user information returned from Active Directory. It does the same for logout events, but the action will not contain a payload.
-
-Import your store into the file rendering the AzureAD component and pass it in:
-
-```jsx
-<AzureAD
-  reduxStore={store}
-  provider={new MsalAuthProviderFactory(config, authenticationParameters, LoginType.Popup)}
-  unauthenticatedFunction={this.loginCallback}
-  authenticatedFunction={this.logoutCallback}
-  accountInfoCallback={this.printAccountInfo}
-/>
+ReactDOM.render(
+  <AzureAD provider={authProvider} reduxStore={store}>
+    <App />
+  </AzureAD>,
+  document.getElementById('root'),
+);
 ```
 
 Add a case to handle `AAD_LOGIN_SUCCESS` and `AAD_LOGOUT_SUCCESS` actions in a reducer file:
@@ -284,41 +391,72 @@ const sampleReducer = (state = initialState, action) => {
 };
 ```
 
-## Accessing the underlying MSAL `UserAgentApplication` object
+In addition to login and logout actions, the `MsalAuthProvider` will dispatch other actions for initialization, authentication state changes, token refreshes, errors, etc. The full list of actions can by found in the [actions.ts](/src/actions.ts) file and in the table below. An example of a fully implemented [sample reducer](/sample/src/reduxStore.js) can be found in the [sample project](/sample/).
 
-While this wrapper attempts to provide a full-featured means of authenticating with Azure AD using the MSAL library, for advanced cases you may want to accesst the underlying `UserAgentApplication` object which is the entrypoint for all MSAL functionality. As an escape hatch, the auth provider returned with `MsalAuthProviderFactory` exposes the `UserAgentApplication` as a public member.
+| Action Type                       | Payload                                              | Description                                                                                                                                                                                           |
+| --------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AAD_INITIALIZING                  | None                                                 | Dispatched when the `MsalAuthProvider` is instantiated and begins checking the cache to determine if the user is authenticated                                                                        |
+| AAD_INITIALIZED                   | None                                                 | Signifies that the `MsalAuthProvider` has successfully determined the authentication state of the user after being instantiated. It is safest not to use any state until initialization has completed |
+| AAD_AUTHENTICATED_STATE_CHANGED   | [`AuthenticationState`](/src/Interfaces.ts)          | Dispatched whenever the user's authentication state changes                                                                                                                                           |
+| AAD_ACQUIRED_ID_TOKEN_SUCCESS     | [`IdTokenResponse`](/src/IdTokenResponse.ts)         | Identifies that the IdToken has been retrieved or renewed successfully                                                                                                                                |
+| AAD_ACQUIRED_ID_TOKEN_ERROR       | `Msal.AuthError`                                     | Dispatched when an error occurred when attempting to retrieve or renew the IdToken                                                                                                                    |
+| AAD_ACQUIRED_ACCESS_TOKEN_SUCCESS | [`AccessTokenResponse`](/src/AccessTokenResponse.ts) | Identifies that the Access Token has been retrieved or refreshed successfully                                                                                                                         |
+| AAD_ACQUIRED_ACCESS_TOKEN_ERROR   | `Msal.AuthError`                                     | Dispatched when an error occurred when attempting to retrieve or refresh the Access Token                                                                                                             |
+| AAD_LOGIN_SUCCESS                 | [`IAccountInfo`](/src/Interfaces.ts)                 | Dispatched when the user has been authenticated and a valid Access Token has been acquired                                                                                                            |
+| AAD_LOGIN_ERROR                   | `Msal.AuthError`                                     | Identifies that an error occurred while a login was in process                                                                                                                                        |
+| AAD_LOGOUT_SUCCESS                | None                                                 | Dispatched when the user has successfully logged out on the client side                                                                                                                               |
+
+### Accessing the MSAL API
+
+While this wrapper attempts to provide a full-featured means of authenticating with AzureAD, for advanced cases you may want to access the underlying MSAL API. The `MsalAuthProvider` extends the MSAL `UserAgentApplication` class, and will give you access to all the functions available, in addition to implementing new methods used by the library components.
 
 ```jsx
-const authProviderFactory = new MsalAuthProviderFactory(config, authenticationParameters);
-const authProvider = authProviderFactory.getAuthProvider();
-// authProvider.UserAgentApplication provides access to MSAL features
-
-<AzureAD
-  provider={authProvider}
-  unauthenticatedFunction={this.loginCallback}
-  authenticatedFunction={this.logoutCallback}
-  accountInfoCallback={this.printAccountInfo}
-/>;
+const authProvider = new MsalAuthProvider(config, authenticationParameters);
+// authProvider provides access to MSAL features
 ```
 
 It is not recommended to use this method if it can be avoided, since operations executed via MSAL may not reflect in the wrapper.
 
-## Demo
+## :cd: Sample application
 
-A sample React-based Single Page Application (SPA) that uses this component is available in the [sample folder](sample/README.md). There you'll find a couple implementations that leverage the library, as well as a tutorial of how to set up Azure Active Directory with an Identity Provider.
+If you'd like to see a sample application running, please see the [sample](sample/) application built with Create React App.
 
-## Contributing
+The project can be built with the following steps:
 
-See our contribution guidelines [here](CONTRIBUTING.md)
+1. `git clone https://github.com/syncweek-react-aad/react-aad.git`
+2. `cd ./react-aad`
+3. Build the `react-aad` library:
+   - `npm install`
+   - `npm run build`
+4. Run the sample project:
+   - `npm start`
 
-## Resources
+## :calendar: Roadmap
 
-- [React AAD MSAL NPM Module](https://www.npmjs.com/package/react-aad-msal)
+While the library is ready for use, there's still plenty of work to do. The following is a list of just a few of the improvements under consideration.
+
+:white_medium_small_square: Rewrite the sample app to use hooks and simplify the logic.  
+:white_medium_small_square: Add a `useAuthentication()` hook to the library.  
+:white_medium_small_square: Rewrite the library components to use hooks.  
+:white_medium_small_square: Replace the `AzureAD` render props with event handlers.  
+:white_medium_small_square: Add Context API provider  
+:white_medium_small_square: Separate MSAL and Redux dependencies as `peerDependencies`  
+:white_medium_small_square: Migrate to a build system such as Webpack, or Rollup.  
+:white_medium_small_square: Add samples for consuming a Web API.  
+:white_medium_small_square: Improve unit test coverage across the library.  
+:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.
+
+## :books: Resources
+
+The following resources may be helpful and provide further insight. If you've written a blog post, tutorial, or article feel free to create an issue so we can include it.
+
 - [Get Started with Azure Active Directory](https://docs.microsoft.com/en-us/azure/active-directory/get-started-azure-ad)
 - [MSAL Documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/AzureAD/microsoft-authentication-library-for-js/dev/docs/index.html)
 - [AAD v2 Scopes](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
 - [AAD B2C Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)
 
-## Problems or Suggestions
+## :trophy: Contributers
 
-[Please create an issue.](https://github.com/Azure-Samples/react-aad-msal/issues)
+This library is built with :heart: by members of the open source community. To become a contributer, please see the [contribution guidelines](CONTRIBUTING.md).
+
+[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/0)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/0)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/1)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/1)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/2)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/2)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/3)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/3)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/4)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/4)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/5)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/5)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/6)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/6)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/7)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/7)
