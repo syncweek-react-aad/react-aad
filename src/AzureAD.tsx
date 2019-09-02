@@ -52,6 +52,7 @@ export interface IAzureADProps {
 
 interface IAzureADState {
   authenticationState: AuthenticationState;
+  accountInfo: IAccountInfo | null;
 }
 
 class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
@@ -59,14 +60,15 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
 
   // tslint:disable-next-line: member-ordering
   public state: Readonly<IAzureADState> = {
+    accountInfo: this.authProvider.getAccountInfo(),
     authenticationState: this.authProvider.authenticationState,
   };
 
   constructor(props: IAzureADProps) {
     super(props);
 
-    this.authProvider.onAuthenticationStateChanged = this.setAuthenticationState;
-    this.authProvider.onAccountInfoChanged = this.onAccountInfoChanged;
+    this.authProvider.registerAuthenticationStateHandler(this.setAuthenticationState);
+    this.authProvider.registerAcountInfoHandler(this.onAccountInfoChanged);
 
     if (props.reduxStore) {
       this.authProvider.registerReduxStore(props.reduxStore);
@@ -74,7 +76,7 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
 
     const { authenticationState } = this.state;
     if (authenticationState === AuthenticationState.Authenticated) {
-      const accountInfo = this.authProvider.getAccountInfo();
+      const accountInfo = this.state.accountInfo;
       if (accountInfo) {
         this.onAccountInfoChanged(accountInfo);
       }
@@ -85,11 +87,17 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
     }
   }
 
+  public componentWillUnmount() {
+    this.authProvider.unregisterAuthenticationStateHandler(this.setAuthenticationState);
+    this.authProvider.unregisterAccountInfoHandler(this.onAccountInfoChanged);
+  }
+
   public render() {
     const { authenticatedFunction, unauthenticatedFunction, children } = this.props;
-    const { authenticationState } = this.state;
+    const { authenticationState, accountInfo } = this.state;
     const { login, logout } = this.authProvider;
-    const accountInfo = this.authProvider.getAccountInfo();
+
+    // TODO: This should be created with a hook
     const childrenFunctionProps = {
       accountInfo,
       authenticationState,
@@ -120,8 +128,11 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
           );
           return unauthenticatedFunction(this.login) || null;
         }
-      default:
+
         return this.getChildrenOrFunction(children, childrenFunctionProps);
+      default:
+        // TODO: This should not be necessary, but it's being called
+        return null;
     }
   }
 
@@ -137,6 +148,10 @@ class AzureAD extends React.Component<IAzureADProps, IAzureADState> {
 
   public onAccountInfoChanged = (newAccountInfo: IAccountInfo) => {
     const { accountInfoCallback } = this.props;
+
+    this.setState({
+      accountInfo: newAccountInfo,
+    });
 
     if (accountInfoCallback) {
       // tslint:disable-next-line: no-console
