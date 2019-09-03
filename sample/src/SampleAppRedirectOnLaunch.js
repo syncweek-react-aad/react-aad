@@ -91,30 +91,25 @@ class SampleAppRedirectOnLaunch extends React.Component {
     return (
       <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
         {({ login, logout, authenticationState }) => {
-          switch (authenticationState) {
-            case AuthenticationState.Authenticated:
-              return (
-                <React.Fragment>
-                  <p>You're logged in!</p>
-                  <button onClick={logout} className="Button">
-                    Logout
-                  </button>
-                  <GetAccessTokenButton provider={authProvider} />
-                  <GetIdTokenButton provider={authProvider} />
-                </React.Fragment>
-              );
-            case AuthenticationState.Unauthenticated:
-              this.countdownToLogin(login);
-              return (
-                <div>
-                  <input type="checkbox" value={redirectEnabled} onChange={this.handleCheck} /> Enable redirect
-                  {redirectEnabled && <div>Redirecting in {this.state.counter} seconds...</div>}
-                </div>
-              );
-            default:
-              // TODO: This should not be necessary
-              //  If it is, it should be documented
-              return null;
+          if (authenticationState === AuthenticationState.Authenticated) {
+            return (
+              <React.Fragment>
+                <p>You're logged in!</p>
+                <button onClick={logout} className="Button">
+                  Logout
+                </button>
+                <GetAccessTokenButton provider={authProvider} />
+                <GetIdTokenButton provider={authProvider} />
+              </React.Fragment>
+            );
+          } else if (authenticationState === AuthenticationState.Unauthenticated) {
+            this.countdownToLogin(login);
+            return (
+              <div>
+                <input type="checkbox" value={redirectEnabled} onChange={this.handleCheck} /> Enable redirect
+                {redirectEnabled && <p>Redirecting in {this.state.counter} seconds...</p>}
+              </div>
+            );
           }
         }}
       </AzureAD>

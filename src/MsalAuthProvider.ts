@@ -40,7 +40,7 @@ import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType, TokenType 
 import { Logger } from './logger';
 
 type AuthenticationStateHandler = (state: AuthenticationState) => void;
-type AccountInfoHandlers = (accountInfo: IAccountInfo) => void;
+type AccountInfoHandlers = (accountInfo: IAccountInfo | null) => void;
 
 export class MsalAuthProvider extends UserAgentApplication implements IAuthProvider {
   public authenticationState: AuthenticationState;
@@ -165,6 +165,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public registerAuthenticationStateHandler = (listener: AuthenticationStateHandler) => {
     this._onAuthenticationStateHandlers.add(listener);
+    listener(this.authenticationState);
   };
 
   public unregisterAuthenticationStateHandler = (listener: AuthenticationStateHandler) => {
@@ -173,6 +174,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public registerAcountInfoHandler = (listener: AccountInfoHandlers) => {
     this._onAccountInfoHandlers.add(listener);
+    listener(this._accountInfo);
   };
 
   public unregisterAccountInfoHandler = (listener: AccountInfoHandlers) => {
@@ -275,9 +277,9 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       accountInfo.jwtAccessToken = response.accessToken;
     }
 
-    this._onAccountInfoHandlers.forEach(listener => listener(accountInfo));
+    this._accountInfo = { ...accountInfo };
+    this._onAccountInfoHandlers.forEach(listener => listener(this._accountInfo));
 
-    this._accountInfo = accountInfo;
     return this._accountInfo;
   };
 
