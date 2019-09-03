@@ -29,15 +29,12 @@ import * as ReactDOM from 'react-dom';
 
 require('jest-localstorage-mock'); // tslint:disable-line
 
-import { IdToken } from 'msal/lib-commonjs/IdToken';
-import { AuthenticationState, AzureAD, LoginType } from './index';
-import { IAccountInfo } from './Interfaces';
+import { AzureAD, LoginType } from './index';
 import { MsalAuthProvider } from './MsalAuthProvider';
 
 let Enzyme;
 let Adapter;
 let authProvider: MsalAuthProvider;
-let loggedInUser: IAccountInfo;
 let testAccount: Msal.Account;
 
 beforeAll(() => {
@@ -77,12 +74,6 @@ beforeEach(() => {
     sid: 'sid',
     userName: 'LilUsername',
   };
-
-  loggedInUser = {
-    account: testAccount,
-    jwtAccessToken: 'accesstoken',
-    jwtIdToken: 'idtoken',
-  };
 });
 
 it('renders without crashing', () => {
@@ -117,50 +108,4 @@ it('renders without crashing', () => {
     div,
   );
   ReactDOM.unmountComponentAtNode(div);
-});
-
-it('updates the component state', () => {
-  let accountInfo: IAccountInfo = null;
-
-  const unauthenticatedFunction = jest.fn();
-  const authenticatedFunction = jest.fn();
-  const accountInfoCallback = jest.fn((token: any) => {
-    accountInfo = token;
-  });
-
-  const wrapper = Enzyme.shallow(
-    <AzureAD
-      provider={authProvider}
-      unauthenticatedFunction={unauthenticatedFunction}
-      authenticatedFunction={authenticatedFunction}
-      accountInfoCallback={accountInfoCallback}
-    />,
-  ).instance() as AzureAD;
-
-  wrapper.onAccountInfoChanged(loggedInUser);
-  wrapper.setAuthenticationState(AuthenticationState.Authenticated);
-
-  expect(accountInfo).toEqual(loggedInUser);
-  expect(wrapper.state.authenticationState).toBe(AuthenticationState.Authenticated);
-  expect(accountInfoCallback).toHaveBeenCalledWith(loggedInUser);
-});
-
-it('logs out the user', () => {
-  const unauthenticatedFunction = jest.fn();
-  const authenticatedFunction = jest.fn();
-  const accountInfoCallback = jest.fn((token: any) => {}); // tslint:disable-line: no-empty
-
-  const wrapper = Enzyme.shallow(
-    <AzureAD
-      provider={authProvider}
-      unauthenticatedFunction={unauthenticatedFunction}
-      authenticatedFunction={authenticatedFunction}
-      accountInfoCallback={accountInfoCallback}
-    />,
-  ).instance() as AzureAD;
-
-  wrapper.setAuthenticationState(AuthenticationState.Unauthenticated);
-
-  expect(wrapper.state.authenticationState).toBe(AuthenticationState.Unauthenticated);
-  expect(accountInfoCallback).not.toHaveBeenCalled();
 });
