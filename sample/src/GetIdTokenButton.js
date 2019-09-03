@@ -33,7 +33,7 @@ export default function GetTokenButton({ provider }) {
   };
 
   return (
-    <React.Fragment>
+    <div style={{ margin: '40px 0' }}>
       <p>
         It's also possible to renew the IdToken. If a valid token is in the cache, it will be returned. Otherwise a
         renewed token will be requested. If the request fails, the user will be forced to login again.
@@ -41,6 +41,6 @@ export default function GetTokenButton({ provider }) {
       <button onClick={getAuthToken} className="Button">
         Get IdToken
       </button>
-    </React.Fragment>
+    </div>
   );
 }
