@@ -44,28 +44,23 @@ class SampleAppButtonLaunch extends React.Component {
     return (
       <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
         {({ login, logout, authenticationState }) => {
-          switch (authenticationState) {
-            case AuthenticationState.Authenticated:
-              return (
-                <React.Fragment>
-                  <p>You're logged in!</p>
-                  <button onClick={logout} className="Button">
-                    Logout
-                  </button>
-                  <GetAccessTokenButton provider={authProvider} />
-                  <GetIdTokenButton provider={authProvider} />
-                </React.Fragment>
-              );
-            case AuthenticationState.Unauthenticated:
-              return (
-                <button className="Button" onClick={login}>
-                  Login
+          if (authenticationState === AuthenticationState.Authenticated) {
+            return (
+              <React.Fragment>
+                <p>You're logged in!</p>
+                <button onClick={logout} className="Button">
+                  Logout
                 </button>
-              );
-            default:
-              // TODO: This should not be necessary
-              //  If it is, it should be documented
-              return null;
+                <GetAccessTokenButton provider={authProvider} />
+                <GetIdTokenButton provider={authProvider} />
+              </React.Fragment>
+            );
+          } else if (authenticationState === AuthenticationState.Unauthenticated) {
+            return (
+              <button className="Button" onClick={login}>
+                Login
+              </button>
+            );
           }
         }}
       </AzureAD>

@@ -92,8 +92,6 @@ class App extends Component {
 
         <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
           {({ accountInfo, authenticationState }) => {
-            console.log('READONLY COMP:', authenticationState);
-            console.log(accountInfo);
             return (
               <React.Fragment>
                 {authenticationState === AuthenticationState.Unauthenticated && (
@@ -114,9 +112,6 @@ class App extends Component {
                     <p>When logged in, this box will show your tokens and user info</p>
                     {accountInfo && (
                       <div style={{ wordWrap: 'break-word' }}>
-                        <p>
-                          <span style={{ fontWeight: 'bold' }}>User Information:</span>
-                        </p>
                         <p>
                           <span style={{ fontWeight: 'bold' }}>ID Token:</span> {accountInfo.jwtIdToken}
                         </p>

@@ -63,10 +63,15 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         accessToken: null,
       };
+    case AuthenticationActions.LoginSuccess:
+      return {
+        ...state,
+        account: action.payload.account,
+      };
     case AuthenticationActions.LoginError:
     case AuthenticationActions.AcquiredIdTokenError:
     case AuthenticationActions.LogoutSuccess:
-      return { ...state, idToken: null, accessToken: null };
+      return { ...state, idToken: null, accessToken: null, account: null };
     case AuthenticationActions.AuthenticatedStateChanged:
       return {
         ...state,
