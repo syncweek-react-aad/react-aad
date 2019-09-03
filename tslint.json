@@ -12,6 +12,7 @@
   "rules": {
     "variable-name": false,
     "no-relative-imports": false,
-    "prefer-type-cast": false
+    "prefer-type-cast": false,
+    "max-func-body-length": 200
   }
 }

@@ -32,15 +32,17 @@ import {
   UserAgentApplication,
 } from 'msal';
 import { AnyAction, Store } from 'redux';
+
 import { AccessTokenResponse } from './AccessTokenResponse';
 import { AuthenticationActionCreators } from './actions';
 import { IdTokenResponse } from './IdTokenResponse';
 import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType, TokenType } from './Interfaces';
 import { Logger } from './logger';
 
+type AuthenticationStateHandler = (state: AuthenticationState) => void;
+type AccountInfoHandlers = (accountInfo: IAccountInfo | null) => void;
+
 export class MsalAuthProvider extends UserAgentApplication implements IAuthProvider {
-  public onAuthenticationStateChanged: (state: AuthenticationState) => void;
-  public onAccountInfoChanged: (accountInfo: IAccountInfo) => void;
   public authenticationState: AuthenticationState;
 
   /**
@@ -54,6 +56,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   protected _loginType: LoginType;
   protected _accountInfo: IAccountInfo | null;
 
+  private _onAuthenticationStateHandlers = new Set<AuthenticationStateHandler>();
+  private _onAccountInfoHandlers = new Set<AccountInfoHandlers>();
   private _actionQueue: AnyAction[] = [];
 
   constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType = LoginType.Popup) {
@@ -142,6 +146,13 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._parameters = parameters;
   };
 
+  public setLoginType = (loginType: LoginType) => {
+    if (loginType === LoginType.Redirect) {
+      this.handleRedirectCallback(this.authenticationRedirectCallback);
+    }
+    this._loginType = loginType;
+  };
+
   public registerReduxStore = (store: Store): void => {
     this._reduxStore = store;
     while (this._actionQueue.length) {
@@ -152,11 +163,22 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
   };
 
-  public setLoginType = (loginType: LoginType) => {
-    if (loginType === LoginType.Redirect) {
-      this.handleRedirectCallback(this.authenticationRedirectCallback);
-    }
-    this._loginType = loginType;
+  public registerAuthenticationStateHandler = (listener: AuthenticationStateHandler) => {
+    this._onAuthenticationStateHandlers.add(listener);
+    listener(this.authenticationState);
+  };
+
+  public unregisterAuthenticationStateHandler = (listener: AuthenticationStateHandler) => {
+    this._onAuthenticationStateHandlers.delete(listener);
+  };
+
+  public registerAcountInfoHandler = (listener: AccountInfoHandlers) => {
+    this._onAccountInfoHandlers.add(listener);
+    listener(this._accountInfo);
+  };
+
+  public unregisterAccountInfoHandler = (listener: AccountInfoHandlers) => {
+    this._onAccountInfoHandlers.delete(listener);
   };
 
   private loginToRefreshToken = async (
@@ -239,10 +261,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       this.authenticationState = state;
 
       this.dispatchAction(AuthenticationActionCreators.authenticatedStateChanged(state));
-
-      if (this.onAuthenticationStateChanged) {
-        this.onAuthenticationStateChanged(state);
-      }
+      this._onAuthenticationStateHandlers.forEach(listener => listener(state));
     }
 
     return this.authenticationState;
@@ -258,11 +277,9 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       accountInfo.jwtAccessToken = response.accessToken;
     }
 
-    if (this.onAccountInfoChanged) {
-      this.onAccountInfoChanged(accountInfo);
-    }
+    this._accountInfo = { ...accountInfo };
+    this._onAccountInfoHandlers.forEach(listener => listener(this._accountInfo));
 
-    this._accountInfo = accountInfo;
     return this._accountInfo;
   };
 

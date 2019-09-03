@@ -24,11 +24,16 @@
 //
 
 import React, { Component } from 'react';
+import { AzureAD, AuthenticationState } from 'react-aad-msal';
+import { basicReduxStore } from './reduxStore';
 
-import './App.css';
+// Import the authentication provider which holds the default settings
+import { authProvider } from './authProvider';
 
 import SampleAppButtonLaunch from './SampleAppButtonLaunch';
 import SampleAppRedirectOnLaunch from './SampleAppRedirectOnLaunch';
+
+import './App.css';
 
 class App extends Component {
   constructor(props) {
@@ -38,17 +43,12 @@ class App extends Component {
       accountInfo: null,
       sampleType: null,
     };
-  }
 
-  componentWillMount = () => {
-    if (localStorage.getItem('sampleType')) {
-      this.setState({ sampleType: localStorage.getItem('sampleType') });
+    const sampleType = localStorage.getItem('sampleType');
+    if (sampleType) {
+      this.state.sampleType = sampleType;
     }
-  };
-
-  accountInfoCallback = accountInfo => {
-    this.setState({ accountInfo });
-  };
+  }
 
   handleClick = sampleType => {
     this.setState({ sampleType });
@@ -57,7 +57,6 @@ class App extends Component {
 
   render() {
     let sampleBox;
-    let sampleButtons;
 
     switch (this.state.sampleType) {
       case 'popup':
@@ -65,7 +64,7 @@ class App extends Component {
           <div className="SampleBox">
             <h2 className="SampleHeader">Button Login</h2>
             <p>This example will launch a popup dialog to allow for authentication with Azure Active Directory</p>
-            <SampleAppButtonLaunch accountInfoCallback={this.accountInfoCallback} />
+            <SampleAppButtonLaunch />
           </div>
         );
         break;
@@ -77,10 +76,7 @@ class App extends Component {
               This example shows how you can use the AzureAD component to redirect the login screen automatically on
               page load. Click the checkbox below to enable the redirect and refresh your browser window.
             </p>
-            <SampleAppRedirectOnLaunch
-              accountInfoCallback={this.accountInfoCallback}
-              accountInfo={this.state.accountInfo}
-            />
+            <SampleAppRedirectOnLaunch accountInfo={this.state.accountInfo} />
           </div>
         );
         break;
@@ -88,42 +84,54 @@ class App extends Component {
         break;
     }
 
-    if (!this.state.accountInfo) {
-      sampleButtons = (
-        <div>
-          <button onClick={() => this.handleClick('popup')} className="Button">
-            Popup Sample
-          </button>{' '}
-          <button onClick={() => this.handleClick('redirect')} className="Button">
-            Redirect Sample
-          </button>
-        </div>
-      );
-    }
-
     return (
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Welcome to the react-aad-msal sample</h1>
         </header>
-        <br /> <br />
-        {sampleButtons}
-        <div className="SampleContainer">
-          {sampleBox}
-          <div className="SampleBox">
-            <h2 className="SampleHeader">Authenticated Values</h2>
-            <p>When logged in, this box will show your tokens and user info</p>
-            {this.state.accountInfo && (
-              <div style={{ wordWrap: 'break-word' }}>
-                <span style={{ fontWeight: 'bold' }}>User Information:</span> <br />
-                <span style={{ fontWeight: 'bold' }}>ID Token:</span> {this.state.accountInfo.jwtIdToken} <br />
-                <span style={{ fontWeight: 'bold' }}>Access Token:</span> {this.state.accountInfo.jwtAccessToken} <br />
-                <span style={{ fontWeight: 'bold' }}>Username:</span> {this.state.accountInfo.account.userName} <br />
-                <span style={{ fontWeight: 'bold' }}>Name:</span> {this.state.accountInfo.account.name}
-              </div>
-            )}
-          </div>
-        </div>
+
+        <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
+          {({ accountInfo, authenticationState }) => {
+            return (
+              <React.Fragment>
+                {authenticationState === AuthenticationState.Unauthenticated && (
+                  <div>
+                    <button onClick={() => this.handleClick('popup')} className="Button">
+                      Popup Sample
+                    </button>{' '}
+                    <button onClick={() => this.handleClick('redirect')} className="Button">
+                      Redirect Sample
+                    </button>
+                  </div>
+                )}
+
+                <div className="SampleContainer">
+                  {sampleBox}
+                  <div className="SampleBox">
+                    <h2 className="SampleHeader">Authenticated Values</h2>
+                    <p>When logged in, this box will show your tokens and user info</p>
+                    {accountInfo && (
+                      <div style={{ wordWrap: 'break-word' }}>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>ID Token:</span> {accountInfo.jwtIdToken}
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>Username:</span> {accountInfo.account.userName}
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>Access Token:</span> {accountInfo.jwtAccessToken}
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>Name:</span> {accountInfo.account.name}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }}
+        </AzureAD>
       </div>
     );
   }
