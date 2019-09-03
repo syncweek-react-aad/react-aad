@@ -23,7 +23,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import react, { useCallback, useEffect, useMemo, useState } from 'react';
+import { default as React, useCallback, useEffect, useMemo, useState } from 'react';
 import { Store } from 'redux';
 
 import { MsalAuthProvider } from './';
