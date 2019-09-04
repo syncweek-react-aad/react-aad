@@ -436,14 +436,14 @@ The project can be built with the following steps:
 While the library is ready for use there is still plenty of ongoing work. The following is a list of a few of the improvements under consideration.
 
 :white_medium_small_square: Rewrite the sample app to use hooks and simplify the logic.  
-:white_medium_small_square: Add a `useAuthentication()` hook to the library. 
+:white_medium_small_square: Add a `useAuthentication()` hook to the library.  
 :white_medium_small_square: Replace the `AzureAD` render props with event handlers.  
-:white_medium_small_square: Add Context API provider  
+:white_medium_small_square: Add Context API provider.  
 :white_medium_small_square: Separate MSAL and Redux dependencies as `peerDependencies`  
 :white_medium_small_square: Migrate to a build system such as Webpack, or Rollup.  
 :white_medium_small_square: Add samples for consuming a Web API.  
 :white_medium_small_square: Improve unit test coverage across the library.  
-:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.
+:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.  
 
 ## :books: Resources
 
