@@ -203,7 +203,7 @@ The `AzureAD` component is the primary method to add authentication to your appl
 The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
 
 ```tsx
-import { AzureAD, AuthenticationStatus } from 'react-aad-msal';
+import { AzureAD, AuthenticationState } from 'react-aad-msal';
 
 // Import the provider created in a different file
 import { authProvider } from './authProvider';
@@ -221,15 +221,15 @@ import { authProvider } from './authProvider';
 // Using a function inside the component will give you control of what to show for each state
 <AzureAD provider={authProvider} forceLogin={true}>
   {
-    ({login, logout, authenticationStatus, accountInfo}) => {
-      if (authenticationStatus === AuthenticationStatus.Authenticated) {
+    ({login, logout, authenticationState, accountInfo}) => {
+      if (authenticationState === AuthenticationState.Authenticated) {
         return (
           <p>
             <span>Welcome, {accountInfo.account.name}!</span>
             <button onClick={logout}>Logout</button>
           </p>
         );
-      } else if (authenticationStatus === AuthenticationStatus.Unauthenticated) {
+      } else if (authenticationState === AuthenticationState.Unauthenticated) {
         return (
           <p>
             <span>Hey stranger, you look new!</span>
