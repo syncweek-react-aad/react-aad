@@ -303,7 +303,7 @@ export const authProvider = new MsalAuthProvider(
 import { authProvider } from './authProvider';
 
 const request = async url => {
-  const token = await authProvider.getAccessToken();
+  const token = await authProvider.getIdToken();
 
   return fetch(url, {
     method: 'GET',
