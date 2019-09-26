@@ -308,7 +308,7 @@ const request = async url => {
   return fetch(url, {
     method: 'GET',
     headers: {
-      Authorization: 'Bearer ' + token.idToken.rawIdToken,
+      Authorization: 'Bearer ' + token.accessToken,
       'Content-Type': 'application/json',
     },
   });
@@ -336,7 +336,8 @@ export const authProvider = new MsalAuthProvider(
 
 // consumer.js
 import { authProvider } from './authProvider';
-const idToken = await authProvider.getIdToken();
+const token = await authProvider.getIdToken();
+const idToken = token.idToken.rawIdToken;
 ```
 
 ### Integrating with a Redux Store
