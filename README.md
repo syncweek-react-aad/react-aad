@@ -203,7 +203,7 @@ The `AzureAD` component is the primary method to add authentication to your appl
 The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
 
 ```tsx
-import { AzureAD, AuthenticationStatus } from 'react-aad-msal';
+import { AzureAD, AuthenticationState } from 'react-aad-msal';
 
 // Import the provider created in a different file
 import { authProvider } from './authProvider';
@@ -221,15 +221,15 @@ import { authProvider } from './authProvider';
 // Using a function inside the component will give you control of what to show for each state
 <AzureAD provider={authProvider} forceLogin={true}>
   {
-    ({login, logout, authenticationStatus, accountInfo}) => {
-      if (authenticationStatus === AuthenticationStatus.Authenticated) {
+    ({login, logout, authenticationState, accountInfo}) => {
+      if (authenticationState === AuthenticationState.Authenticated) {
         return (
           <p>
             <span>Welcome, {accountInfo.account.name}!</span>
             <button onClick={logout}>Logout</button>
           </p>
         );
-      } else if (authenticationStatus === AuthenticationStatus.Unauthenticated) {
+      } else if (authenticationState === AuthenticationState.Unauthenticated) {
         return (
           <p>
             <span>Hey stranger, you look new!</span>
@@ -401,9 +401,9 @@ In addition to login and logout actions, the `MsalAuthProvider` will dispatch ot
 | AAD_ACQUIRED_ID_TOKEN_SUCCESS     | [`IdTokenResponse`](/src/IdTokenResponse.ts)                                                                                         | Identifies that the IdToken has been retrieved or renewed successfully                                                                                                                                 |
 | AAD_ACQUIRED_ID_TOKEN_ERROR       | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts) | Dispatched when an error occurred while attempting to retrieve or renew the IdToken                                                                                                                    |
 | AAD_ACQUIRED_ACCESS_TOKEN_SUCCESS | [`AccessTokenResponse`](/src/AccessTokenResponse.ts)                                                                                 | Identifies that the Access Token has been retrieved or refreshed successfully                                                                                                                          |
-| AAD_ACQUIRED_ACCESS_TOKEN_ERROR   | `Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Dispatched when an error occurred while attempting to retrieve or refresh the Access Token                                                                                                             |
+| AAD_ACQUIRED_ACCESS_TOKEN_ERROR   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Dispatched when an error occurred while attempting to retrieve or refresh the Access Token                                                                                                             |
 | AAD_LOGIN_SUCCESS                 | [`IAccountInfo`](/src/Interfaces.ts)                                                                                                 | Dispatched when the user has been authenticated and a valid Access Token has been acquired                                                                                                             |
-| AAD_LOGIN_ERROR                   | `Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Identifies that an error occurred while login was in process                                                                                                                                           |
+| AAD_LOGIN_ERROR                   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Identifies that an error occurred while login was in process                                                                                                                                           |
 | AAD_LOGOUT_SUCCESS                | None                                                                                                                                 | Dispatched when the user has successfully logged out on the client side                                                                                                                                |
 
 ### Accessing the MSAL API
@@ -436,14 +436,14 @@ The project can be built with the following steps:
 While the library is ready for use there is still plenty of ongoing work. The following is a list of a few of the improvements under consideration.
 
 :white_medium_small_square: Rewrite the sample app to use hooks and simplify the logic.  
-:white_medium_small_square: Add a `useAuthentication()` hook to the library. 
+:white_medium_small_square: Add a `useAuthentication()` hook to the library.  
 :white_medium_small_square: Replace the `AzureAD` render props with event handlers.  
-:white_medium_small_square: Add Context API provider  
+:white_medium_small_square: Add Context API provider.  
 :white_medium_small_square: Separate MSAL and Redux dependencies as `peerDependencies`  
 :white_medium_small_square: Migrate to a build system such as Webpack, or Rollup.  
 :white_medium_small_square: Add samples for consuming a Web API.  
 :white_medium_small_square: Improve unit test coverage across the library.  
-:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.
+:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.  
 
 ## :books: Resources
 
