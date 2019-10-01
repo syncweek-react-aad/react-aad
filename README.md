@@ -75,7 +75,7 @@ Before beginning it is required to configure an instance of the `MsalAuthProvide
 | `parameters` | Instance of the `Msal.AuthenticationParameters` configuration to identify how the authentication process should function. This object includes the `scopes` values. You can see possible [values for scopes here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
 | `loginType`  | **[Optional]** A `LoginType` value which identifies whether the login operation is executed using a Popup or Reidrect. The default value is Popup                                                                                                                                                             |
 
-The `MsalAuthProvider` is meant to be a singleton. There are known implications when multiple instances of MSAL are running at the same time. THe recommended approach is to instantiate the `MsalAuthProvider` in a separate file and `import` it when needed.
+The `MsalAuthProvider` is meant to be a singleton. There are known implications when multiple instances of MSAL are running at the same time. The recommended approach is to instantiate the `MsalAuthProvider` in a separate file and `import` it when needed.
 
 ```TypeScript
 // authProvider.js
@@ -278,7 +278,7 @@ The first parameter is the component that requires authentication before being m
 
 The library components will manage authenticating the user without you needing to think about tokens. But there are scenarios where a fresh token will be needed to communicate with a service or to decode the token to examine the claims. The library exposes methods for retrieving active IdTokens and Access Tokens.
 
-For more advanced scenarios where you need specific control over error handling whena token fails to renew you can always [access the MSAL API](#accessing-the-msal-api) methods and renew a token manually as described in the MSAL [token renewal pattern](https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/FAQs#q3-how-to-renew-tokens-with-msaljs) documentation.
+For more advanced scenarios where you need specific control over error handling when a token fails to renew you can always [access the MSAL API](#accessing-the-msal-api) methods and renew a token manually as described in the MSAL [token renewal pattern](https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/FAQs#q3-how-to-renew-tokens-with-msaljs) documentation.
 
 #### Refreshing Access Tokens
 
