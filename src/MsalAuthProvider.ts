@@ -40,6 +40,7 @@ import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType, TokenType 
 import { Logger } from './logger';
 
 type AuthenticationStateHandler = (state: AuthenticationState) => void;
+type ErrorHandler = (error: AuthError | null) => void;
 type AccountInfoHandlers = (accountInfo: IAccountInfo | null) => void;
 
 export class MsalAuthProvider extends UserAgentApplication implements IAuthProvider {
@@ -55,9 +56,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   protected _parameters: AuthenticationParameters;
   protected _loginType: LoginType;
   protected _accountInfo: IAccountInfo | null;
+  protected _error: AuthError;
 
   private _onAuthenticationStateHandlers = new Set<AuthenticationStateHandler>();
   private _onAccountInfoHandlers = new Set<AccountInfoHandlers>();
+  private _onErrorHandlers = new Set<ErrorHandler>();
   private _actionQueue: AnyAction[] = [];
 
   constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType = LoginType.Popup) {
@@ -81,12 +84,13 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     } else if (this._loginType === LoginType.Popup) {
       try {
         await this.loginPopup(params);
-        this.processLogin();
       } catch (error) {
         Logger.ERROR(error);
-        this.dispatchAction(AuthenticationActionCreators.loginError(error));
+
+        this.setError(error);
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
       }
+      this.processLogin();
     }
   };
 
@@ -142,6 +146,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public getAuthenticationParameters = (): AuthenticationParameters => this._parameters;
 
+  public getError = () => this._error;
+
   public setAuthenticationParameters = (parameters: AuthenticationParameters): void => {
     this._parameters = parameters;
   };
@@ -181,6 +187,24 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._onAccountInfoHandlers.delete(listener);
   };
 
+  public registerErrorHandler = (listener: ErrorHandler) => {
+    this._onErrorHandlers.add(listener);
+    listener(this._error);
+  };
+
+  public unregisterErrorHandler = (listener: ErrorHandler) => {
+    this._onErrorHandlers.delete(listener);
+  };
+
+  private setError = (error: AuthError) => {
+    this._error = error;
+
+    this.dispatchAction(AuthenticationActionCreators.loginError(error));
+
+    this._onErrorHandlers.forEach(listener => listener(this._error));
+    return this._error;
+  };
+
   private loginToRefreshToken = async (
     error: AuthError,
     parameters?: AuthenticationParameters,
@@ -204,7 +228,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       } catch (error) {
         Logger.ERROR(error);
 
-        this.dispatchAction(AuthenticationActionCreators.loginError(error));
+        this.setError(error);
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
 
         throw error;
@@ -212,7 +236,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     } else {
       Logger.ERROR(error as any);
 
-      this.dispatchAction(AuthenticationActionCreators.loginError(error));
+      this.setError(error);
       this.setAuthenticationState(AuthenticationState.Unauthenticated);
 
       throw error;
@@ -220,9 +244,10 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   };
 
   private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
-    if (response) {
-      this.processLogin();
+    if (error) {
+      this.setError(error);
     }
+    this.processLogin();
   };
 
   private initializeProvider = async () => {
@@ -234,7 +259,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   };
 
   private processLogin = async () => {
-    if (this.getAccount()) {
+    if (this.getError()) {
+      this.handleLoginFailed();
+
+      this.setAuthenticationState(AuthenticationState.Unauthenticated);
+    } else if (this.getAccount()) {
       try {
         // If the IdToken has expired, refresh it. Otherwise use the cached token
         await this.getIdToken();
@@ -300,6 +329,13 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     } else if (response.tokenType === TokenType.AccessToken) {
       const token = new AccessTokenResponse(response);
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenSuccess(token));
+    }
+  };
+
+  private handleLoginFailed = (): void => {
+    const error = this.getError();
+    if (error) {
+      this.dispatchAction(AuthenticationActionCreators.loginFailed());
     }
   };
 
