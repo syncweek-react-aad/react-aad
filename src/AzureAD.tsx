@@ -40,6 +40,7 @@ export interface IAzureADFunctionProps {
   logout: LogoutFunction;
   authenticationState: AuthenticationState;
   accountInfo: IAccountInfo | null;
+  error: AuthError | null;
 }
 
 export interface IAzureADProps {
