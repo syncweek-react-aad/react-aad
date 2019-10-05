@@ -198,8 +198,17 @@ The library provides multiple components to integrate Azure AD authentication in
 The `AzureAD` component is the primary method to add authentication to your application. When the component is loaded it internally uses MSAL to check the cache and determine the current authentication state. The users authentication status determines how the component will render the `children`.
 
 1. If the `children` is an element, it will only be rendered when the `AzureAD` detects an authenticated user.
-2. If the `children` is a function, then it will always be executed and a reference to the `login`, `logout`, `authenticationState`, and `accountInfo` will be passed down.
-
+2. If the `children` is a function, then it will always be executed with the following argument: 
+    ```tsx
+    {
+      login, // login function
+      logout, // logout function
+      authenticationState, // the current authentication state
+      error, // any error that occured during the login process
+      accountInfo, // account info of the authenticated user
+    }
+    ```
+  
 The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
 
 ```tsx
@@ -221,7 +230,7 @@ import { authProvider } from './authProvider';
 // Using a function inside the component will give you control of what to show for each state
 <AzureAD provider={authProvider} forceLogin={true}>
   {
-    ({login, logout, authenticationState, accountInfo}) => {
+    ({login, logout, authenticationState, error, accountInfo}) => {
       if (authenticationState === AuthenticationState.Authenticated) {
         return (
           <p>
@@ -230,6 +239,15 @@ import { authProvider } from './authProvider';
           </p>
         );
       } else if (authenticationState === AuthenticationState.Unauthenticated) {
+        if (error) {
+          return (
+              <p>
+                <span>An error occured during authentication, please try again!</span>
+                <button onClick={login}>Login</button>
+              </p>
+            );
+        }
+
         return (
           <p>
             <span>Hey stranger, you look new!</span>
@@ -402,9 +420,10 @@ In addition to login and logout actions, the `MsalAuthProvider` will dispatch ot
 | AAD_ACQUIRED_ID_TOKEN_SUCCESS     | [`IdTokenResponse`](/src/IdTokenResponse.ts)                                                                                         | Identifies that the IdToken has been retrieved or renewed successfully                                                                                                                                 |
 | AAD_ACQUIRED_ID_TOKEN_ERROR       | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts) | Dispatched when an error occurred while attempting to retrieve or renew the IdToken                                                                                                                    |
 | AAD_ACQUIRED_ACCESS_TOKEN_SUCCESS | [`AccessTokenResponse`](/src/AccessTokenResponse.ts)                                                                                 | Identifies that the Access Token has been retrieved or refreshed successfully                                                                                                                          |
-| AAD_ACQUIRED_ACCESS_TOKEN_ERROR   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Dispatched when an error occurred while attempting to retrieve or refresh the Access Token                                                                                                             |
+| AAD_ACQUIRED_ACCESS_TOKEN_ERROR   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts) | Dispatched when an error occurred while attempting to retrieve or refresh the Access Token                                                                                                             |
 | AAD_LOGIN_SUCCESS                 | [`IAccountInfo`](/src/Interfaces.ts)                                                                                                 | Dispatched when the user has been authenticated and a valid Access Token has been acquired                                                                                                             |
-| AAD_LOGIN_ERROR                   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts)  | Identifies that an error occurred while login was in process                                                                                                                                           |
+| AAD_LOGIN_FAILED                  | None                                                                                                                                 | Dispatched when the authentication process fails                                                                                                                                                       |
+| AAD_LOGIN_ERROR                   | [`Msal.AuthError`](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-core/src/error/AuthError.ts) | Identifies that an error occurred while login was in process                                                                                                                                           |
 | AAD_LOGOUT_SUCCESS                | None                                                                                                                                 | Dispatched when the user has successfully logged out on the client side                                                                                                                                |
 
 ### Accessing the MSAL API
