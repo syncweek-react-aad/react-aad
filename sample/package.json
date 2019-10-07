@@ -21,9 +21,7 @@
     "Andrew Craswell <andcra@microsoft.com>"
   ],
   "dependencies": {
-    "react": "16.9.0",
     "react-aad-msal": "file:../",
-    "react-dom": "16.9.0",
     "react-redux": "7.1.0",
     "react-scripts": "3.1.1",
     "redux": "4.0.4"
