@@ -19,7 +19,10 @@
     "start": "yarn build:lib && cd packages/sample && yarn start",
     "clean": "yarn clean:lib && yarn clean:sample",
     "clean:lib": "cd packages/lib && yarn clean",
-    "clean:sample": "cd packages/sample && yarn clean"
+    "clean:sample": "cd packages/sample && yarn clean",
+    "test": "yarn test:lib && yarn test:sample",
+    "test:lib": "cd packages/lib && yarn test",
+    "test:sample": "yarn build:lib && cd packages/sample && yarn test --watchAll=false"
   },
   "husky": {
     "hooks": {
