@@ -1,0 +1,9 @@
+{
+  "name": "react-aad-msal-root",
+  "version": "1.0.0",
+  "description": "root project",
+  "private": true,
+  "workspaces": {
+    "packages": ["packages/*"]
+  }
+}
