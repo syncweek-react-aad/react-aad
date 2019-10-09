@@ -22,7 +22,8 @@
     "clean:sample": "cd packages/sample && yarn clean",
     "test": "yarn test:lib && yarn test:sample",
     "test:lib": "cd packages/lib && yarn test",
-    "test:sample": "yarn build:lib && cd packages/sample && yarn test --watchAll=false"
+    "test:sample": "yarn build:lib && cd packages/sample && yarn test --watchAll=false",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "husky": {
     "hooks": {

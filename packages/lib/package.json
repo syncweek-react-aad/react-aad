@@ -31,8 +31,7 @@
     "lint": "tslint --config tslint.json --project ./tsconfig.json --fix",
     "start": "tsc && cd ./sample && npm run start",
     "build": "npm run lint && tsc",
-    "test": "jest --env=jsdom",
-    "version": "auto-changelog -p && git add CHANGELOG.md"
+    "test": "jest --env=jsdom"
   },
   "dependencies": {
     "msal": "1.1.3",
