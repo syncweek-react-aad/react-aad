@@ -22,7 +22,7 @@
     "Björn Dalfors <bjorn@binovi.se>"
   ],
   "dependencies": {
-    "react-aad-msal": "file:../",
+    "react-aad-msal": "*",
     "react-redux": "7.1.0",
     "react-scripts": "3.2.0",
     "redux": "4.0.4"
