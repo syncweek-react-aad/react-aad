@@ -4,11 +4,15 @@
   "description": "root project",
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/tslint-microsoft-contrib"]
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/tslint-microsoft-contrib"
+    ]
   },
-  "scripts" : {
-    "build" : "yarn build:lib && yarn build:sample",
+  "scripts": {
+    "build": "yarn build:lib && yarn build:sample",
     "build:lib": "cd packages/lib && yarn build",
     "build:sample": "cd packages/sample && yarn build",
     "reset-modules": "rm -rf node_modules/ packages/*/node_modules",
@@ -16,5 +20,21 @@
     "clean": "yarn clean:lib && yarn clean:sample",
     "clean:lib": "cd packages/lib && yarn clean",
     "clean:sample": "cd packages/sample && yarn clean"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,ts,tsx}": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.{ts,tsx}": [
+      "tslint --config tslint.json --fix",
+      "git add"
+    ]
   }
 }

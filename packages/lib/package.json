@@ -84,21 +84,5 @@
     "Microsoft Authentication Library",
     "Azure Active Directory",
     "Azure"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run test"
-    }
-  },
-  "lint-staged": {
-    "*.{js,json,css,ts,tsx}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.{ts,tsx}": [
-      "tslint --config tslint.json --fix",
-      "git add"
-    ]
-  }
+  ]
 }
