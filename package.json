@@ -37,7 +37,7 @@
       "git add"
     ],
     "*.{ts,tsx}": [
-      "tslint --config tslint.json --fix",
+      "tslint --config packages/lib/tslint.json --fix",
       "git add"
     ]
   }
