@@ -17,12 +17,13 @@ This repository contains a sample react application that demonstrates how to use
 
 1. `git clone https://github.com/Azure-Samples/react-aad-msal.git`
 2. `cd react-aad-msal`
-3. Create a `.env.local` file under the `sample` directory with the following variables:
+3. Create a `.env.local` file under the `packages/sample` directory with the following variables:
    ```
    REACT_APP_AAD_APP_CLIENT_ID=<client id guid>
    REACT_APP_AUTHORITY=<authority url (optional)>
    ```
-4. Run the sample application `npm start`
+4. Install dependencies `yarn install`
+5. Run the sample application by running `npm start` or `yarn start` from the repository root folder
 
 The sample site should launch in a Web browser at `http://localhost:3000`.
 
