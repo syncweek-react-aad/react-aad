@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "root project",
   "private": true,
+  "engines": {
+    "yarn": ">=1.4.2"
+  },
   "workspaces": {
     "packages": [
       "packages/*"
