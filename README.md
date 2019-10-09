@@ -446,10 +446,10 @@ The project can be built with the following steps:
 1. `git clone https://github.com/syncweek-react-aad/react-aad.git`
 2. `cd ./react-aad`
 3. Build the `react-aad` library:
-   - `npm install`
-   - `npm run build`
+   - `yarn install`
+   - `yarn build`
 4. Run the sample project:
-   - `npm start`
+   - `yarn start`
 
 ## :calendar: Roadmap
 
