@@ -29,7 +29,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "tslint --config tslint.json --project ./tsconfig.json --fix",
-    "start": "tsc && cd ./sample && npm run start",
     "build": "npm run lint && tsc",
     "test": "jest --env=jsdom"
   },
