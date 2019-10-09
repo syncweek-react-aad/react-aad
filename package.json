@@ -4,6 +4,8 @@
   "description": "root project",
   "private": true,
   "workspaces": {
-    "packages": ["packages/*"]
+    "packages": ["packages/*"],
+    "nohoist": ["**/tslint-microsoft-contrib"]
+  },
   }
 }
