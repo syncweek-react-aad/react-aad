@@ -91,7 +91,7 @@ class App extends Component {
         </header>
 
         <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
-          {({ accountInfo, authenticationState }) => {
+          {({ accountInfo, authenticationState, error }) => {
             return (
               <React.Fragment>
                 {authenticationState === AuthenticationState.Unauthenticated && (
@@ -123,6 +123,20 @@ class App extends Component {
                         </p>
                         <p>
                           <span style={{ fontWeight: 'bold' }}>Name:</span> {accountInfo.account.name}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="SampleBox">
+                    <h2 className="SampleHeader">Errors</h2>
+                    <p>If authentication fails, this box will the errors that occured</p>
+                    {error && (
+                      <div style={{ wordWrap: 'break-word' }}>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>errorCode:</span> {error.errorCode}
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 'bold' }}>errorMessage:</span> {error.errorMessage}
                         </p>
                       </div>
                     )}

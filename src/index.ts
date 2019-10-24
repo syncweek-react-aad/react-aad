@@ -34,7 +34,7 @@ import {
 
 import { AccessTokenResponse } from './AccessTokenResponse';
 import { AuthenticationActions } from './actions';
-import { AzureAD } from './AzureAD';
+import { AzureAD, IAzureADFunctionProps } from './AzureAD';
 import { IdTokenResponse } from './IdTokenResponse';
 import { AuthenticationState, IAccountInfo, LoginType } from './Interfaces';
 import { MsalAuthProvider } from './MsalAuthProvider';
@@ -48,6 +48,7 @@ export {
   AuthenticationState,
   IAccountInfo,
   LoginType,
+  IAzureADFunctionProps,
   MsalAuthProvider,
   withAuthentication,
   IdTokenResponse,

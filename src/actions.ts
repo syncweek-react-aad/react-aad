@@ -33,6 +33,7 @@ export enum AuthenticationActions {
   Initializing = 'AAD_INITIALIZING',
   Initialized = 'AAD_INITIALIZED',
   LoginSuccess = 'AAD_LOGIN_SUCCESS',
+  LoginFailed = 'AAD_LOGIN_FAILED',
   LoginError = 'AAD_LOGIN_ERROR',
   LogoutSuccess = 'AAD_LOGOUT_SUCCESS',
   AcquiredIdTokenSuccess = 'AAD_ACQUIRED_ID_TOKEN_SUCCESS',
@@ -54,6 +55,10 @@ export abstract class AuthenticationActionCreators {
   public static loginSuccessful = (data: IAccountInfo): AnyAction => ({
     payload: data,
     type: AuthenticationActions.LoginSuccess,
+  });
+
+  public static loginFailed = (): AnyAction => ({
+    type: AuthenticationActions.LoginFailed,
   });
 
   public static loginError = (error: AuthError): AnyAction => ({

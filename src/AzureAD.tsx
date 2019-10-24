@@ -26,6 +26,7 @@
 import { default as React, useCallback, useEffect, useMemo, useState } from 'react';
 import { Store } from 'redux';
 
+import { AuthError } from 'msal';
 import { MsalAuthProvider } from './';
 import { AccountInfoCallback, AuthenticationState, IAccountInfo } from './Interfaces';
 
@@ -39,6 +40,7 @@ export interface IAzureADFunctionProps {
   logout: LogoutFunction;
   authenticationState: AuthenticationState;
   accountInfo: IAccountInfo | null;
+  error: AuthError | null;
 }
 
 export interface IAzureADProps {
@@ -54,11 +56,13 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
   const { authenticatedFunction, unauthenticatedFunction, provider, forceLogin, accountInfoCallback } = props;
   const [accountInfo, _setAccountInfo] = useState(provider.getAccountInfo());
   const [authenticationState, _setAuthenticationState] = useState(provider.authenticationState);
+  const [error, _setError] = useState(provider.getError());
 
   // On component mounted
   useEffect(() => {
     provider.registerAuthenticationStateHandler(setAuthenticationState);
     provider.registerAcountInfoHandler(onAccountInfoChanged);
+    provider.registerErrorHandler(setError);
 
     if (props.reduxStore) {
       provider.registerReduxStore(props.reduxStore);
@@ -99,6 +103,15 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     [authenticationState, forceLogin],
   );
 
+  const setError = useCallback(
+    (newError: AuthError) => {
+      if (newError !== error) {
+        _setError(newError);
+      }
+    },
+    [error],
+  );
+
   const onAccountInfoChanged = useCallback(
     (newAccountInfo: IAccountInfo) => {
       _setAccountInfo(newAccountInfo);
@@ -119,10 +132,11 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     () => ({
       accountInfo,
       authenticationState,
+      error,
       login,
       logout,
     }),
-    [accountInfo, authenticationState, login, logout],
+    [accountInfo, authenticationState, error, login, logout],
   );
 
   function getChildrenOrFunction(children: any, childrenProps: IAzureADFunctionProps) {

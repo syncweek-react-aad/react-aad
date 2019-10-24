@@ -18,14 +18,13 @@
     "Zach Miller <zamiller@microsoft.com>",
     "P.J. Little <pj.little@microsoft.com>",
     "Shawn Cicoria <shawn.cicoria@microsoft.com>",
-    "Andrew Craswell <andcra@microsoft.com>"
+    "Andrew Craswell <andcra@microsoft.com>",
+    "Björn Dalfors <bjorn@binovi.se>"
   ],
   "dependencies": {
-    "react": "16.9.0",
     "react-aad-msal": "file:../",
-    "react-dom": "16.9.0",
     "react-redux": "7.1.0",
-    "react-scripts": "3.1.1",
+    "react-scripts": "3.2.0",
     "redux": "4.0.4"
   },
   "devDependencies": {
