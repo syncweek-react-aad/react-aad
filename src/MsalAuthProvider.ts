@@ -268,9 +268,6 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
         // If the IdToken has expired, refresh it. Otherwise use the cached token
         await this.getIdToken();
 
-        // If the access token has expired, refresh it. Otherwise use the cached token
-        await this.getAccessToken(this._parameters);
-
         this.handleLoginSuccess();
       } catch (error) {
         // Swallow the error if the user isn't authenticated, just set to Unauthenticated
