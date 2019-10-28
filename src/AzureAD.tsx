@@ -76,6 +76,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     return () => {
       provider.unregisterAuthenticationStateHandler(setAuthenticationState);
       provider.unregisterAccountInfoHandler(onAccountInfoChanged);
+      provider.unregisterErrorHandler(setError);
     };
   }, []);
 

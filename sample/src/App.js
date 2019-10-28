@@ -129,7 +129,7 @@ class App extends Component {
                   </div>
                   <div className="SampleBox">
                     <h2 className="SampleHeader">Errors</h2>
-                    <p>If authentication fails, this box will the errors that occured</p>
+                    <p>If authentication fails, this box will have the errors that occured</p>
                     {error && (
                       <div style={{ wordWrap: 'break-word' }}>
                         <p>

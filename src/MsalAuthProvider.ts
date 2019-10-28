@@ -56,7 +56,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   protected _parameters: AuthenticationParameters;
   protected _loginType: LoginType;
   protected _accountInfo: IAccountInfo | null;
-  protected _error: AuthError;
+  protected _error: AuthError | null;
 
   private _onAuthenticationStateHandlers = new Set<AuthenticationStateHandler>();
   private _onAccountInfoHandlers = new Set<AccountInfoHandlers>();
@@ -77,6 +77,9 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public login = async (parameters?: AuthenticationParameters) => {
     const params = parameters ? parameters : this._parameters;
+
+    // Reset any active authentication errors
+    this.setError(null);
 
     if (this._loginType === LoginType.Redirect) {
       this.loginRedirect(this._parameters);
@@ -129,6 +132,13 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       ...params,
       scopes: [clientId],
     };
+
+    // If the parameters do not specify a login hint and the user already has a session cached,
+    // prefer the cached user name to bypass the account selection process if possible
+    const account = this.getAccount();
+    if (account && (!parameters || !parameters.loginHint)) {
+      params.loginHint = account.userName;
+    }
 
     try {
       const response = await this.acquireTokenSilent(params);
@@ -196,12 +206,15 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._onErrorHandlers.delete(listener);
   };
 
-  private setError = (error: AuthError) => {
+  private setError = (error: AuthError | null) => {
     this._error = error;
 
-    this.dispatchAction(AuthenticationActionCreators.loginError(error));
+    if (error) {
+      this.dispatchAction(AuthenticationActionCreators.loginError(error));
+    }
 
     this._onErrorHandlers.forEach(listener => listener(this._error));
+
     return this._error;
   };
 
