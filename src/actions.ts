@@ -35,6 +35,7 @@ export enum AuthenticationActions {
   LoginSuccess = 'AAD_LOGIN_SUCCESS',
   LoginFailed = 'AAD_LOGIN_FAILED',
   LoginError = 'AAD_LOGIN_ERROR',
+  ClearError = 'AAD_CLEAR_ERROR',
   LogoutSuccess = 'AAD_LOGOUT_SUCCESS',
   AcquiredIdTokenSuccess = 'AAD_ACQUIRED_ID_TOKEN_SUCCESS',
   AcquiredIdTokenError = 'AAD_ACQUIRED_ID_TOKEN_ERROR',
@@ -64,6 +65,10 @@ export abstract class AuthenticationActionCreators {
   public static loginError = (error: AuthError): AnyAction => ({
     payload: error,
     type: AuthenticationActions.LoginError,
+  });
+
+  public static clearError = (): AnyAction => ({
+    type: AuthenticationActions.ClearError,
   });
 
   public static logoutSuccessful = (): AnyAction => ({
