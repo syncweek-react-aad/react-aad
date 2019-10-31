@@ -188,3 +188,5 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       return null;
   }
 };
+
+AzureAD.displayName = 'AzureAD';
