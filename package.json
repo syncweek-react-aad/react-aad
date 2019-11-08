@@ -35,7 +35,7 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
-    "msal": "1.2.0-beta.2",
+    "msal": "1.2.0-beta.3",
     "redux": "4.0.4"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
     "@types/jest": "24.0.18",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
-    "auto-changelog": "1.16.1",
+    "auto-changelog": "1.16.2",
     "babel-jest": "24.9.0",
     "core-js": "3.2.1",
     "enzyme": "3.10.0",
