@@ -35,7 +35,7 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
-    "msal": "1.2.0-beta.3",
+    "msal": "1.2.0-beta.4",
     "redux": "4.0.4"
   },
   "devDependencies": {
