@@ -62,7 +62,7 @@ A library of components to easily integrate the Microsoft Authentication Library
 Via NPM:
 
 ```
-npm install react-aad-msal
+npm install react-aad-msal msal --save
 ```
 
 ### Creating the Provider
