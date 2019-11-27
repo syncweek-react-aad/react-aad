@@ -22,36 +22,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+import { AzureAD } from './AzureAD';
 
-import {
-  Account,
-  AuthenticationParameters,
-  AuthResponse,
-  CacheLocation,
-  Configuration,
-  UserAgentApplication,
-} from 'msal';
-
-import { AccessTokenResponse } from './AccessTokenResponse';
-import { AuthenticationActions } from './actions';
-import { AzureAD, IAzureADFunctionProps } from './AzureAD';
-import { IdTokenResponse } from './IdTokenResponse';
-import { AuthenticationState, IAccountInfo, LoginType } from './Interfaces';
-import { MsalAuthProvider } from './MsalAuthProvider';
-import { withAuthentication } from './withAuthentication';
-
-export { Account, AuthenticationParameters, AuthResponse, CacheLocation, Configuration, UserAgentApplication };
-export {
-  AccessTokenResponse,
-  AzureAD,
-  AuthenticationActions,
-  AuthenticationState,
-  IAccountInfo,
-  LoginType,
-  IAzureADFunctionProps,
-  MsalAuthProvider,
-  withAuthentication,
-  IdTokenResponse,
-};
+export { AccessTokenResponse } from './AccessTokenResponse';
+export { AuthenticationActions } from './actions';
+export { AzureAD, IAzureADFunctionProps } from './AzureAD';
+export { IdTokenResponse } from './IdTokenResponse';
+export { AuthenticationState, IAccountInfo, LoginType } from './Interfaces';
+export { MsalAuthProvider } from './MsalAuthProvider';
+export { withAuthentication } from './withAuthentication';
 
 export default AzureAD;
