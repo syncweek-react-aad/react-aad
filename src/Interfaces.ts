@@ -33,6 +33,7 @@ export enum LoginType {
 
 export enum AuthenticationState {
   Unauthenticated = 'Unauthenticated',
+  InProgress = 'InProgress',
   Authenticated = 'Authenticated',
 }
 

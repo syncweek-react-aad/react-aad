@@ -44,7 +44,11 @@ class SampleAppButtonLaunch extends React.Component {
     return (
       <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
         {({ login, logout, authenticationState }) => {
-          if (authenticationState === AuthenticationState.Authenticated) {
+          const isInProgress = authenticationState === AuthenticationState.InProgress;
+          const isAuthenticated = authenticationState === AuthenticationState.Authenticated;
+          const isUnauthenticated = authenticationState === AuthenticationState.Unauthenticated;
+
+          if (isAuthenticated) {
             return (
               <React.Fragment>
                 <p>You're logged in!</p>
@@ -55,9 +59,9 @@ class SampleAppButtonLaunch extends React.Component {
                 <GetIdTokenButton provider={authProvider} />
               </React.Fragment>
             );
-          } else if (authenticationState === AuthenticationState.Unauthenticated) {
+          } else if (isUnauthenticated || isInProgress) {
             return (
-              <button className="Button" onClick={login}>
+              <button className="Button" onClick={login} disabled={isInProgress}>
                 Login
               </button>
             );
