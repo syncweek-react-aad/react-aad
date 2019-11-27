@@ -69,3 +69,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
   font-size: 15px;
   cursor: pointer;
 }
+
+.Button:disabled {
+  background-color: grey;
+}
