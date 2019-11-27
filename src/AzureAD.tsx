@@ -68,7 +68,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       provider.registerReduxStore(props.reduxStore);
     }
 
-    if (authenticationState === AuthenticationState.Unauthenticated && forceLogin) {
+    if (forceLogin && authenticationState === AuthenticationState.Unauthenticated && !error) {
       login();
     }
 
