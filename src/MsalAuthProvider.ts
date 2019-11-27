@@ -82,10 +82,12 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this.setError(null);
 
     if (this._loginType === LoginType.Redirect) {
+      this.setAuthenticationState(AuthenticationState.InProgress);
       this.loginRedirect(this._parameters);
       // Nothing to do here, user will be redirected to the login page
     } else if (this._loginType === LoginType.Popup) {
       try {
+        this.setAuthenticationState(AuthenticationState.InProgress);
         await this.loginPopup(params);
       } catch (error) {
         Logger.ERROR(error);
@@ -290,6 +292,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
       }
+    } else if (this.getLoginInProgress()) {
+      this.setAuthenticationState(AuthenticationState.InProgress);
     } else {
       this.setAuthenticationState(AuthenticationState.Unauthenticated);
     }

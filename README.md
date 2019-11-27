@@ -85,7 +85,7 @@ const config = {
   auth: {
     authority: 'https://login.microsoftonline.com/common',
     clientId: '<YOUR APPLICATION ID>',
-    redirectUri: '<OPTIONAL REDIRECT URI'
+    redirectUri: '<OPTIONAL REDIRECT URI>'
   },
   cache: {
     cacheLocation: "localStorage",
@@ -212,7 +212,7 @@ The `AzureAD` component is the primary method to add authentication to your appl
 The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
 
 ```tsx
-import { AzureAD, AuthenticationState } from 'react-aad-msal';
+import { AzureAD, AuthenticationState, AuthenticationState } from 'react-aad-msal';
 
 // Import the provider created in a different file
 import { authProvider } from './authProvider';
@@ -231,29 +231,26 @@ import { authProvider } from './authProvider';
 <AzureAD provider={authProvider} forceLogin={true}>
   {
     ({login, logout, authenticationState, error, accountInfo}) => {
-      if (authenticationState === AuthenticationState.Authenticated) {
-        return (
-          <p>
-            <span>Welcome, {accountInfo.account.name}!</span>
-            <button onClick={logout}>Logout</button>
-          </p>
-        );
-      } else if (authenticationState === AuthenticationState.Unauthenticated) {
-        if (error) {
+      switch (authenticationState) {
+        case AuthenticationState.Authenticated:
           return (
+            <p>
+              <span>Welcome, {accountInfo.account.name}!</span>
+              <button onClick={logout}>Logout</button>
+            </p>
+          );
+        case AuthenticationState.Unauthenticated:
+          return (
+            <div>
+              {error && <p><span>An error occured during authentication, please try again!</span></p>}
               <p>
-                <span>An error occured during authentication, please try again!</span>
+                <span>Hey stranger, you look new!</span>
                 <button onClick={login}>Login</button>
               </p>
-            );
-        }
-
-        return (
-          <p>
-            <span>Hey stranger, you look new!</span>
-            <button onClick={login}>Login</button>
-          </p>
-        );
+            </div>
+          );
+        case AuthenticationState.InProgress:
+          return (<p>Authenticating...</p>);
       }
     }
   }
@@ -450,6 +447,8 @@ The project can be built with the following steps:
    - `npm run build`
 4. Run the sample project:
    - `npm start`
+
+Be sure to modify the [authProvider.js](sample/authProvider.js) configuration to specify your own `ClientID` and `Authority`.
 
 ## :calendar: Roadmap
 

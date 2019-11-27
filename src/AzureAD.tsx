@@ -78,7 +78,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       provider.unregisterAccountInfoHandler(onAccountInfoChanged);
       provider.unregisterErrorHandler(setError);
     };
-  }, []);
+  }, [authenticationState, accountInfo, error]);
 
   const login = useCallback(() => {
     provider.login();
@@ -184,6 +184,8 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       //  Otherwise the content should be restricted until authenticated
       const functionOrChildren = getChildrenOrFunction(props.children, childrenFunctionProps);
       return functionOrChildren === props.children ? null : functionOrChildren;
+    case AuthenticationState.InProgress:
+      return getChildrenOrFunction(props.children, childrenFunctionProps);
     default:
       return null;
   }
