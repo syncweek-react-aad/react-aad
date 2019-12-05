@@ -36,7 +36,14 @@ import { AnyAction, Store } from 'redux';
 import { AccessTokenResponse } from './AccessTokenResponse';
 import { AuthenticationActionCreators } from './actions';
 import { IdTokenResponse } from './IdTokenResponse';
-import { AuthenticationState, IAccountInfo, IAuthProvider, LoginType, TokenType } from './Interfaces';
+import {
+  AuthenticationState,
+  IAccountInfo,
+  IAuthProvider,
+  IMsalAuthProviderConfig,
+  LoginType,
+  TokenType,
+} from './Interfaces';
 import { Logger } from './logger';
 
 type AuthenticationStateHandler = (state: AuthenticationState) => void;
@@ -54,7 +61,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   protected _reduxStore: Store;
   protected _parameters: AuthenticationParameters;
-  protected _loginType: LoginType;
+  protected _options: IMsalAuthProviderConfig;
   protected _accountInfo: IAccountInfo | null;
   protected _error: AuthError | null;
 
@@ -63,29 +70,36 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   private _onErrorHandlers = new Set<ErrorHandler>();
   private _actionQueue: AnyAction[] = [];
 
-  constructor(config: Configuration, parameters: AuthenticationParameters, loginType: LoginType = LoginType.Popup) {
+  constructor(
+    config: Configuration,
+    parameters: AuthenticationParameters,
+    options: IMsalAuthProviderConfig = {
+      loginType: LoginType.Popup,
+      tokenRefreshUri: window.location.origin,
+    },
+  ) {
     super(config);
 
     // Required only for backward compatibility
     this.UserAgentApplication = this as UserAgentApplication;
 
     this.setAuthenticationParameters(parameters);
-    this.setLoginType(loginType);
+    this.setProviderOptions(options);
 
     this.initializeProvider();
   }
 
   public login = async (parameters?: AuthenticationParameters) => {
-    const params = parameters ? parameters : this._parameters;
+    const params = parameters || this._parameters;
 
     // Reset any active authentication errors
     this.setError(null);
 
-    if (this._loginType === LoginType.Redirect) {
+    if (this._options.loginType === LoginType.Redirect) {
       this.setAuthenticationState(AuthenticationState.InProgress);
-      this.loginRedirect(this._parameters);
+      this.loginRedirect(params);
       // Nothing to do here, user will be redirected to the login page
-    } else if (this._loginType === LoginType.Popup) {
+    } else if (this._options.loginType === LoginType.Popup) {
       try {
         this.setAuthenticationState(AuthenticationState.InProgress);
         await this.loginPopup(params);
@@ -108,7 +122,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
 
   public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AccessTokenResponse> => {
-    const params = parameters ? parameters : this._parameters;
+    const params = parameters || this._parameters;
+    params.redirectUri = (parameters && parameters.redirectUri) || this._options.tokenRefreshUri;
 
     try {
       const response = await this.acquireTokenSilent(params);
@@ -127,11 +142,12 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   public getIdToken = async (parameters?: AuthenticationParameters): Promise<IdTokenResponse> => {
     const config = this.getCurrentConfiguration();
     const clientId = config.auth.clientId;
-    let params = parameters ? parameters : this._parameters;
 
-    // Pass the clientId as the only scope to get a renewed IdToken if it has expired
+    let params = parameters || this._parameters;
     params = {
       ...params,
+      redirectUri: (parameters && parameters.redirectUri) || this._options.tokenRefreshUri,
+      // Pass the clientId as the only scope to get a renewed IdToken if it has expired
       scopes: [clientId],
     };
 
@@ -164,11 +180,14 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._parameters = parameters;
   };
 
-  public setLoginType = (loginType: LoginType) => {
-    if (loginType === LoginType.Redirect) {
+  public getProviderOptions = (): IMsalAuthProviderConfig => this._options;
+
+  public setProviderOptions = (options: IMsalAuthProviderConfig) => {
+    if (options.loginType === LoginType.Redirect) {
       this.handleRedirectCallback(this.authenticationRedirectCallback);
     }
-    this._loginType = loginType;
+
+    this._options = options;
   };
 
   public registerReduxStore = (store: Store): void => {
@@ -224,10 +243,10 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     error: AuthError,
     parameters?: AuthenticationParameters,
   ): Promise<AuthResponse> => {
-    const params = parameters ? parameters : this._parameters;
+    const params = parameters || this._parameters;
 
     if (error instanceof InteractionRequiredAuthError) {
-      if (this._loginType === LoginType.Redirect) {
+      if (this._options.loginType === LoginType.Redirect) {
         this.acquireTokenRedirect(params);
 
         // Nothing to return, the user is redirected to the login page

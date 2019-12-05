@@ -25,7 +25,7 @@ A library of components to easily integrate the Microsoft Authentication Library
     - [Creating the Provider](#creating-the-provider)
       - [Configuration Options](#configuration-options)
       - [Authentication Parameters](#authentication-parameters)
-      - [Login Type](#login-type)
+      - [Options](#options)
   - [:package: Authentication Components](#package-authentication-components)
     - [AzureAD Component](#azuread-component)
     - [Higher Order Component](#higher-order-component)
@@ -73,7 +73,7 @@ Before beginning it is required to configure an instance of the `MsalAuthProvide
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `config`     | Instance of a `Msal.Configuration` object to configure the underlying provider. The documentation for all the options can be found in the [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications#configuration-options) doc         |
 | `parameters` | Instance of the `Msal.AuthenticationParameters` configuration to identify how the authentication process should function. This object includes the `scopes` values. You can see possible [values for scopes here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
-| `loginType`  | **[Optional]** A `LoginType` value which identifies whether the login operation is executed using a Popup or Reidrect. The default value is Popup                                                                                                                                                             |
+| `options`  | **[Optional]** The `options` are defined by the [IMsalAuthProviderConfig](src/Interfaces.ts) interface. This contains settings that describe how the authentication provider should handle certain authentication processes.                                                                                                                                                             |
 
 The `MsalAuthProvider` is meant to be a singleton. There are known implications when multiple instances of MSAL are running at the same time. The recommended approach is to instantiate the `MsalAuthProvider` in a separate file and `import` it when needed.
 
@@ -100,7 +100,12 @@ const authenticationParameters = {
   ]
 }
 
-export const authProvider = new MsalAuthProvider(config, authenticationParameters, LoginType.Popup)
+const options = {
+  loginType: LoginType.Popup,
+  tokenRefreshUri: window.location.origin + '/auth.html'
+}
+
+export const authProvider = new MsalAuthProvider(config, authenticationParameters, options)
 ```
 
 Now you can `import` the `authProvider` and use it in combination with one of the authentication components.
@@ -185,9 +190,24 @@ The set of options that are supported for the `Msal.AuthenticationParameters` cl
   };
 ```
 
-#### Login Type
+#### Options
 
-The `LoginType` parameter is an enum with two options for `Popup` or `Redirect` authentication. This parameter is optional and will default to `Popup` if not provided. At any time after instantiating the `MsalAuthProvider` the login type can be changed using the `setLoginType()` method.
+The `options` parameter defines settings related to how the authentication provider processes authentication operations.
+
+```typescript
+const options = {
+  // The default login type is Popup
+  loginType: LoginType.Popup,
+  // A blank html page that MSAL can load in an iframe to refresh the token
+  // The default setting for this parameter is `window.location.origin`
+  tokenRefreshUri: window.location.origin + '/auth.html'
+}
+```
+
+ `LoginType` is an enum with two options for `Popup` or `Redirect` authentication. This parameter is optional and will default to `Popup` if not provided. The `tokenRefreshUri` allows you to set a separate page to load only when tokens are being refreshed. When `MSAL` attempts to refresh a token, it will reload the page in an iframe. This option allows you to inform `MSAL` of a specific page it can load in the iframe. It is best practice to use a blank HTML file so as to prevent all your site scripts and contents from loading multiple times.
+ 
+
+ At any time after instantiating the `MsalAuthProvider` the login type can be changed using the `setProviderOptions()` method. You may also retrieve the current options using the `getProviderOptions()` method.
 
 ## :package: Authentication Components
 
