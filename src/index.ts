@@ -28,7 +28,7 @@ export { AccessTokenResponse } from './AccessTokenResponse';
 export { AuthenticationActions } from './actions';
 export { AzureAD, IAzureADFunctionProps } from './AzureAD';
 export { IdTokenResponse } from './IdTokenResponse';
-export { AuthenticationState, IAccountInfo, LoginType } from './Interfaces';
+export { AuthenticationState, IAccountInfo, IMsalAuthProviderConfig, LoginType } from './Interfaces';
 export { MsalAuthProvider } from './MsalAuthProvider';
 export { withAuthentication } from './withAuthentication';
 
