@@ -1,6 +1,6 @@
 {
   "name": "react-aad-msal",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "A react component that integrates with Azure AD (v2, MSAL).",
   "private": false,
   "license": "MIT",
@@ -65,11 +65,11 @@
     "tslint-microsoft-contrib": "6.2.0",
     "tslint-react": "4.0.0",
     "typescript": "3.5.3",
-    "msal": "1.2.0-beta.4"
+    "msal": "1.2.0-beta.5"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "msal": ">=1.1.3"
+    "msal": ">1.1.3"
   },
   "engines": {
     "node": ">= 8.10.0",

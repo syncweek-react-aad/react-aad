@@ -1,0 +1,11 @@
+<!--
+  A blank html helper file for authentication redirects.
+
+  If using the popup authentication method, point the redirectUrl to this file for a more performant authentication.
+  Rather than the authentication popup loading the entire page in an iframe and downloading scripts/css twice,
+  the MSAL library will use this blank HTML file as a valid route on the domain to store items in cache and deal
+  with cookies.
+
+  If not using the popup authentication method, this file can still be used for refresh tokens, where the file will be loaded
+  in the refresh iframe rather than reloading your entire site.
+-->

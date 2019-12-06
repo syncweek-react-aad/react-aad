@@ -37,7 +37,9 @@ class SampleAppButtonLaunch extends React.Component {
     super(props);
 
     // Change the login type to execute in a Popup
-    authProvider.setLoginType(LoginType.Popup);
+    const options = authProvider.getProviderOptions();
+    options.loginType = LoginType.Popup;
+    authProvider.setProviderOptions(options);
   }
 
   render() {

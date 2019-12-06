@@ -38,7 +38,9 @@ class SampleAppRedirectOnLaunch extends React.Component {
     super(props);
 
     // Change the login type to execute in a Redirect
-    authProvider.setLoginType(LoginType.Redirect);
+    const options = authProvider.getProviderOptions();
+    options.loginType = LoginType.Redirect;
+    authProvider.setProviderOptions(options);
 
     this.interval = null;
     let redirectEnabled = sessionStorage.getItem('redirectEnabled') || false;
