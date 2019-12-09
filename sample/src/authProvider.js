@@ -24,6 +24,7 @@
 //
 
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
+import { Logger, LogLevel } from 'msal';
 
 // The auth provider should be a singleton. Best practice is to only have it ever instantiated once.
 // Avoid creating an instance inside the component it will be recreated on each render.
@@ -40,6 +41,19 @@ export const authProvider = new MsalAuthProvider(
       // After being redirected to the "redirectUri" page, should user
       // be redirected back to the Url where their login originated from?
       navigateToLoginRequestUrl: false,
+    },
+    // Enable logging of MSAL events for easier troubleshooting.
+    // This should be disabled in production builds.
+    system: {
+      logger: new Logger(
+        (logLevel, message, containsPii) => {
+          console.log('[MSAL]', message);
+        },
+        {
+          level: LogLevel.Verbose,
+          piiLoggingEnabled: false,
+        },
+      ),
     },
     cache: {
       cacheLocation: 'sessionStorage',

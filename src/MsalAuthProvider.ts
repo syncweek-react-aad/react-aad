@@ -123,6 +123,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AccessTokenResponse> => {
     const params = parameters || this._parameters;
+
+    // Use the redirectUri that was passed, otherwise use the configured tokenRefreshUri
     params.redirectUri = (parameters && parameters.redirectUri) || this._options.tokenRefreshUri;
 
     try {
@@ -183,11 +185,10 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   public getProviderOptions = (): IMsalAuthProviderConfig => this._options;
 
   public setProviderOptions = (options: IMsalAuthProviderConfig) => {
+    this._options = options;
     if (options.loginType === LoginType.Redirect) {
       this.handleRedirectCallback(this.authenticationRedirectCallback);
     }
-
-    this._options = options;
   };
 
   public registerReduxStore = (store: Store): void => {
@@ -277,11 +278,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
   };
 
-  private authenticationRedirectCallback = (error: AuthError, response: AuthResponse): void => {
+  private authenticationRedirectCallback = async (error: AuthError, response: AuthResponse) => {
     if (error) {
       this.setError(error);
     }
-    this.processLogin();
+    await this.processLogin();
   };
 
   private initializeProvider = async () => {
