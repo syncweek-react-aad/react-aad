@@ -96,12 +96,12 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       if (newState !== authenticationState) {
         _setAuthenticationState(newState);
 
-        if (newState === AuthenticationState.Unauthenticated && forceLogin) {
+        if (newState === AuthenticationState.Unauthenticated && forceLogin && !error) {
           login();
         }
       }
     },
-    [authenticationState, forceLogin],
+    [authenticationState, forceLogin, error],
   );
 
   const setError = useCallback(
