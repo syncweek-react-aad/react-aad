@@ -28,9 +28,6 @@ yarn-error.log*
 # env file
 .env
 
-# vscode config
-.vscode
-
 # intellij config
 .idea
 

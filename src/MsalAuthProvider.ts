@@ -1,27 +1,3 @@
-//
-// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license.
-//
-// MIT License:
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
 import {
   AuthenticationParameters,
   AuthError,
@@ -55,6 +31,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   /**
    * Gives access to the MSAL functionality for advanced usage.
+   *
    * @deprecated The MsalAuthProvider class itself extends from UserAgentApplication and has the same functionality
    */
   public UserAgentApplication: UserAgentApplication;
@@ -102,7 +79,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     if (this._options.loginType === LoginType.Redirect) {
       this.setAuthenticationState(AuthenticationState.InProgress);
       try {
-        await this.loginRedirect(params);
+        this.loginRedirect(params);
       } catch (error) {
         Logger.ERROR(error);
 
@@ -289,11 +266,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
   };
 
-  private authenticationRedirectCallback = async (error: AuthError, response: AuthResponse) => {
+  private authenticationRedirectCallback = (error: AuthError) => {
     if (error) {
       this.setError(error);
     }
-    await this.processLogin();
+    this.processLogin();
   };
 
   private initializeProvider = async () => {
