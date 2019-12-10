@@ -27,7 +27,7 @@ beforeEach(() => {
   authProvider = new MsalAuthProvider(
     {
       auth: {
-        authority: '<authority>',
+        authority: 'https://login.microsoftonline.com/common',
         clientId: '<guid>',
       },
       cache: {
