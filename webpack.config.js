@@ -36,10 +36,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin(),
-    // Outputs visualization interface which analyzes the contents of a bundle and
-    // provides in-depth analysis of the size. ALso exports a stats JSON file
-    // for use with third-party analyzers.
-    // https://github.com/webpack-contrib/webpack-bundle-analyzer
     new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       openAnalyzer: false,
