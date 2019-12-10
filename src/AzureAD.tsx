@@ -93,7 +93,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       _setAccountInfo(newAccountInfo);
 
       if (accountInfoCallback) {
-        // tslint:disable-next-line: no-console
+        // eslint-disable-next-line no-console
         console.warn(
           'Warning! The accountInfoCallback callback has been deprecated and will be removed in a future release.',
         );
@@ -115,6 +115,10 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     [accountInfo, authenticationState, error, login, logout],
   );
 
+  /**
+   * @param children
+   * @param childrenProps
+   */
   function getChildrenOrFunction(children: any, childrenProps: IAzureADFunctionProps) {
     if (children) {
       // tslint:disable-next-line: triple-equals
@@ -134,7 +138,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       if (authenticatedFunction) {
         const authFunctionResult = authenticatedFunction(logout);
 
-        // tslint:disable-next-line: no-console
+        // eslint-disable-next-line no-console
         console.warn(
           'Warning! The authenticatedFunction callback has been deprecated and will be removed in a future release.',
         );
@@ -148,7 +152,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       return getChildrenOrFunction(props.children, childrenFunctionProps);
     case AuthenticationState.Unauthenticated:
       if (unauthenticatedFunction) {
-        // tslint:disable-next-line: no-console
+        // eslint-disable-next-line no-console
         console.warn(
           'Warning! The unauthenticatedFunction callback has been deprecated and will be removed in a future release.',
         );

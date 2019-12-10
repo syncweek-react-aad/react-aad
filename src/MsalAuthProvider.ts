@@ -31,6 +31,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
   /**
    * Gives access to the MSAL functionality for advanced usage.
+   *
    * @deprecated The MsalAuthProvider class itself extends from UserAgentApplication and has the same functionality
    */
   public UserAgentApplication: UserAgentApplication;
@@ -78,7 +79,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     if (this._options.loginType === LoginType.Redirect) {
       this.setAuthenticationState(AuthenticationState.InProgress);
       try {
-        await this.loginRedirect(params);
+        this.loginRedirect(params);
       } catch (error) {
         Logger.ERROR(error);
 
@@ -265,11 +266,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     }
   };
 
-  private authenticationRedirectCallback = async (error: AuthError, response: AuthResponse) => {
+  private authenticationRedirectCallback = (error: AuthError) => {
     if (error) {
       this.setError(error);
     }
-    await this.processLogin();
+    this.processLogin();
   };
 
   private initializeProvider = async () => {

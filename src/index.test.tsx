@@ -10,6 +10,7 @@ import { MsalAuthProvider } from './MsalAuthProvider';
 let Enzyme;
 let Adapter;
 let authProvider: MsalAuthProvider;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let testAccount: Msal.Account;
 
 beforeAll(() => {
@@ -26,7 +27,7 @@ beforeEach(() => {
   authProvider = new MsalAuthProvider(
     {
       auth: {
-        authority: null,
+        authority: '<authority>',
         clientId: '<guid>',
       },
       cache: {
@@ -36,7 +37,9 @@ beforeEach(() => {
     {
       scopes: ['openid'],
     },
-    LoginType.Popup,
+    {
+      loginType: LoginType.Popup,
+    },
   );
 
   testAccount = {
@@ -52,7 +55,7 @@ beforeEach(() => {
 });
 
 it('renders without crashing', () => {
-  const unauthenticatedFunction = (login: any) => {
+  const unauthenticatedFunction = () => {
     return (
       <div>
         <h1> unauthenticatedFunction </h1>
@@ -60,7 +63,7 @@ it('renders without crashing', () => {
     );
   };
 
-  const authenticatedFunction = (logout: any) => {
+  const authenticatedFunction = () => {
     return (
       <div>
         <h1> authenticatedFunction </h1>
@@ -68,7 +71,7 @@ it('renders without crashing', () => {
     );
   };
 
-  const accountInfoCallback = (token: any) => {
+  const accountInfoCallback = () => {
     // empty
   };
 

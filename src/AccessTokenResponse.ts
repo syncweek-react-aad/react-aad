@@ -2,10 +2,10 @@ import { AuthResponse } from 'msal';
 import { TokenType } from './Interfaces';
 
 export class AccessTokenResponse {
-  public accessToken: string = '';
+  public accessToken = '';
   public scopes: string[] = [];
   public expiresOn: Date;
-  public state: string = '';
+  public state = '';
 
   constructor(response: AuthResponse) {
     if (response.tokenType !== TokenType.AccessToken) {
