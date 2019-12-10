@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "dist/commonjs",
     "module": "commonjs",
     "target": "es5",
     "lib": ["es6", "dom"],
@@ -16,10 +16,10 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "baseUrl": ".",
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "sample", "dist", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["node_modules", "sample", "dist"]
 }

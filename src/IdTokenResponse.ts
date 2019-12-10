@@ -4,7 +4,7 @@ import { TokenType } from './Interfaces';
 
 export class IdTokenResponse {
   public idToken: IdToken;
-  public state: string = '';
+  public state = '';
 
   constructor(response: AuthResponse) {
     if (response.tokenType !== TokenType.IdToken) {

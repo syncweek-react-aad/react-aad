@@ -1,28 +1,3 @@
-//
-// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license.
-//
-// MIT License:
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
 import * as Msal from 'msal';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -35,6 +10,7 @@ import { MsalAuthProvider } from './MsalAuthProvider';
 let Enzyme;
 let Adapter;
 let authProvider: MsalAuthProvider;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let testAccount: Msal.Account;
 
 beforeAll(() => {
@@ -51,7 +27,7 @@ beforeEach(() => {
   authProvider = new MsalAuthProvider(
     {
       auth: {
-        authority: null,
+        authority: 'https://login.microsoftonline.com/common',
         clientId: '<guid>',
       },
       cache: {
@@ -61,7 +37,9 @@ beforeEach(() => {
     {
       scopes: ['openid'],
     },
-    LoginType.Popup,
+    {
+      loginType: LoginType.Popup,
+    },
   );
 
   testAccount = {
@@ -77,7 +55,7 @@ beforeEach(() => {
 });
 
 it('renders without crashing', () => {
-  const unauthenticatedFunction = (login: any) => {
+  const unauthenticatedFunction = () => {
     return (
       <div>
         <h1> unauthenticatedFunction </h1>
@@ -85,7 +63,7 @@ it('renders without crashing', () => {
     );
   };
 
-  const authenticatedFunction = (logout: any) => {
+  const authenticatedFunction = () => {
     return (
       <div>
         <h1> authenticatedFunction </h1>
@@ -93,7 +71,7 @@ it('renders without crashing', () => {
     );
   };
 
-  const accountInfoCallback = (token: any) => {
+  const accountInfoCallback = () => {
     // empty
   };
 

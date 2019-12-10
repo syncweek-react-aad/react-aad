@@ -23,7 +23,7 @@ A library of components to easily integrate the Microsoft Authentication Library
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
     - [Creating the Provider](#creating-the-provider)
-      - [Configuration Options](#configuration-options)
+      - [Msal Configuration](#msal-configuration)
       - [Authentication Parameters](#authentication-parameters)
       - [Options](#options)
   - [:package: Authentication Components](#package-authentication-components)
@@ -42,12 +42,12 @@ A library of components to easily integrate the Microsoft Authentication Library
 
 ## :tada: Features
 
-:white_check_mark: Login/logout with `AzureAD` component  
-:white_check_mark: Callback functions for login success, logout success, and user info changed  
-:white_check_mark: `withAuthentication` higher order component for protecting components, routes, or the whole app  
-:white_check_mark: Function as Child Component pattern ([FaCC](https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9)) to pass authentication data and login/logout functions to children components  
-:white_check_mark: Redux integration for storing authentication status, user info, tokens, etc  
-:white_check_mark: Automatic renewal of IdTokens, and optional function to get a fresh token at any point  
+:white_check_mark: Login/logout with `AzureAD` component
+:white_check_mark: Callback functions for login success, logout success, and user info changed
+:white_check_mark: `withAuthentication` higher order component for protecting components, routes, or the whole app
+:white_check_mark: Function as Child Component pattern ([FaCC](https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9)) to pass authentication data and login/logout functions to children components
+:white_check_mark: Redux integration for storing authentication status, user info, tokens, etc
+:white_check_mark: Automatic renewal of IdTokens, and optional function to get a fresh token at any point
 :white_check_mark: Easily fetch a fresh Access Token from cache (or refresh it) before calling API endpoints
 
 ## :checkered_flag: Getting Started
@@ -73,7 +73,7 @@ Before beginning it is required to configure an instance of the `MsalAuthProvide
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `config`     | Instance of a `Msal.Configuration` object to configure the underlying provider. The documentation for all the options can be found in the [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications#configuration-options) doc         |
 | `parameters` | Instance of the `Msal.AuthenticationParameters` configuration to identify how the authentication process should function. This object includes the `scopes` values. You can see possible [values for scopes here](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes) |
-| `options`  | **[Optional]** The `options` are defined by the [IMsalAuthProviderConfig](src/Interfaces.ts) interface. This contains settings that describe how the authentication provider should handle certain authentication processes.                                                                                                                                                             |
+| `options`    | **[Optional]** The `options` are defined by the [IMsalAuthProviderConfig](src/Interfaces.ts) interface. This contains settings that describe how the authentication provider should handle certain authentication processes.                                                                                  |
 
 The `MsalAuthProvider` is meant to be a singleton. There are known implications when multiple instances of MSAL are running at the same time. The recommended approach is to instantiate the `MsalAuthProvider` in a separate file and `import` it when needed.
 
@@ -81,6 +81,7 @@ The `MsalAuthProvider` is meant to be a singleton. There are known implications 
 // authProvider.js
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 
+// Msal Configurations
 const config = {
   auth: {
     authority: 'https://login.microsoftonline.com/common',
@@ -93,6 +94,7 @@ const config = {
   }
 };
 
+// Authentication Parameters
 const authenticationParameters = {
   scopes: [
     '<property (i.e. user.read)>',
@@ -100,6 +102,7 @@ const authenticationParameters = {
   ]
 }
 
+// Options
 const options = {
   loginType: LoginType.Popup,
   tokenRefreshUri: window.location.origin + '/auth.html'
@@ -127,7 +130,7 @@ ReactDOM.render(
 );
 ```
 
-#### Configuration Options
+#### `Msal` Configuration
 
 The options that get passed to the `MsalAuthProvider` are defined by the MSAL library, and are described in more detail in the [configuration options](https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-js-initializing-client-applications#configuration-options) documentation.
 
@@ -192,7 +195,7 @@ The set of options that are supported for the `Msal.AuthenticationParameters` cl
 
 #### Options
 
-The `options` parameter defines settings related to how the authentication provider processes authentication operations.
+The `options` parameter defines settings related to how the authentication provider processes authentication operations provided by the `MSAL` library.
 
 ```typescript
 const options = {
@@ -200,14 +203,13 @@ const options = {
   loginType: LoginType.Popup,
   // A blank html page that MSAL can load in an iframe to refresh the token
   // The default setting for this parameter is `window.location.origin`
-  tokenRefreshUri: window.location.origin + '/auth.html'
-}
+  tokenRefreshUri: window.location.origin + '/auth.html',
+};
 ```
 
- `LoginType` is an enum with two options for `Popup` or `Redirect` authentication. This parameter is optional and will default to `Popup` if not provided. The `tokenRefreshUri` allows you to set a separate page to load only when tokens are being refreshed. When `MSAL` attempts to refresh a token, it will reload the page in an iframe. This option allows you to inform `MSAL` of a specific page it can load in the iframe. It is best practice to use a blank HTML file so as to prevent all your site scripts and contents from loading multiple times.
- 
+`LoginType` is an enum with two options for `Popup` or `Redirect` authentication. This parameter is optional and will default to `Popup` if not provided. The `tokenRefreshUri` allows you to set a separate page to load only when tokens are being refreshed. When `MSAL` attempts to refresh a token, it will reload the page in an iframe. This option allows you to inform `MSAL` of a specific page it can load in the iframe. It is best practice to use a blank HTML file so as to prevent all your site scripts and contents from loading multiple times.
 
- At any time after instantiating the `MsalAuthProvider` the login type can be changed using the `setProviderOptions()` method. You may also retrieve the current options using the `getProviderOptions()` method.
+At any time after instantiating the `MsalAuthProvider` the login type can be changed using the `setProviderOptions()` method. You may also retrieve the current options using the `getProviderOptions()` method.
 
 ## :package: Authentication Components
 
@@ -218,17 +220,17 @@ The library provides multiple components to integrate Azure AD authentication in
 The `AzureAD` component is the primary method to add authentication to your application. When the component is loaded it internally uses MSAL to check the cache and determine the current authentication state. The users authentication status determines how the component will render the `children`.
 
 1. If the `children` is an element, it will only be rendered when the `AzureAD` detects an authenticated user.
-2. If the `children` is a function, then it will always be executed with the following argument: 
-    ```tsx
-    {
-      login, // login function
-      logout, // logout function
-      authenticationState, // the current authentication state
-      error, // any error that occured during the login process
-      accountInfo, // account info of the authenticated user
-    }
-    ```
-  
+2. If the `children` is a function, then it will always be executed with the following argument:
+   ```tsx
+   {
+     login, // login function
+     logout, // logout function
+     authenticationState, // the current authentication state
+     error, // any error that occured during the login process
+     accountInfo, // account info of the authenticated user
+   }
+   ```
+
 The `AzureAD` component will check that the IdToken is not expired before determining that the user is authenticated. If the token has expired, it will attempt to renew it silently. If a valid token is maintained it will be sure there is an active Access Token available, otherwise it will refresh silently. If either of the tokens cannot be refreshed without user interaction, the user will be prompted to signin again.
 
 ```tsx
@@ -326,12 +328,14 @@ The `getAccessToken()` returns an instance of the [`AccessTokenResponse`](/src/A
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 export const authProvider = new MsalAuthProvider(
   {
-    /* config */
+    /* Msal configurations */
   },
   {
-    /* parameters */
+    /* Authentication parameters */
   },
-  LoginType.Popup,
+  {
+    /* Options */
+  },
 );
 
 // api.js
@@ -361,12 +365,14 @@ The `getIdToken()` returns an instance of the [`IdTokenResponse`](/src/IdTokenRe
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 export const authProvider = new MsalAuthProvider(
   {
-    /* config */
+    /* Msal configurations */
   },
   {
-    /* parameters */
+    /* Authentication parameters */
   },
-  LoginType.Popup,
+  {
+    /* Options */
+  },
 );
 
 // consumer.js
@@ -386,12 +392,14 @@ Import your store into the file rendering the `AzureAD` component and pass it as
 import { MsalAuthProvider, LoginType } from 'react-aad-msal';
 export const authProvider = new MsalAuthProvider(
   {
-    /* config */
+    /* Msal configurations */
   },
   {
-    /* parameters */
+    /* Authentication parameters */
   },
-  LoginType.Popup,
+  {
+    /* Options */
+  },
 );
 
 // index.js
@@ -474,15 +482,15 @@ Be sure to modify the [authProvider.js](sample/authProvider.js) configuration to
 
 While the library is ready for use there is still plenty of ongoing work. The following is a list of a few of the improvements under consideration.
 
-:white_medium_small_square: Rewrite the sample app to use hooks and simplify the logic.  
-:white_medium_small_square: Add a `useAuthentication()` hook to the library.  
-:white_medium_small_square: Replace the `AzureAD` render props with event handlers.  
-:white_medium_small_square: Add Context API provider.  
-:white_medium_small_square: Separate MSAL and Redux dependencies as `peerDependencies`  
-:white_medium_small_square: Migrate to a build system such as Webpack, or Rollup.  
-:white_medium_small_square: Add samples for consuming a Web API.  
-:white_medium_small_square: Improve unit test coverage across the library.  
-:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.  
+:white_medium_small_square: Rewrite the sample app to use hooks and simplify the logic.
+:white_medium_small_square: Add a `useAuthentication()` hook to the library.
+:white_medium_small_square: Replace the `AzureAD` render props with event handlers.
+:white_medium_small_square: Add Context API provider.
+:white_medium_small_square: Separate MSAL and Redux dependencies as `peerDependencies`
+:white_medium_small_square: Migrate to a build system such as Webpack, or Rollup.
+:white_medium_small_square: Add samples for consuming a Web API.
+:white_medium_small_square: Improve unit test coverage across the library.
+:white_medium_small_square: Maintain feature parity between the official MSAL [Angular library](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/lib/msal-angular) after it undergoes its planned upgrade.
 
 ## :books: Resources
 
