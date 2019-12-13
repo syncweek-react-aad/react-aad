@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/syncweek-react-aad/react-aad.git"
   },
-  "main": "./lib-commonjs/index.js",
+  "main": "./dist/commonjs/index.js",
   "module": "./dist/esm/index.js",
   "files": [
     "dist"
