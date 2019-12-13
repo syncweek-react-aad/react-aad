@@ -22,11 +22,11 @@
     "Björn Dalfors <bjorn@binovi.se>"
   ],
   "dependencies": {
+    "msal": "1.2.0",
     "react-aad-msal": "file:../",
     "react-redux": "7.1.0",
-    "react-scripts": "3.2.0",
-    "redux": "4.0.4",
-    "msal": "1.2.0-beta.5"
+    "react-scripts": "^3.3.0",
+    "redux": "4.0.4"
   },
   "devDependencies": {
     "rimraf": "3.0.0"
