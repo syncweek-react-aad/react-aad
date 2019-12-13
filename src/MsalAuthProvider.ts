@@ -124,7 +124,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       return new AccessTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
-      const response = await this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, this._parameters);
       return new AccessTokenResponse(response);
     }
   };
@@ -157,7 +157,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       return new IdTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireIdTokenError(error));
-      const response = await this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, this._parameters);
       return new IdTokenResponse(response);
     }
   };
