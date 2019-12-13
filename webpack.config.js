@@ -1,12 +1,13 @@
-var path = require('path');
-var webpack = require('webpack');
-var package = require('./package');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const package = require('./package');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const moduleName = package.name;
 const outputFolder = path.resolve(__dirname, 'dist/umd');
 var PATHS = {
   entryPoint: path.resolve(__dirname, 'src/index.ts'),
@@ -18,8 +19,8 @@ var PATHS = {
 module.exports = {
   mode: 'production',
   entry: {
-    'react-aad-msal': [PATHS.entryPoint],
-    'react-aad-msal.min': [PATHS.entryPoint],
+    [moduleName]: [PATHS.entryPoint],
+    [moduleName + '.min']: [PATHS.entryPoint],
   },
   output: {
     path: PATHS.outputFolder,
