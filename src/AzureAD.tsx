@@ -122,7 +122,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
   function getChildrenOrFunction(children: any, childrenProps: IAzureADFunctionProps) {
     if (children) {
       // tslint:disable-next-line: triple-equals
-      if (typeof children == 'function' || false) {
+      if (isChildrenFunction(children)) {
         return (children as (props: IAzureADFunctionProps) => {})(childrenProps);
       } else {
         return children;
@@ -130,6 +130,13 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     } else {
       return null;
     }
+  }
+
+  /**
+   * @param children
+   */
+  function isChildrenFunction(children: any) {
+    return typeof children == 'function' || false;
   }
 
   // Render logic
@@ -159,12 +166,14 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
         return unauthenticatedFunction(login) || null;
       }
 
-      // Only return the children if it's a function to pass the current state to
-      //  Otherwise the content should be restricted until authenticated
-      const functionOrChildren = getChildrenOrFunction(props.children, childrenFunctionProps);
-      return functionOrChildren === props.children ? null : functionOrChildren;
+    // If state is Uauthenticated or InProgress, only return the children if it's a function
+    // If the children prop is a function, we will pass state changes to be handled by the consumer
+    // eslint-disable-next-line no-fallthrough
     case AuthenticationState.InProgress:
-      return getChildrenOrFunction(props.children, childrenFunctionProps);
+      if (isChildrenFunction(props.children)) {
+        return getChildrenOrFunction(props.children, childrenFunctionProps);
+      }
+      return null;
     default:
       return null;
   }
