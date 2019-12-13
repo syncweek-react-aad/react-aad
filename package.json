@@ -8,9 +8,8 @@
     "type": "git",
     "url": "https://github.com/syncweek-react-aad/react-aad.git"
   },
-  "main": "./dist/umd/react-aad-msal.js",
-  "module": "./dist/commonjs/index.js",
-  "es2015": "./dist/esm/index.js",
+  "main": "./lib-commonjs/index.js",
+  "module": "./dist/esm/index.js",
   "files": [
     "dist"
   ],
