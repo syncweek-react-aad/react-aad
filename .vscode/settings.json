@@ -1,11 +1,4 @@
 {
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "editor.formatOnSave": true,
-  "editor.insertSpaces": true,
-  "editor.renderWhitespace": "all",
-  "editor.rulers": [140],
-  "files.trimTrailingWhitespace": true,
   "files.exclude": {
     "**/node_modules": true,
     "debug.log": true
