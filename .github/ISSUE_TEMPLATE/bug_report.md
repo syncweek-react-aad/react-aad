@@ -7,8 +7,16 @@ assignees: ''
 
 ---
 
+**Library versions**
+- `react-aad-msal`: [e.g. version number]
+- `msal`: [e.g. version number]
+
 **Describe the bug**
 A clear and concise description of what the bug is.
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -16,12 +24,6 @@ Steps to reproduce the behavior:
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
@@ -34,5 +36,3 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Additional context**
-Add any other context about the problem here.
