@@ -1,0 +1,66 @@
+module.exports = {
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:jsdoc/recommended',
+    'prettier',
+    'prettier/@typescript-eslint',
+  ],
+  env: {
+    browser: true,
+    es6: true,
+    node: true,
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+    jsdoc: {
+      mode: 'typescript',
+    },
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+      modules: true,
+    },
+  },
+  ignorePatterns: ['node_modules/', 'dist/'],
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'jsx-a11y', 'jsdoc'],
+  rules: {
+    '@typescript-eslint/member-ordering': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/interface-name-prefix': ['error', { prefixWithI: 'always' }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
+    '@typescript-eslint/unbound-method': 'off',
+    '@typescript-eslint/camelcase': 'off',
+    'react/no-unescaped-entities': 'off',
+    'react/forbid-dom-props': ['error', { forbid: ['style'] }],
+    'react/prop-types': 'off',
+    'react/jsx-no-bind': 'error',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'off',
+    'jsdoc/check-tag-names': [
+      'warn',
+      {
+        definedTags: ['typeparam', 'jest-environment'],
+      },
+    ],
+    'jsdoc/require-returns': 'off',
+    'jsdoc/require-param-type': 'off',
+    camelcase: 'warn',
+    'id-match': 'warn',
+    'max-classes-per-file': 'off',
+    'no-underscore-dangle': 'off',
+    'no-console': 'error',
+    'no-warning-comments': 'warn',
+    'no-case-declarations': 'off',
+  },
+};

@@ -251,5 +251,7 @@ paket-files/
 .idea/
 *.sln.iml
 
-# MSAL specific ignore files
+# Library specific ignore files
 node_modules/
+*.tgz
+*.zip
