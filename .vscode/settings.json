@@ -1,11 +1,4 @@
 {
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "editor.formatOnSave": true,
-  "editor.insertSpaces": true,
-  "editor.renderWhitespace": "all",
-  "editor.rulers": [140],
-  "files.trimTrailingWhitespace": true,
   "files.exclude": {
     "**/node_modules": true,
     "debug.log": true
@@ -27,17 +20,18 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "eslint.autoFixOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "eslint.validate": [
+    "html",
     "javascript",
+    "typescript",
     "javascriptreact",
-    {
-      "autoFix": true,
-      "language": "typescript"
-    },
-    {
-      "autoFix": true,
-      "language": "typescriptreact"
-    }
-  ]
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    {"pattern": "./packages/*/"},
+    {"pattern": "./samples/*/"}
+  ],
 }
