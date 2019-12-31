@@ -22,13 +22,15 @@
     "Björn Dalfors <bjorn@binovi.se>"
   ],
   "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
     "msal": "^1.2.0",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
     "react-aad-msal": "^2.2.7",
-    "react-redux": "^7.1.0",
-    "react-scripts": "^3.3.0",
-    "redux": "^4.0.4"
+    "react-redux": "^7.1.3"
   },
   "devDependencies": {
     "rimraf": "^3.0.0"
@@ -40,14 +42,20 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "engines": {
-    "node": ">= 8.10.0",
-    "npm": ">= 5.6.0"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie < 11",
-    "not op_mini all"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not ie < 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
