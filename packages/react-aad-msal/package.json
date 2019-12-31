@@ -27,6 +27,7 @@
     "dist"
   ],
   "scripts": {
+    "precommit": "lint-staged",
     "clean": "rimraf dist",
     "lint": "npm run lint:ts && npm run lint:types",
     "lint:ts": "eslint src/ --ext .ts,.tsx --color --fix",
