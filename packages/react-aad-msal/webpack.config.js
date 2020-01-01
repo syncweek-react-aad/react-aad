@@ -7,6 +7,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const moduleName = package.name;
 const outputFolder = path.resolve(__dirname, 'dist/umd');
 const srcFolder = path.resolve(__dirname, 'src');
 const PATHS = {
@@ -20,13 +21,13 @@ const PATHS = {
 module.exports = {
   mode: 'production',
   entry: {
-    [package.name]: [PATHS.entryPoint],
-    [package.name + '.min']: [PATHS.entryPoint],
+    [moduleName]: [PATHS.entryPoint],
+    [moduleName + '.min']: [PATHS.entryPoint],
   },
   output: {
     path: PATHS.outputFolder,
     filename: '[name].js',
-    library: package.name,
+    library: moduleName,
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },

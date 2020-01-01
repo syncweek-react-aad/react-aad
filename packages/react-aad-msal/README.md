@@ -42,13 +42,13 @@ A library of components to easily integrate the Microsoft Authentication Library
 
 ## :tada: Features
 
-:white_check_mark: Login/logout with `AzureAD` component
-:white_check_mark: Callback functions for login success, logout success, and user info changed
-:white_check_mark: `withAuthentication` higher order component for protecting components, routes, or the whole app
-:white_check_mark: Function as Child Component pattern ([FaCC](https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9)) to pass authentication data and login/logout functions to children components
-:white_check_mark: Redux integration for storing authentication status, user info, tokens, etc
-:white_check_mark: Automatic renewal of IdTokens, and optional function to get a fresh token at any point
-:white_check_mark: Easily fetch a fresh Access Token from cache (or refresh it) before calling API endpoints
+:white_check_mark: Login/logout with `AzureAD` component  
+:white_check_mark: Callback functions for login success, logout success, and user info changed  
+:white_check_mark: `withAuthentication` higher order component for protecting components, routes, or the whole app  
+:white_check_mark: Function as Child Component pattern ([FaCC](https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9)) to pass authentication data and login/logout functions to children components  
+:white_check_mark: Redux integration for storing authentication status, user info, tokens, etc  
+:white_check_mark: Automatic renewal of IdTokens, and optional function to get a fresh token at any point  
+:white_check_mark: Easily fetch a fresh Access Token from cache (or refresh it) before calling API endpoints  
 :white_check_mark: Various build types including ES6, CommonJS, and UMD
 
 ## :checkered_flag: Getting Started
