@@ -15,7 +15,8 @@
   "scripts": {
     "start": "cd packages/react-aad-msal && yarn start",
     "lint": "cd packages/react-aad-msal && yarn run lint",
-    "test":  "cd packages/react-aad-msal && yarn test"
+    "test":  "cd packages/react-aad-msal && yarn test",
+    "build": "cd packages/react-aad-msal &&  yarn build"
   },
   "dependencies": {},
   "husky": {
