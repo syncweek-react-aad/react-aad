@@ -10,17 +10,11 @@ import {
 import { AnyAction, Store } from 'redux';
 
 import { AccessTokenResponse } from './AccessTokenResponse';
-import { AuthenticationActionCreators } from './actions';
+import { AuthenticationActionCreators } from './AuthenticationActionCreators';
 import { IdTokenResponse } from './IdTokenResponse';
-import {
-  AuthenticationState,
-  IAccountInfo,
-  IAuthProvider,
-  IMsalAuthProviderConfig,
-  LoginType,
-  TokenType,
-} from './Interfaces';
-import { Logger } from './logger';
+import { IAccountInfo, IAuthProvider, IMsalAuthProviderConfig } from './interfaces';
+import { Logger } from './Logger';
+import { AuthenticationState, LoginType, TokenType } from './enums';
 
 type AuthenticationStateHandler = (state: AuthenticationState) => void;
 type ErrorHandler = (error: AuthError | null) => void;
@@ -124,7 +118,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       return new AccessTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
-      const response = await this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, this._parameters);
       return new AccessTokenResponse(response);
     }
   };
@@ -157,7 +151,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       return new IdTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireIdTokenError(error));
-      const response = await this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, this._parameters);
       return new IdTokenResponse(response);
     }
   };

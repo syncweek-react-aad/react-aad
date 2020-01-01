@@ -1,7 +1,7 @@
 {
-  "name": "react-aad-msal-samples",
+  "name": "react-javascript-sample",
   "version": "1.0.0",
-  "description": "A `create-react-app` sample React application that demonstrates the Azure AD react component.",
+  "description": "A sample React application that demonstrates the Azure AD react component.",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -22,14 +22,19 @@
     "Björn Dalfors <bjorn@binovi.se>"
   ],
   "dependencies": {
-    "react-aad-msal": "file:../",
-    "react-redux": "7.1.0",
-    "react-scripts": "3.2.0",
-    "redux": "4.0.4",
-    "msal": "1.2.0-beta.5"
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
+    "msal": "^1.2.0",
+    "react-aad-msal": "^2.2.7",
+    "react-redux": "^7.1.3",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
-    "rimraf": "3.0.0"
+    "rimraf": "^3.0.0"
   },
   "scripts": {
     "clean": "rimraf build",
@@ -38,14 +43,20 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "engines": {
-    "node": ">= 8.10.0",
-    "npm": ">= 5.6.0"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not ie < 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

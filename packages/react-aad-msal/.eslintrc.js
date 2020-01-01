@@ -8,7 +8,6 @@ module.exports = {
     'plugin:jsdoc/recommended',
     'prettier',
     'prettier/@typescript-eslint',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   env: {
     browser: true,
@@ -25,12 +24,13 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.json',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
+      modules: true,
     },
   },
+  ignorePatterns: ['node_modules/', 'dist/'],
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'jsx-a11y', 'jsdoc'],
   rules: {
     '@typescript-eslint/member-ordering': 'warn',

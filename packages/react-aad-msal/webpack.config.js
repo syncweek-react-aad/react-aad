@@ -1,15 +1,18 @@
-var path = require('path');
-var webpack = require('webpack');
-var package = require('./package');
-var ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path');
+const package = require('./package');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Stylish = require('webpack-stylish');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const moduleName = package.name;
 const outputFolder = path.resolve(__dirname, 'dist/umd');
-var PATHS = {
-  entryPoint: path.resolve(__dirname, 'src/index.ts'),
+const srcFolder = path.resolve(__dirname, 'src');
+const PATHS = {
+  srcFolder,
+  entryPoint: path.join(srcFolder, 'index.ts'),
   outputFolder,
   bundleReport: path.join(outputFolder, 'bundle_report.html'),
   bundleStats: path.join(outputFolder, 'bundle_stats.html'),
@@ -18,13 +21,13 @@ var PATHS = {
 module.exports = {
   mode: 'production',
   entry: {
-    'react-aad-msal': [PATHS.entryPoint],
-    'react-aad-msal.min': [PATHS.entryPoint],
+    [moduleName]: [PATHS.entryPoint],
+    [moduleName + '.min']: [PATHS.entryPoint],
   },
   output: {
     path: PATHS.outputFolder,
     filename: '[name].js',
-    library: 'react-aad-msal',
+    library: moduleName,
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
@@ -97,12 +100,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|tsx|js)?$/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            transpileOnly: true,
-          },
+        test: /\.(js|jsx|ts|tsx)$/,
+        include: PATHS.srcFolder,
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true,
+          // Save disk space when time isn't as important
+          cacheCompression: true,
+          compact: true,
         },
       },
     ],

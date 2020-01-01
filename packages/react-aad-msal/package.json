@@ -1,0 +1,112 @@
+{
+  "name": "react-aad-msal",
+  "version": "2.2.7",
+  "description": "A react component that integrates with Azure AD (v2, MSAL).",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/syncweek-react-aad/react-aad.git"
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/typings/index.d.ts",
+  "author": "Laura Bochenek",
+  "contributors": [
+    "Laura Bochenek <laura.bochenek@microsoft.com>",
+    "Omeed Musavi <omusavi@microsoft.com>",
+    "Lilian Kasem <lilian.kasem@microsoft.com>",
+    "Tess DiStefano <tedistef@microsoft.com>",
+    "Lucas Huet-Hudson <lucashh@microsoft.com>",
+    "Zach Miller <zamiller@microsoft.com>",
+    "P.J. Little <pj.little@microsoft.com>",
+    "Shawn Cicoria <shawn.cicoria@microsoft.com>",
+    "Andrew Craswell <andcra@microsoft.com>",
+    "Björn Dalfors <bjorn@binovi.se>"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "precommit": "lint-staged",
+    "clean": "rimraf dist",
+    "lint": "npm run lint:ts && npm run lint:types",
+    "lint:ts": "eslint src/ --ext .ts,.tsx --color --fix",
+    "lint:types": "tsc --project ./tsconfig.json --noEmit --pretty",
+    "start": "npm run clean && npm run build:commonjs && cd ../../samples/react-javascript && npm start",
+    "build": "npm run clean && npm run lint && npm run build:types && npm run build:commonjs && npm run build:esm && npm run build:umd",
+    "build:commonjs": "babel src --out-dir dist/commonjs --extensions .ts,.tsx --source-maps --plugins @babel/plugin-transform-modules-commonjs",
+    "build:umd": "webpack",
+    "build:esm": "tsc -m es6 --outDir dist/es6 --declaration false",
+    "build:types": "tsc --emitDeclarationOnly --outDir ./dist/typings/",
+    "build:watch": "npm run build:commonjs -- --watch",
+    "test": "jest --env=jsdom",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
+  },
+  "dependencies": {
+    "redux": "4.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.7.7",
+    "@babel/core": "7.7.7",
+    "@babel/plugin-proposal-class-properties": "7.7.4",
+    "@babel/plugin-syntax-dynamic-import": "7.7.4",
+    "@babel/plugin-transform-modules-commonjs": "7.7.5",
+    "@babel/preset-env": "7.7.7",
+    "@babel/preset-react": "7.7.4",
+    "@babel/preset-typescript": "7.7.7",
+    "@types/jest": "24.0.18",
+    "@types/react": "16.9.17",
+    "@types/react-dom": "16.9.4",
+    "@typescript-eslint/eslint-plugin": "2.13.0",
+    "@typescript-eslint/parser": "2.13.0",
+    "auto-changelog": "1.16.2",
+    "babel-jest": "24.9.0",
+    "babel-loader": "8.0.6",
+    "clean-webpack-plugin": "3.0.0",
+    "core-js": "3.6.1",
+    "enzyme": "3.10.0",
+    "enzyme-adapter-react-16": "1.14.0",
+    "eslint": "6.8.0",
+    "eslint-config-prettier": "6.8.0",
+    "eslint-plugin-jsdoc": "18.6.0",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-react": "7.17.0",
+    "eslint-plugin-react-hooks": "2.3.0",
+    "fork-ts-checker-webpack-plugin": "0.5.1",
+    "husky": "3.0.4",
+    "jest": "24.9.0",
+    "jest-localstorage-mock": "2.4.0",
+    "lint-staged": "9.2.3",
+    "msal": "1.2.0",
+    "prettier": "1.18.2",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "regenerator-runtime": "0.13.3",
+    "rimraf": "3.0.0",
+    "terser-webpack-plugin": "2.2.2",
+    "typescript": "3.2.1",
+    "webpack": "4.41.2",
+    "webpack-bundle-analyzer": "3.6.0",
+    "webpack-cli": "3.2.3",
+    "webpack-stylish": "0.1.8"
+  },
+  "peerDependencies": {
+    "msal": ">=1.2.0",
+    "react": ">=16.8.0"
+  },
+  "engines": {
+    "node": ">= 8.10.0",
+    "npm": ">= 5.6.0"
+  },
+  "keywords": [
+    "Azure AD",
+    "MSAL",
+    "React",
+    "OAuth",
+    "OAuth2",
+    "AAD",
+    "Microsoft Authentication Library",
+    "Azure Active Directory",
+    "Azure"
+  ]
+}
