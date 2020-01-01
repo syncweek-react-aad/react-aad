@@ -2,9 +2,11 @@ import { default as React, useCallback, useEffect, useMemo, useState } from 'rea
 import { Store } from 'redux';
 
 import { AuthError } from 'msal';
-import { MsalAuthProvider } from './';
-import { AccountInfoCallback, AuthenticationState, IAccountInfo } from './Interfaces';
+import { MsalAuthProvider } from '..';
+import { IAccountInfo } from '../interfaces';
+import { AuthenticationState } from '../enums';
 
+type AccountInfoCallback = (token: IAccountInfo) => void;
 type UnauthenticatedFunction = (login: LoginFunction) => JSX.Element;
 type AuthenticatedFunction = (logout: LogoutFunction) => JSX.Element;
 type LoginFunction = () => void;

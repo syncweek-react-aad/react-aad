@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const webpack = require('webpack');
 const package = require('./package');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -9,8 +9,10 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 const moduleName = package.name;
 const outputFolder = path.resolve(__dirname, 'dist/umd');
-var PATHS = {
-  entryPoint: path.resolve(__dirname, 'src/index.ts'),
+const srcFolder = path.resolve(__dirname, 'src');
+const PATHS = {
+  srcFolder,
+  entryPoint: path.join(srcFolder, 'index.ts'),
   outputFolder,
   bundleReport: path.join(outputFolder, 'bundle_report.html'),
   bundleStats: path.join(outputFolder, 'bundle_stats.html'),
@@ -25,7 +27,7 @@ module.exports = {
   output: {
     path: PATHS.outputFolder,
     filename: '[name].js',
-    library: 'react-aad-msal',
+    library: moduleName,
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
@@ -98,12 +100,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|tsx|js)?$/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            transpileOnly: true,
-          },
+        test: /\.(js|jsx|ts|tsx)$/,
+        include: PATHS.srcFolder,
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true,
+          // Save disk space when time isn't as important
+          cacheCompression: true,
+          compact: true,
         },
       },
     ],

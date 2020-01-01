@@ -1,5 +1,6 @@
 import { AuthResponse } from 'msal';
-import { TokenType } from './Interfaces';
+
+import { TokenType } from './enums';
 
 export class AccessTokenResponse {
   public accessToken = '';

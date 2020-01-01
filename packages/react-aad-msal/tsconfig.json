@@ -20,6 +20,6 @@
     "baseUrl": ".",
     "esModuleInterop": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "sample", "dist"]
+  "include": ["**/*"],
+  "exclude": ["node_modules", "dist"],
 }

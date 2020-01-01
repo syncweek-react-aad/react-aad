@@ -20,17 +20,18 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
-  "eslint.autoFixOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "eslint.validate": [
+    "html",
     "javascript",
+    "typescript",
     "javascriptreact",
-    {
-      "autoFix": true,
-      "language": "typescript"
-    },
-    {
-      "autoFix": true,
-      "language": "typescriptreact"
-    }
-  ]
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    {"pattern": "./packages/*/"},
+    {"pattern": "./samples/*/"}
+  ],
 }

@@ -1,6 +1,7 @@
 import { AuthResponse } from 'msal';
 import { IdToken } from 'msal/lib-commonjs/IdToken';
-import { TokenType } from './Interfaces';
+
+import { TokenType } from './enums';
 
 export class IdTokenResponse {
   public idToken: IdToken;
