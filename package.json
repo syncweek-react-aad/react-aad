@@ -23,5 +23,6 @@
     "hooks": {
       "pre-commit": "lerna run --concurrency 1 --stream precommit"
     }
-  }
+  },
+  "version": "0.0.1"
 }
