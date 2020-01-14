@@ -1,4 +1,4 @@
-import { LoginType } from 'src/enums';
+import { LoginType } from '../enums';
 
 export interface IMsalAuthProviderConfig {
   // Determines whether the login process is executed in a new popup window,

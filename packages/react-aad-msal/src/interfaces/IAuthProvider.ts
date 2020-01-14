@@ -1,4 +1,4 @@
-import { AuthenticationState } from 'src/enums';
+import { AuthenticationState } from '../enums';
 import { IAccountInfo } from './';
 
 export interface IAuthProvider {
