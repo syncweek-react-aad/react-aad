@@ -118,7 +118,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       return new AccessTokenResponse(response);
     } catch (error) {
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
-      const response = await this.loginToRefreshToken(error, this._parameters);
+      const response = await this.loginToRefreshToken(error, params);
       return new AccessTokenResponse(response);
     }
   };
