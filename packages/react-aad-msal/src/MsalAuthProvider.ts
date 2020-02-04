@@ -61,7 +61,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   }
 
   public login = async (parameters?: AuthenticationParameters) => {
-    const params = parameters || this._parameters;
+    const params = parameters || this.getAuthenticationParameters();
 
     // Clear any active authentication errors unless the code is executing from within
     // the token renewal iframe
@@ -70,7 +70,8 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       this.setError(null);
     }
 
-    if (this._options.loginType === LoginType.Redirect) {
+    const providerOptions = this.getProviderOptions();
+    if (providerOptions.loginType === LoginType.Redirect) {
       this.setAuthenticationState(AuthenticationState.InProgress);
       try {
         this.loginRedirect(params);
@@ -80,7 +81,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
         this.setError(error);
         this.setAuthenticationState(AuthenticationState.Unauthenticated);
       }
-    } else if (this._options.loginType === LoginType.Popup) {
+    } else if (providerOptions.loginType === LoginType.Popup) {
       try {
         this.setAuthenticationState(AuthenticationState.InProgress);
         await this.loginPopup(params);
@@ -101,73 +102,99 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this.dispatchAction(AuthenticationActionCreators.logoutSuccessful());
   };
 
-  public getAccountInfo = (): IAccountInfo | null => this._accountInfo;
+  public getAccountInfo = (): IAccountInfo | null => {
+    return this._accountInfo ? { ...this._accountInfo } : null;
+  };
 
   public getAccessToken = async (parameters?: AuthenticationParameters): Promise<AccessTokenResponse> => {
-    const params = parameters || this._parameters;
+    const providerOptions = this.getProviderOptions();
 
-    // Use the redirectUri that was passed, otherwise use the configured tokenRefreshUri
-    params.redirectUri = (parameters && parameters.redirectUri) || this._options.tokenRefreshUri;
+    // The parameters to be used when silently refreshing the token
+    const refreshParams = {
+      ...(parameters || this.getAuthenticationParameters()),
+      // Use the redirectUri that was passed, otherwise use the configured tokenRefreshUri
+      redirectUri: (parameters && parameters.redirectUri) || providerOptions.tokenRefreshUri,
+    };
 
     try {
-      const response = await this.acquireTokenSilent(params);
+      const response = await this.acquireTokenSilent(refreshParams);
 
       this.handleAcquireTokenSuccess(response);
       this.setAuthenticationState(AuthenticationState.Authenticated);
 
       return new AccessTokenResponse(response);
     } catch (error) {
+      // The parameters to be used if silent refresh failed, and a new login needs to be initiated
+      const loginParams = {
+        ...(parameters || this.getAuthenticationParameters()),
+      };
+
       this.dispatchAction(AuthenticationActionCreators.acquireAccessTokenError(error));
-      const response = await this.loginToRefreshToken(error, params);
+      const response = await this.loginToRefreshToken(error, loginParams);
+
       return new AccessTokenResponse(response);
     }
   };
 
   public getIdToken = async (parameters?: AuthenticationParameters): Promise<IdTokenResponse> => {
+    const providerOptions = this.getProviderOptions();
     const config = this.getCurrentConfiguration();
     const clientId = config.auth.clientId;
 
-    let params = parameters || this._parameters;
-    params = {
-      ...params,
-      redirectUri: (parameters && parameters.redirectUri) || this._options.tokenRefreshUri,
+    // The parameters to be used when silently refreshing the token
+    const refreshParams = {
+      ...(parameters || this.getAuthenticationParameters()),
+      // Use the redirectUri that was passed, otherwise use the configured tokenRefreshUri
+      redirectUri: (parameters && parameters.redirectUri) || providerOptions.tokenRefreshUri,
       // Pass the clientId as the only scope to get a renewed IdToken if it has expired
       scopes: [clientId],
     };
 
-    // If the parameters do not specify a login hint and the user already has a session cached,
-    // prefer the cached user name to bypass the account selection process if possible
-    const account = this.getAccount();
-    if (account && (!parameters || !parameters.loginHint)) {
-      params.loginHint = account.userName;
-    }
-
     try {
-      const response = await this.acquireTokenSilent(params);
+      const response = await this.acquireTokenSilent(refreshParams);
 
       this.handleAcquireTokenSuccess(response);
       this.setAuthenticationState(AuthenticationState.Authenticated);
 
       return new IdTokenResponse(response);
     } catch (error) {
+      // The parameters to be used if silent refresh failed, and a new login needs to be initiated
+      const loginParams = {
+        ...(parameters || this.getAuthenticationParameters()),
+      };
+
+      // If the parameters do not specify a login hint and the user already has a session cached,
+      // prefer the cached user name to bypass the account selection process if possible
+      const account = this.getAccount();
+      if (account && (!parameters || !parameters.loginHint)) {
+        loginParams.loginHint = account.userName;
+      }
+
       this.dispatchAction(AuthenticationActionCreators.acquireIdTokenError(error));
-      const response = await this.loginToRefreshToken(error, this._parameters);
+      const response = await this.loginToRefreshToken(error, loginParams);
+
       return new IdTokenResponse(response);
     }
   };
 
-  public getAuthenticationParameters = (): AuthenticationParameters => this._parameters;
-
-  public getError = () => this._error;
-
-  public setAuthenticationParameters = (parameters: AuthenticationParameters): void => {
-    this._parameters = parameters;
+  public getAuthenticationParameters = (): AuthenticationParameters => {
+    return { ...this._parameters };
   };
 
-  public getProviderOptions = (): IMsalAuthProviderConfig => this._options;
+  public getError = () => {
+    return this._error ? { ...this._error } : null;
+  };
+
+  public setAuthenticationParameters = (parameters: AuthenticationParameters): void => {
+    this._parameters = { ...parameters };
+  };
+
+  public getProviderOptions = (): IMsalAuthProviderConfig => {
+    return { ...this._options };
+  };
 
   public setProviderOptions = (options: IMsalAuthProviderConfig) => {
-    this._options = options;
+    this._options = { ...options };
     if (options.loginType === LoginType.Redirect) {
       this.handleRedirectCallback(this.authenticationRedirectCallback);
     }
@@ -211,7 +238,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
   };
 
   private setError = (error: AuthError | null) => {
-    this._error = error;
+    this._error = error ? { ...error } : null;
 
     if (error) {
       this.dispatchAction(AuthenticationActionCreators.loginError(error));
@@ -219,17 +246,18 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
     this._onErrorHandlers.forEach(listener => listener(this._error));
 
-    return this._error;
+    return { ...this._error };
   };
 
   private loginToRefreshToken = async (
     error: AuthError,
     parameters?: AuthenticationParameters,
   ): Promise<AuthResponse> => {
-    const params = parameters || this._parameters;
+    const providerOptions = this.getProviderOptions();
+    const params = parameters || this.getAuthenticationParameters();
 
     if (error instanceof InteractionRequiredAuthError) {
-      if (this._options.loginType === LoginType.Redirect) {
+      if (providerOptions.loginType === LoginType.Redirect) {
         this.acquireTokenRedirect(params);
 
         // Nothing to return, the user is redirected to the login page
@@ -240,7 +268,6 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
         const response = await this.acquireTokenPopup(params);
         this.handleAcquireTokenSuccess(response);
         this.setAuthenticationState(AuthenticationState.Authenticated);
-
         return response;
       } catch (error) {
         Logger.ERROR(error);
@@ -326,7 +353,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     this._accountInfo = { ...accountInfo };
     this._onAccountInfoHandlers.forEach(listener => listener(this._accountInfo));
 
-    return this._accountInfo;
+    return { ...this._accountInfo };
   };
 
   private dispatchAction = (action: AnyAction): void => {
