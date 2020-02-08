@@ -13,10 +13,10 @@
     ]
   },
   "scripts": {
-    "start": "cd packages/react-aad-msal && yarn start",
-    "lint": "cd packages/react-aad-msal && yarn run lint",
-    "test": "cd packages/react-aad-msal && yarn test",
-    "build": "cd packages/react-aad-msal &&  yarn build"
+    "start": "yarn workspace react-aad-msal start",
+    "lint": "yarn workspace react-aad-msal lint",
+    "test": "yarn workspace react-aad-msal test",
+    "build": "yarn workspace react-aad-msal build"
   },
   "dependencies": {},
   "husky": {

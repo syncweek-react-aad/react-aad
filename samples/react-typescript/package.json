@@ -1,0 +1,68 @@
+{
+  "name": "react-typescript-sample",
+  "version": "1.0.0",
+  "description": "A sample React application that demonstrates the Azure AD react component.",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/syncweek-react-aad/react-aad.git"
+  },
+  "author": "Laura Bochenek",
+  "contributors": [
+    "Laura Bochenek <laura.bochenek@microsoft.com>",
+    "Omeed Musavi <omusavi@microsoft.com>",
+    "Lilian Kasem <lilian.kasem@microsoft.com>",
+    "Tess DiStefano <tedistef@microsoft.com>",
+    "Lucas Huet-Hudson <lucashh@microsoft.com>",
+    "Zach Miller <zamiller@microsoft.com>",
+    "P.J. Little <pj.little@microsoft.com>",
+    "Shawn Cicoria <shawn.cicoria@microsoft.com>",
+    "Andrew Craswell <andcra@microsoft.com>",
+    "Björn Dalfors <bjorn@binovi.se>"
+  ],
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "@types/jest": "^24.0.0",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-redux": "^7.1.7",
+    "msal": "^1.2.0",
+    "react": "^16.12.0",
+    "react-aad-msal": "^2.3.2",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "react-scripts": "3.3.0",
+    "redux": "^4.0.5",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.0"
+  },
+  "scripts": {
+    "clean": "rimraf build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not ie < 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
