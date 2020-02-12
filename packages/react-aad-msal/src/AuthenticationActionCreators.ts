@@ -2,7 +2,7 @@ import { AuthError } from 'msal';
 import { AnyAction } from 'redux';
 import { AccessTokenResponse } from './AccessTokenResponse';
 import { IdTokenResponse } from './IdTokenResponse';
-import { IAccountInfo } from 'src/interfaces';
+import { IAccountInfo } from './interfaces';
 import { AuthenticationActions, AuthenticationState } from './enums';
 
 export abstract class AuthenticationActionCreators {
