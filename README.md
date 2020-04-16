@@ -436,7 +436,7 @@ const sampleReducer = (state = initialState, action) => {
 };
 ```
 
-In addition to login and logout actions, the `MsalAuthProvider` will dispatch other actions for for various state changes. The full list can be found in the [AuthenticationActions.ts](/packages/react-aad-msal/src/enums/AuthenticationActions.ts) file and in the table below. An example of a fully implemented [sample reducer](/samples/react-javascript/src/reduxStore.js) can be found in the [sample project](/sample/).
+In addition to login and logout actions, the `MsalAuthProvider` will dispatch other actions for various state changes. The full list can be found in the [AuthenticationActions.ts](/packages/react-aad-msal/src/enums/AuthenticationActions.ts) file and in the table below. An example of a fully implemented [sample reducer](/samples/react-javascript/src/reduxStore.js) can be found in the [sample project](/sample/).
 
 | Action Type                       | Payload                                                                                                                              | Description                                                                                                                                                                                            |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
