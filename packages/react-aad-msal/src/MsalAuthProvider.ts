@@ -116,6 +116,16 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       redirectUri: (parameters && parameters.redirectUri) || providerOptions.tokenRefreshUri,
     };
 
+    /* In this library, acquireTokenSilent is being called only when there is an accountInfo of an expired session.
+        *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
+        *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
+        *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
+        *  of multiple domain_hint param being added by the MSAL.js.
+    */
+    if (refreshParams.extraQueryParameters && refreshParams.extraQueryParameters.domain_hint) {
+      delete refreshParams.extraQueryParameters.domain_hint;
+    }
+
     try {
       const response = await this.acquireTokenSilent(refreshParams);
 
@@ -149,6 +159,16 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       // Pass the clientId as the only scope to get a renewed IdToken if it has expired
       scopes: [clientId],
     };
+
+    /* In this library, acquireTokenSilent is being called only when there is an accountInfo of an expired session.
+        *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
+        *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
+        *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
+        *  of multiple domain_hint param being added by the MSAL.js.
+    */
+    if (refreshParams.extraQueryParameters && refreshParams.extraQueryParameters.domain_hint) {
+      delete refreshParams.extraQueryParameters.domain_hint;
+    }
 
     try {
       const response = await this.acquireTokenSilent(refreshParams);
