@@ -8,6 +8,8 @@
 
 <p align="center">:monkey_face: Our code monkeys live on a solid diet of :star:'s. If you like what they're doing, please feed them!</p>
 
+<p>**UPDATE:** During the Microsoft OneWeek hackathon in July, there are plans to work on v2.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information. The goal is to rewrite the library to reduce dependency on callbacks between components, and instead explore using Context and Hooks, while removing the dependency on Redux.</p>
+
 # React AAD MSAL
 
 A library of components to easily integrate the Microsoft Authentication Library with Azure Active Directory in your React app quickly and reliably. The library focuses on flexibility, providing functionality to login, logout, and fetch the user details while maintaining access to the underlying MSAL library for advanced use.
