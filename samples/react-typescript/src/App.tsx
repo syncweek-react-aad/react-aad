@@ -85,7 +85,7 @@ const App = () => {
                   <h2 className="SampleHeader">Errors</h2>
                   <p>
                     If authentication fails, this box will have the errors that
-                    occured
+                    occurred
                   </p>
                   {error && (
                     <div style={{ wordWrap: "break-word" }}>
