@@ -40,7 +40,7 @@ A library of components to easily integrate the Microsoft Authentication Library
   - [:cd: Sample applications](#cd-sample-applications)
   - [:calendar: Roadmap](#calendar-roadmap)
   - [:books: Resources](#books-resources)
-  - [:trophy: Contributers](#trophy-contributers)
+  - [:trophy: Contributors](#trophy-contributors)
 
 ## :tada: Features
 
@@ -229,7 +229,7 @@ The `AzureAD` component is the primary method to add authentication to your appl
      login, // login function
      logout, // logout function
      authenticationState, // the current authentication state
-     error, // any error that occured during the login process
+     error, // any error that occurred during the login process
      accountInfo, // account info of the authenticated user
    }
    ```
@@ -267,7 +267,7 @@ import { authProvider } from './authProvider';
         case AuthenticationState.Unauthenticated:
           return (
             <div>
-              {error && <p><span>An error occured during authentication, please try again!</span></p>}
+              {error && <p><span>An error occurred during authentication, please try again!</span></p>}
               <p>
                 <span>Hey stranger, you look new!</span>
                 <button onClick={login}>Login</button>
@@ -503,8 +503,8 @@ The following resources may be helpful and provide further insight. If you've wr
 - [AAD v2 Scopes](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes)
 - [AAD B2C Setup MSA App](https://docs.microsoft.com/en-us/azure/active-directory-b2c/active-directory-b2c-setup-msa-app)
 
-## :trophy: Contributers
+## :trophy: Contributors
 
-This library is built with :heart: by members of the open source community. To become a contributer, please see the [contribution guidelines](CONTRIBUTING.md).
+This library is built with :heart: by members of the open source community. To become a contributor, please see the [contribution guidelines](CONTRIBUTING.md).
 
 [![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/0)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/0)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/1)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/1)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/2)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/2)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/3)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/3)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/4)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/4)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/5)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/5)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/6)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/6)[![](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/images/7)](https://sourcerer.io/fame/AndrewCraswell/syncweek-react-aad/react-aad/links/7)
