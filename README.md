@@ -8,7 +8,7 @@
 
 <p align="center">:monkey_face: Our code monkeys live on a solid diet of :star:'s. If you like what they're doing, please feed them!</p>
 
-<p>UPDATE: During the Microsoft OneWeek hackathon in July (26th-27th), there are plans to work on v3.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information. The goal is to rewrite the library to reduce dependency on callbacks between components, and instead explore using Context and Hooks, while removing the dependency on Redux.</p>
+**:exclamation: UPDATE: During the Microsoft OneWeek hackathon in July (26th-27th), there are plans to work on v3.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information. The goal is to rewrite the library to reduce dependency on callbacks between components, and instead explore using Context and Hooks, while removing the dependency on Redux.**
 
 # React AAD MSAL
 
