@@ -1,3 +1,5 @@
+**:exclamation: UPDATE: During the Microsoft OneWeek hackathon (July 26th-27th) there are plans to work on v3.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information.**
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/1908292/64083094-6321ce80-ccce-11e9-8c09-4101444bc4f8.png">
 </p>
@@ -7,8 +9,6 @@
 </p>
 
 <p align="center">:monkey_face: Our code monkeys live on a solid diet of :star:'s. If you like what they're doing, please feed them!</p>
-
-**:exclamation: UPDATE: During the Microsoft OneWeek hackathon in July (26th-27th), there are plans to work on v3.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information.**
 
 # React AAD MSAL
 
