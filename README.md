@@ -1,4 +1,4 @@
-**:raising_hand_woman: UPDATE: During the Microsoft OneWeek hackathon (July 26th-27th) there are plans to work on v3.0 of AAD for React. For Microsoft FTEs who are interested in participating, please reach out to Andrew Craswell (andcra) for information.**
+**UPDATE: Microsoft is currently in process of building an official `@azure/msal-react` library which will replace `react-aad-msal`. While this library will remain till then, it is not recommended for new applications since it relies on the older MSAL 1.0 dependencies, which are based on the old authentication flow which has known issues. There will be some intermediary updates to help support a migration path to the official library, but at this point, `react-aad-msal` is scheduled to be deprecated.**
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/1908292/64083094-6321ce80-ccce-11e9-8c09-4101444bc4f8.png">
