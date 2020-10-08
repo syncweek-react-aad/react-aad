@@ -34,7 +34,7 @@ const App = () => {
         }: IAzureADFunctionProps) => {
           return (
             <React.Fragment>
-              {authenticationState === AuthenticationState.Unauthenticated && (
+              {authenticationState === "Unauthenticated" && (
                 <div>
                   <button
                     onClick={() => handleClick("popup")}

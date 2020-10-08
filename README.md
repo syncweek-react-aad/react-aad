@@ -257,14 +257,14 @@ import { authProvider } from './authProvider';
   {
     ({login, logout, authenticationState, error, accountInfo}) => {
       switch (authenticationState) {
-        case AuthenticationState.Authenticated:
+        case 'Authenticated':
           return (
             <p>
               <span>Welcome, {accountInfo.account.name}!</span>
               <button onClick={logout}>Logout</button>
             </p>
           );
-        case AuthenticationState.Unauthenticated:
+        case 'Unauthenticated':
           return (
             <div>
               {error && <p><span>An error occurred during authentication, please try again!</span></p>}
@@ -274,7 +274,7 @@ import { authProvider } from './authProvider';
               </p>
             </div>
           );
-        case AuthenticationState.InProgress:
+        case 'InProgress':
           return (<p>Authenticating...</p>);
       }
     }

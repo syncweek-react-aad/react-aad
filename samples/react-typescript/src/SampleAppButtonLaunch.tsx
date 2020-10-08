@@ -21,12 +21,9 @@ const SampleAppButtonLaunch = () => {
   return (
     <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
       {({ login, logout, authenticationState }: IAzureADFunctionProps) => {
-        const isInProgress =
-          authenticationState === AuthenticationState.InProgress;
-        const isAuthenticated =
-          authenticationState === AuthenticationState.Authenticated;
-        const isUnauthenticated =
-          authenticationState === AuthenticationState.Unauthenticated;
+        const isInProgress = authenticationState === "InProgress";
+        const isAuthenticated = authenticationState === "Authenticated";
+        const isUnauthenticated = authenticationState === "Unauthenticated";
 
         if (isAuthenticated) {
           return (

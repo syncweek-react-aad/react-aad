@@ -45,7 +45,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       provider.registerReduxStore(props.reduxStore);
     }
 
-    if (forceLogin && authenticationState === AuthenticationState.Unauthenticated && !error) {
+    if (forceLogin && authenticationState === 'Unauthenticated' && !error) {
       login();
     }
 
@@ -62,7 +62,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
   }, [provider]);
 
   const logout = useCallback(() => {
-    if (authenticationState !== AuthenticationState.Authenticated) {
+    if (authenticationState !== 'Authenticated') {
       return;
     }
     provider.logout();
@@ -73,7 +73,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
       if (newState !== authenticationState) {
         _setAuthenticationState(newState);
 
-        if (newState === AuthenticationState.Unauthenticated && forceLogin && !error) {
+        if (newState === 'Unauthenticated' && forceLogin && !error) {
           login();
         }
       }
@@ -143,7 +143,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
 
   // Render logic
   switch (authenticationState) {
-    case AuthenticationState.Authenticated:
+    case 'Authenticated':
       if (authenticatedFunction) {
         const authFunctionResult = authenticatedFunction(logout);
 
@@ -159,7 +159,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
 
       // If there is no authenticatedFunction, or it returned null, render the children
       return getChildrenOrFunction(props.children, childrenFunctionProps);
-    case AuthenticationState.Unauthenticated:
+    case 'Unauthenticated':
       if (unauthenticatedFunction) {
         // eslint-disable-next-line no-console
         console.warn(
@@ -171,7 +171,7 @@ export const AzureAD: React.FunctionComponent<IAzureADProps> = props => {
     // If state is Uauthenticated or InProgress, only return the children if it's a function
     // If the children prop is a function, we will pass state changes to be handled by the consumer
     // eslint-disable-next-line no-fallthrough
-    case AuthenticationState.InProgress:
+    case 'InProgress':
       if (isChildrenFunction(props.children)) {
         return getChildrenOrFunction(props.children, childrenFunctionProps);
       }

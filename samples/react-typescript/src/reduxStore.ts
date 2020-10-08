@@ -13,7 +13,7 @@ const initialState = {
   initialized: false,
   idToken: null,
   accessToken: null,
-  state: AuthenticationState.Unauthenticated
+  state: "Unauthenticated"
 };
 
 const rootReducer: Reducer<any, any> = (
