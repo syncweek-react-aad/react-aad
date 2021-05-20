@@ -1,5 +1,1 @@
-export enum AuthenticationState {
-  Unauthenticated = 'Unauthenticated',
-  InProgress = 'InProgress',
-  Authenticated = 'Authenticated',
-}
+export type AuthenticationState = 'Unauthenticated' | 'InProgress' | 'Authenticated';

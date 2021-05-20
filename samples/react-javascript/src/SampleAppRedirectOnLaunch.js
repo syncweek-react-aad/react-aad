@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { AzureAD, LoginType, AuthenticationState } from 'react-aad-msal';
+import * as React from "react";
+import { AzureAD, LoginType, AuthenticationState } from "react-aad-msal";
 
-import { basicReduxStore } from './reduxStore';
-import GetAccessTokenButton from './GetAccessTokenButton';
-import GetIdTokenButton from './GetIdTokenButton';
+import { basicReduxStore } from "./reduxStore";
+import GetAccessTokenButton from "./GetAccessTokenButton";
+import GetIdTokenButton from "./GetIdTokenButton";
 
 // Import the authentication provider which holds the default settings
-import { authProvider } from './authProvider';
+import { authProvider } from "./authProvider";
 
 class SampleAppRedirectOnLaunch extends React.Component {
   constructor(props) {
@@ -18,10 +18,10 @@ class SampleAppRedirectOnLaunch extends React.Component {
     authProvider.setProviderOptions(options);
 
     this.interval = null;
-    let redirectEnabled = sessionStorage.getItem('redirectEnabled') || false;
+    let redirectEnabled = sessionStorage.getItem("redirectEnabled") || false;
     this.state = {
       counter: 5,
-      redirectEnabled: redirectEnabled,
+      redirectEnabled: redirectEnabled
     };
   }
 
@@ -29,15 +29,15 @@ class SampleAppRedirectOnLaunch extends React.Component {
     this.setState(
       state => ({
         ...state,
-        redirectEnabled: !state.redirectEnabled,
+        redirectEnabled: !state.redirectEnabled
       }),
       () => {
         if (!this.state.redirectEnabled) {
           this.clearRedirectInterval();
         } else {
-          sessionStorage.setItem('redirectEnabled', true);
+          sessionStorage.setItem("redirectEnabled", true);
         }
-      },
+      }
     );
   };
 
@@ -58,7 +58,7 @@ class SampleAppRedirectOnLaunch extends React.Component {
   clearRedirectInterval() {
     clearInterval(this.interval);
     this.setState({ counter: 5 });
-    sessionStorage.removeItem('redirectEnabled');
+    sessionStorage.removeItem("redirectEnabled");
     this.interval = null;
   }
 
@@ -68,9 +68,9 @@ class SampleAppRedirectOnLaunch extends React.Component {
     return (
       <AzureAD provider={authProvider} reduxStore={basicReduxStore}>
         {({ login, logout, authenticationState }) => {
-          const isInProgress = authenticationState === AuthenticationState.InProgress;
-          const isAuthenticated = authenticationState === AuthenticationState.Authenticated;
-          const isUnauthenticated = authenticationState === AuthenticationState.Unauthenticated;
+          const isInProgress = authenticationState === "InProgress";
+          const isAuthenticated = authenticationState === "Authenticated";
+          const isUnauthenticated = authenticationState === "Unauthenticated";
 
           if (isAuthenticated) {
             return (
@@ -87,8 +87,15 @@ class SampleAppRedirectOnLaunch extends React.Component {
             this.countdownToLogin(login);
             return (
               <div>
-                <input type="checkbox" value={redirectEnabled} onChange={this.handleCheck} /> Enable redirect
-                {redirectEnabled && <p>Redirecting in {this.state.counter} seconds...</p>}
+                <input
+                  type="checkbox"
+                  value={redirectEnabled}
+                  onChange={this.handleCheck}
+                />{" "}
+                Enable redirect
+                {redirectEnabled && (
+                  <p>Redirecting in {this.state.counter} seconds...</p>
+                )}
               </div>
             );
           }

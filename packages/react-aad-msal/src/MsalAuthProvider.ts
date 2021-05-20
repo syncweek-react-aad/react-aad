@@ -72,24 +72,24 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
 
     const providerOptions = this.getProviderOptions();
     if (providerOptions.loginType === LoginType.Redirect) {
-      this.setAuthenticationState(AuthenticationState.InProgress);
+      this.setAuthenticationState('InProgress');
       try {
         this.loginRedirect(params);
       } catch (error) {
         Logger.ERROR(error);
 
         this.setError(error);
-        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+        this.setAuthenticationState('Unauthenticated');
       }
     } else if (providerOptions.loginType === LoginType.Popup) {
       try {
-        this.setAuthenticationState(AuthenticationState.InProgress);
+        this.setAuthenticationState('InProgress');
         await this.loginPopup(params);
       } catch (error) {
         Logger.ERROR(error);
 
         this.setError(error);
-        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+        this.setAuthenticationState('Unauthenticated');
       }
 
       await this.processLogin();
@@ -117,11 +117,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     };
 
     /* In this library, acquireTokenSilent is being called only when there is an accountInfo of an expired session.
-        *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
-        *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
-        *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
-        *  of multiple domain_hint param being added by the MSAL.js.
-    */
+     *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
+     *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
+     *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
+     *  of multiple domain_hint param being added by the MSAL.js.
+     */
     if (refreshParams.extraQueryParameters && refreshParams.extraQueryParameters.domain_hint) {
       delete refreshParams.extraQueryParameters.domain_hint;
     }
@@ -130,7 +130,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       const response = await this.acquireTokenSilent(refreshParams);
 
       this.handleAcquireTokenSuccess(response);
-      this.setAuthenticationState(AuthenticationState.Authenticated);
+      this.setAuthenticationState('Authenticated');
 
       return new AccessTokenResponse(response);
     } catch (error) {
@@ -161,11 +161,11 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     };
 
     /* In this library, acquireTokenSilent is being called only when there is an accountInfo of an expired session.
-        *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
-        *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
-        *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
-        *  of multiple domain_hint param being added by the MSAL.js.
-    */
+     *  In a scenario where user interaction is required, username from the account info is passed as 'login_hint'
+     *  parameter which redirects user to user's organization login page. So 'domain_hint' is not required to be
+     *  passed for silent calls. Hence, the below code is to avoid sending domain_hint. This also solves the issue
+     *  of multiple domain_hint param being added by the MSAL.js.
+     */
     if (refreshParams.extraQueryParameters && refreshParams.extraQueryParameters.domain_hint) {
       delete refreshParams.extraQueryParameters.domain_hint;
     }
@@ -174,7 +174,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       const response = await this.acquireTokenSilent(refreshParams);
 
       this.handleAcquireTokenSuccess(response);
-      this.setAuthenticationState(AuthenticationState.Authenticated);
+      this.setAuthenticationState('Authenticated');
 
       return new IdTokenResponse(response);
     } catch (error) {
@@ -287,13 +287,13 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       try {
         const response = await this.acquireTokenPopup(params);
         this.handleAcquireTokenSuccess(response);
-        this.setAuthenticationState(AuthenticationState.Authenticated);
+        this.setAuthenticationState('Authenticated');
         return response;
       } catch (error) {
         Logger.ERROR(error);
 
         this.setError(error);
-        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+        this.setAuthenticationState('Unauthenticated');
 
         throw error;
       }
@@ -301,7 +301,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
       Logger.ERROR(error as any);
 
       this.setError(error);
-      this.setAuthenticationState(AuthenticationState.Unauthenticated);
+      this.setAuthenticationState('Unauthenticated');
 
       throw error;
     }
@@ -326,7 +326,7 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
     if (this.getError()) {
       this.handleLoginFailed();
 
-      this.setAuthenticationState(AuthenticationState.Unauthenticated);
+      this.setAuthenticationState('Unauthenticated');
     } else if (this.getAccount()) {
       try {
         // If the IdToken has expired, refresh it. Otherwise use the cached token
@@ -340,12 +340,12 @@ export class MsalAuthProvider extends UserAgentApplication implements IAuthProvi
           this.setError(error);
         }
 
-        this.setAuthenticationState(AuthenticationState.Unauthenticated);
+        this.setAuthenticationState('Unauthenticated');
       }
     } else if (this.getLoginInProgress()) {
-      this.setAuthenticationState(AuthenticationState.InProgress);
+      this.setAuthenticationState('InProgress');
     } else {
-      this.setAuthenticationState(AuthenticationState.Unauthenticated);
+      this.setAuthenticationState('Unauthenticated');
     }
   };
 
